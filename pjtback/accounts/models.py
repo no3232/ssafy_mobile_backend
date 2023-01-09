@@ -8,7 +8,7 @@ from django.utils.translation import gettext_lazy as _
 
 class User(AbstractUser):
     email = models.EmailField(_("email_address"), unique=True)
-    phone_number = models.CharField(_("phone"), max_length=13)
+    phone_number = models.CharField(_("phone"), max_length=13, unique=True)
     profile_image = ProcessedImageField(
         blank=True,
         upload_to='profile_image/%Y/%m',
