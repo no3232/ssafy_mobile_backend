@@ -94,3 +94,9 @@ def get_tokens_for_user(user):
         'access': str(refresh.access_token),
     }
 
+
+# 토큰 관련해서 조금 함수구현 끄적이다가 시간도 시간이고 집중 안돼서 일단 놔뒀는데,
+# 일단 refresh , access 두개를 쓰려고 하면 그 의의를 찾으려면
+# 기본 내장 되어있는 refresh 토큰 가지고 refresh 하는 api 를 만들어야 하고,
+# app_setting 부분에 기한 (expired_time 같은?) 거 정해야 할듯 하다. 이 주석은 나중에 구현하면서 지우도록 하자.
+
