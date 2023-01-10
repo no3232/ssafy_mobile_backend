@@ -21,31 +21,14 @@ from rest_framework_simplejwt.views import (
 )
 from django.conf.urls import url
 from rest_framework import permissions
-from drf_yasg import openapi
-from drf_yasg.views import get_schema_view
-
-schema_view_v1 = get_schema_view(
-    openapi.Info(
-        title="Your Server Name or Swagger Docs name",
-        default_version="Your API version(Custom)",
-        description="Your Swagger Docs descriptions",
-        # terms_of_service="https://www.google.com/policies/terms/",
-        # contact=openapi.Contact(name="test", email="test@test.com"),
-        # license=openapi.License(name="Test License"),
-    ),
-    public=True,
-    permission_classes=(permissions.AllowAny,),
-)
-
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('accounts/', include('dj_rest_auth.urls')),
-    path('accounts/registration/', include('dj_rest_auth.registration.urls')),
+    # 이런 라이브러리 안 쪽에거는 decorator 달아봤는데도 잘 안되더라
+    # 잘 모르겠어서 그냥 좀 특이하게 아예 path 네이밍을 바꿨다. 맘에 안들면 원래대로 ㄱㄱ
+    path('samba/', include('dj_rest_auth.urls')),
+    path('samba/registration/', include('dj_rest_auth.registration.urls')),
     path('accounts/', include('accounts.urls')),
     path('api/token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
     path('api/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
-     url(r'^swagger(?P<format>\.json|\.yaml)$', schema_view_v1.without_ui(cache_timeout=0), name='schema-json'),
-    url(r'^swagger/$', schema_view_v1.with_ui('swagger', cache_timeout=0), name='schema-swagger-ui'),
-    url(r'^redoc/$', schema_view_v1.with_ui('redoc', cache_timeout=0), name='schema-redoc'),
 ]

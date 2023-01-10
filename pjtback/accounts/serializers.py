@@ -1,7 +1,6 @@
 from rest_framework import serializers
 from dj_rest_auth.registration.serializers import RegisterSerializer
 from django.utils.translation import gettext_lazy as _
-
 # 회원가입 시리얼라이저
 
 class CustomRegisterSerializer(RegisterSerializer):
@@ -46,3 +45,18 @@ class CustomTokenSerializer(serializers.ModelSerializer):
     class Meta:
         model = TokenModel
         fields = ('key', 'user', )
+
+
+
+
+# 중복 검사 serializer 이런식으로 할 수도 있고 사실상 django 는 이렇게 짜는 걸 더 권장하는 것 같음
+from rest_framework.validators import UniqueValidator
+from django.contrib.auth import get_user_model
+from .models import User
+
+class EmailUniqueCheckSerializer(serializers.ModelSerializer):
+    email = serializers.CharField(required=True, min_length=3, max_length=30, validators=[UniqueValidator(queryset=get_user_model().objects.all())])
+
+    class Meta:
+        model = User
+        fields = ('email')

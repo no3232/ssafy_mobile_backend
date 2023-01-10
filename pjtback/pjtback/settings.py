@@ -29,6 +29,29 @@ DEBUG = True
 
 ALLOWED_HOSTS = []
 
+#일단 긁어 온 swagger setting
+SPECTACULAR_SETTINGS = {
+    # General schema metadata. Refer to spec for valid inputs
+    # https://github.com/OAI/OpenAPI-Specification/blob/master/versions/3.0.3.md#openapi-object
+    'TITLE': 'FOOT_TRIP API',
+    'DESCRIPTION': '일단 테스트용입니다. 개선 예정',
+    # Swagger UI를 좀더 편리하게 사용하기위해 기본옵션들을 수정한 값들입니다.
+    'SWAGGER_UI_SETTINGS': {
+        'dom_id': '#swagger-ui',  # required(default)
+        'layout': 'BaseLayout',  # required(default)
+        'deepLinking': True,  # API를 클릭할때 마다 SwaggerUI의 url이 변경됩니다. (특정 API url 공유시 유용하기때문에 True설정을 사용합니다)
+        'persistAuthorization': True,  # True 이면 SwaggerUI상 Authorize에 입력된 정보가 새로고침을 하더라도 초기화되지 않습니다.
+        'displayOperationId': True,  # True이면 API의 urlId 값을 노출합니다. 대체로 DRF api name둘과 일치하기때문에 api를 찾을때 유용합니다.
+        'filter': True,  # True 이면 Swagger UI에서 'Filter by Tag' 검색이 가능합니다
+    },
+
+    'VERSION': '1.0.1',
+    'SERVE_INCLUDE_SCHEMA': False,  # OAS3 Meta정보 API를 비노출 처리합니다.
+     
+    'SWAGGER_UI_DIST': '//unpkg.com/swagger-ui-dist@3.38.0',  # Swagger UI 버전을 조절할수 있습니다.
+    
+}
+
 
 # Application definition
 
@@ -45,7 +68,10 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
 
-    'drf_yasg',
+
+    # drf-yasg 뺌 밑에게 낫다는 말이 있어서
+    'drf_spectacular',
+
     'rest_framework',
     'rest_framework.authtoken',
     'rest_framework_simplejwt',
@@ -60,14 +86,29 @@ INSTALLED_APPS = [
 ]
 # restframework 인증
 REST_FRAMEWORK = {
-    'DEFAULT_PERMISSION_CLASSES': (
-        'rest_framework.permissions.IsAuthenticated',
-    ),
+    #phone_number_check 나 email_check 도 인증으로 막아버리길래 일단 제거했다.
+    #그 view 함수 들에 permission_classes 데코레이터 붙여주거나 밑에 default_classes 를 수정하거나
+
+    # 'DEFAULT_PERMISSION_CLASSES': (
+    #     'rest_framework.permissions.IsAuthenticated',
+    # ),
     'DEFAULT_AUTHENTICATION_CLASSES': (
         'rest_framework.authentication.TokenAuthentication',
         'rest_framework_simplejwt.authentication.JWTAuthentication',
     ),
+
+    # swagger
+    'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
 }
+
+# 교재에 있던 기본 세팅은 일단 없앤다.
+# SPECTACULAR_SETTINGS = {
+#     'TITLE' : 'FOOT_TRIP API',
+#     'DESCRIPTION': '일단 테스트용입니다. 개선 예정',
+#     'VERSION': '1.0.1',
+#     'SERVE_INCLUDE_SCHEMA': False,
+# }
+
 # JWT 토큰
 SIMPLE_JWT = {
     'ACCESS_TOKEN_LIFETIME': timedelta(minutes=5),
