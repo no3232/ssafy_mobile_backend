@@ -42,7 +42,7 @@ def filtering_email(request):
     return JsonResponse(context)
 
 # 소셜 로그인 시 유저 정보 조회 후 토큰 발급
-# @csrf_exempt
+@csrf_exempt
 def social_login(request):
     from rest_framework.authtoken.models import Token
     # print(request.POST)
