@@ -16,19 +16,12 @@ class CustomRegisterSerializer(RegisterSerializer):
     def get_cleaned_data(self):
         data = super().get_cleaned_data()
         data['profile_image'] = self.validated_data.get('profile_image', '')
+        data['phone_number'] = self.validated_data.get('phone_number','')
+        data['naver_email'] = self.validated_data.get('naver_email','')
+        data['google_email'] = self.validated_data.get('google_email','')
+        data['kakao_email'] = self.validated_data.get('kakao_email','')
 
         return data
-    
-    def save(self, request):
-        user = super().save(request)
-        # 추가 입력 해야할 필드
-        user.phone_number = self.data.get('phone_number')
-        user.profile_image = self.data.get('profile_image')
-        user.naver_email = self.data.get('naver_email')
-        user.kakao_email = self.data.get('kakao_email')
-        user.google_email = self.data.get('google_email')
-        user.save()
-        return user
 
 
 # 토큰 시리얼라이저

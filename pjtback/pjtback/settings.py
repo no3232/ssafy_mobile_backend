@@ -143,7 +143,7 @@ DATABASES = {
         'ENGINE': 'django.db.backends.mysql',
         'NAME': 'django_mobile',
         'USER': 'root',
-        'PASSWORD': 'sangjun1324',
+        'PASSWORD': 'hedonism1@',
         'HOST': 'localhost',
         'PORT': '3306'
     }
@@ -214,6 +214,9 @@ AUTHENTICATION_BACKENDS = (
 )
 
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+
+
+ACCOUNT_ADAPTER = 'accounts.adapter.CustomAccountAdapter'
 
 # 토큰 시리얼라이저 추가
 REST_AUTH_SERIALIZERS = {
