@@ -268,6 +268,3 @@ REST_USE_JWT = True
 
 # 스태틱 파일 BASEROOT
 STATIC_ROOT = BASE_DIR / 'staticfiles'
-
-# mobile slahs 삭제
-APPEND_SLASH=False
