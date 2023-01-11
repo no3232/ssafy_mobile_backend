@@ -5,6 +5,9 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import login
 from drf_spectacular.utils import extend_schema
 from django.http import JsonResponse, HttpResponse
+from rest_framework import status
+from rest_framework.response import Response
+
 
 from rest_framework.decorators import api_view
 
@@ -104,3 +107,14 @@ def login2 (request):
         return HttpResponse(True)
     else:
         return HttpResponse(False)
+
+
+@api_view(['DELETE'])
+@csrf_exempt
+def user_detail(request, userpk):
+    user = get_user_model()
+    User = get_object_or_404(user, pk=userpk)
+    if request.method == 'DELETE':
+        User.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
+    return Response(status=status.HTTP_201_CREATED)
