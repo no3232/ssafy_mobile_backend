@@ -268,3 +268,6 @@ REST_USE_JWT = True
 
 # 스태틱 파일 BASEROOT
 STATIC_ROOT = BASE_DIR / 'staticfiles'
+
+
+APPEND_SLASH=False
