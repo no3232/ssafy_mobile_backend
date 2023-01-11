@@ -72,9 +72,9 @@ def filtering_email(request):
     return JsonResponse(context)
 
 # 소셜 로그인 시 유저 정보 조회 후 토큰 발급
+@api_view(['POST'])
 @csrf_exempt
 def social_login(request):
-    from rest_framework.authtoken.models import Token
     # print(request.POST)
     useremail = request.POST.get('email')
     User = get_user_model()
@@ -82,9 +82,6 @@ def social_login(request):
         user = get_object_or_404(User, email=useremail)
     except:
         return JsonResponse({"no one": False})
-    # print("----------------------")
-    # print(token)
-    # print("----------------------")
     token = get_tokens_for_user(user)
     context = {
         "token": {"refresh": token["refresh"],
@@ -108,6 +105,7 @@ def get_tokens_for_user(user):
 # 기본 내장 되어있는 refresh 토큰 가지고 refresh 하는 api 를 만들어야 하고,
 # app_setting 부분에 기한 (expired_time 같은?) 거 정해야 할듯 하다. 이 주석은 나중에 구현하면서 지우도록 하자.
 
+@csrf_exempt
 def login2 (request):
     useremail = request.POST.get('email')
     password = request.POST.get('password')
