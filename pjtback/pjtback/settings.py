@@ -27,7 +27,7 @@ SECRET_KEY = 'django-insecure-=!7_uk)1g!md3rh)_bg@t&^yvnawn$3g)5@x-%z*w9u73ro^4)
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 
 #일단 긁어 온 swagger setting
 SPECTACULAR_SETTINGS = {
@@ -184,7 +184,7 @@ DATABASES = {
         'ENGINE': 'django.db.backends.mysql',
         'NAME': 'django_mobile',
         'USER': 'root',
-        'PASSWORD': 'hedonism1@',
+        'PASSWORD': 'sangjun1324',
         'HOST': 'localhost',
         'PORT': '3306'
     }
@@ -265,3 +265,6 @@ REST_AUTH_SERIALIZERS = {
 }
 # JWT 사용
 REST_USE_JWT = True
+
+# 스태틱 파일 BASEROOT
+STATIC_ROOT = BASE_DIR / 'staticfiles'

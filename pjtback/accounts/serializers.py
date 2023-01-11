@@ -59,4 +59,4 @@ class EmailUniqueCheckSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = User
-        fields = ('email')
+        fields = ('email', )
