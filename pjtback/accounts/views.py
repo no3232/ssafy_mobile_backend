@@ -53,11 +53,11 @@ def filtering_email(request):
     serializer = EmailUniqueCheckSerializer(data= request.data)
     if serializer.is_valid():
         context = {
-            'is_duplicated': True
+            'is_duplicated': False
         }
     else:
         context = {
-            'is_duplicated': False
+            'is_duplicated': True
         }
     return JsonResponse(context)
 
