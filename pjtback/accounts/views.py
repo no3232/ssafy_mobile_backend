@@ -3,8 +3,9 @@ from django.shortcuts import render
 from django.contrib.auth import get_user_model
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import login
-from drf_spectacular.utils import extend_schema
+from drf_spectacular.utils import extend_schema, OpenApiParameter , OpenApiTypes , OpenApiExample
 from django.http import JsonResponse
+from django.http import HttpResponse
 
 from rest_framework.decorators import api_view
 
@@ -19,7 +20,7 @@ from .serializers import EmailUniqueCheckSerializer
 
 # 이런 식으로 할 수도 있고.. api_view 에 등록해야 rest_api 로서 등록되는 방식.
 # 모델 , serializer , view 함수가 있으면 자동으로 등록 된다고 하는 것 같다. 뭔가 예시로 할만한게 잘 없네. swagger 에서 registration 참고하면 좋을듯
-@extend_schema(tags=['테스트'],description='테스트를 위한 메소드입니다')
+@extend_schema(tags=['registration'],parameters=[OpenApiParameter(name="phone_number", required=True, type=str)],summary='폰 넘버 중복 체크')
 @api_view(['POST'])
 @csrf_exempt
 def filtering_phone(request):
@@ -38,7 +39,7 @@ def filtering_phone(request):
 # 이메일 중복검증
 # serializer 쓰도록? 약간 바꿔봤는데 이거는 근데 좀 난이도 있는 블로그 변형 많이 해서 쓰는거라 틀릴 수 있음
 # 틀리면 그냥 원상태로 돌리면 될듯 주석처리해놓음
-@extend_schema(tags=['테스트'],description='테스트를 위한 메소드입니다')
+@extend_schema(tags=['registration'],parameters=[OpenApiParameter(name="email", required=True, type=str)],summary='email 중복 체크')
 @api_view(['POST'])
 @csrf_exempt
 def filtering_email(request):
@@ -52,13 +53,10 @@ def filtering_email(request):
 
     serializer = EmailUniqueCheckSerializer(data= request.data)
     if serializer.is_valid():
-        context = {
-            'is_duplicated': False
-        }
+        return HttpResponse(True)
     else:
-        context = {
-            'is_duplicated': True
-        }
+        return 
+        (False)
     return JsonResponse(context)
 
 # 소셜 로그인 시 유저 정보 조회 후 토큰 발급
