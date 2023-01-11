@@ -3,9 +3,17 @@ from django.shortcuts import render
 from django.contrib.auth import get_user_model
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import login
+<<<<<<< HEAD
 from drf_spectacular.utils import extend_schema, OpenApiParameter , OpenApiTypes , OpenApiExample
 from django.http import JsonResponse
 from django.http import HttpResponse
+=======
+from drf_spectacular.utils import extend_schema
+from django.http import JsonResponse, HttpResponse
+from rest_framework import status
+from rest_framework.response import Response
+
+>>>>>>> 5d88c8474e15a2189b8a135ffe9afac6cce2727b
 
 from rest_framework.decorators import api_view
 
@@ -16,6 +24,7 @@ from django.views.decorators.csrf import csrf_exempt
 
 
 from .serializers import EmailUniqueCheckSerializer
+from .serializers import PhoneUniqueCheckSerializer
 
 
 # 이런 식으로 할 수도 있고.. api_view 에 등록해야 rest_api 로서 등록되는 방식.
@@ -24,17 +33,21 @@ from .serializers import EmailUniqueCheckSerializer
 @api_view(['POST'])
 @csrf_exempt
 def filtering_phone(request):
-    print(request.POST)
-    phone = request.POST.get('phone')
-    print(phone)
-    peoples = get_user_model().objects.filter(phone_number=phone)
-    print("------------")
-    print(bool(peoples))
-    print("------------")
-    context = {
-        'is_duplicated': bool(peoples)
-    }
-    return JsonResponse(context)
+    # print(request.POST)
+    # phone = request.POST.get('phone')
+    # print(phone)
+    # peoples = get_user_model().objects.filter(phone_number=phone)
+    # print("------------")
+    # print(bool(peoples))
+    # print("------------")
+    # context = {
+    #     'is_duplicated': bool(peoples)
+    # }
+    serializer = PhoneUniqueCheckSerializer(data= request.data)
+    if serializer.is_valid():
+        return HttpResponse(False)
+    else:
+        return HttpResponse(True)
 
 # 이메일 중복검증
 # serializer 쓰도록? 약간 바꿔봤는데 이거는 근데 좀 난이도 있는 블로그 변형 많이 해서 쓰는거라 틀릴 수 있음
@@ -53,16 +66,22 @@ def filtering_email(request):
 
     serializer = EmailUniqueCheckSerializer(data= request.data)
     if serializer.is_valid():
+<<<<<<< HEAD
         return HttpResponse(True)
     else:
         return 
         (False)
     return JsonResponse(context)
+=======
+        return HttpResponse(False)
+    else:
+        return HttpResponse(True)
+>>>>>>> 5d88c8474e15a2189b8a135ffe9afac6cce2727b
 
 # 소셜 로그인 시 유저 정보 조회 후 토큰 발급
+@api_view(['POST'])
 @csrf_exempt
 def social_login(request):
-    from rest_framework.authtoken.models import Token
     # print(request.POST)
     useremail = request.POST.get('email')
     User = get_user_model()
@@ -70,16 +89,11 @@ def social_login(request):
         user = get_object_or_404(User, email=useremail)
     except:
         return JsonResponse({"no one": False})
-    userid = user.pk
-    token = Token.objects.get(user__pk=userid)
-    # print("----------------------")
-    # print(token)
-    # print("----------------------")
     token = get_tokens_for_user(user)
     context = {
         "token": {"refresh": token["refresh"],
                 "access": token["access"], },
-        "user": {}
+        "user": user.email
     }
     return JsonResponse(context)
 
@@ -98,3 +112,23 @@ def get_tokens_for_user(user):
 # 기본 내장 되어있는 refresh 토큰 가지고 refresh 하는 api 를 만들어야 하고,
 # app_setting 부분에 기한 (expired_time 같은?) 거 정해야 할듯 하다. 이 주석은 나중에 구현하면서 지우도록 하자.
 
+@csrf_exempt
+def login2 (request):
+    useremail = request.POST.get('email')
+    password = request.POST.get('password')
+
+    if useremail and password:
+        return HttpResponse(True)
+    else:
+        return HttpResponse(False)
+
+
+@api_view(['DELETE'])
+@csrf_exempt
+def user_detail(request, userpk):
+    user = get_user_model()
+    User = get_object_or_404(user, pk=userpk)
+    if request.method == 'DELETE':
+        User.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
+    return Response(status=status.HTTP_201_CREATED)
