@@ -22,12 +22,14 @@ from rest_framework_simplejwt.views import (
 from django.conf.urls import url
 from rest_framework import permissions
 
+from dj_rest_auth.registration.views import RegisterView
+
 urlpatterns = [
     path('admin/', admin.site.urls),
     # 이런 라이브러리 안 쪽에거는 decorator 달아봤는데도 잘 안되더라
     # 잘 모르겠어서 그냥 좀 특이하게 아예 path 네이밍을 바꿨다. 맘에 안들면 원래대로 ㄱㄱ
-    path('samba/', include('dj_rest_auth.urls')),
-    path('registration/', include('dj_rest_auth.registration.urls')),
+    path('accounts/rest', include('dj_rest_auth.urls')),
+    path('registration/', RegisterView.as_view() , name = 'registration'),
     path('accounts/', include('accounts.urls')),
     path('api/token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
     path('api/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
