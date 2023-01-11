@@ -4,7 +4,7 @@ from drf_spectacular.views import SpectacularAPIView, SpectacularSwaggerView
 
 urlpatterns = [
     path('phonecheck/', views.filtering_phone),
-    path('emailcheck', views.filtering_email),
+    path('emailcheck/', views.filtering_email),
     path('social_login/', views.social_login),
     path('login2/', views.login2),
 
