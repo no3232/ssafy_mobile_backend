@@ -60,3 +60,10 @@ class EmailUniqueCheckSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = ('email', )
+
+class PhoneUniqueCheckSerializer(serializers.ModelSerializer):
+    phone_number = serializers.CharField(required=True, min_length=3, max_length=30, validators=[UniqueValidator(queryset=get_user_model().objects.all())])
+
+    class Meta:
+        model = User
+        fields = ('phone_number', )
