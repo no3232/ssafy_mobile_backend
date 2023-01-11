@@ -15,6 +15,7 @@ from django.views.decorators.csrf import csrf_exempt
 
 
 from .serializers import EmailUniqueCheckSerializer
+from .serializers import PhoneUniqueCheckSerializer
 
 
 # 이런 식으로 할 수도 있고.. api_view 에 등록해야 rest_api 로서 등록되는 방식.
@@ -23,16 +24,25 @@ from .serializers import EmailUniqueCheckSerializer
 @api_view(['POST'])
 @csrf_exempt
 def filtering_phone(request):
-    print(request.POST)
-    phone = request.POST.get('phone')
-    print(phone)
-    peoples = get_user_model().objects.filter(phone_number=phone)
-    print("------------")
-    print(bool(peoples))
-    print("------------")
-    context = {
-        'is_duplicated': bool(peoples)
-    }
+    # print(request.POST)
+    # phone = request.POST.get('phone')
+    # print(phone)
+    # peoples = get_user_model().objects.filter(phone_number=phone)
+    # print("------------")
+    # print(bool(peoples))
+    # print("------------")
+    # context = {
+    #     'is_duplicated': bool(peoples)
+    # }
+    serializer = PhoneUniqueCheckSerializer(data= request.data)
+    if serializer.is_valid():
+        context = {
+            'is_duplicated': False
+        }
+    else:
+        context = {
+            'is_duplicated': True
+        }
     return JsonResponse(context)
 
 # 이메일 중복검증
@@ -72,8 +82,6 @@ def social_login(request):
         user = get_object_or_404(User, email=useremail)
     except:
         return JsonResponse({"no one": False})
-    userid = user.pk
-    token = Token.objects.get(user__pk=userid)
     # print("----------------------")
     # print(token)
     # print("----------------------")
@@ -81,7 +89,7 @@ def social_login(request):
     context = {
         "token": {"refresh": token["refresh"],
                 "access": token["access"], },
-        "user": {}
+        "user": user.email
     }
     return JsonResponse(context)
 
@@ -100,3 +108,13 @@ def get_tokens_for_user(user):
 # 기본 내장 되어있는 refresh 토큰 가지고 refresh 하는 api 를 만들어야 하고,
 # app_setting 부분에 기한 (expired_time 같은?) 거 정해야 할듯 하다. 이 주석은 나중에 구현하면서 지우도록 하자.
 
+def login2 (request):
+    useremail = request.POST.get('email')
+    password = request.POST.get('password')
+
+    if useremail and password:
+        context = {'key': True}
+        return JsonResponse(context)
+    else:
+        context = {'key': False}
+        return JsonResponse(context)
