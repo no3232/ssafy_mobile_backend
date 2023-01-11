@@ -4,7 +4,7 @@ from django.contrib.auth import get_user_model
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import login
 from drf_spectacular.utils import extend_schema
-from django.http import JsonResponse
+from django.http import JsonResponse, HttpResponse
 
 from rest_framework.decorators import api_view
 
@@ -36,14 +36,9 @@ def filtering_phone(request):
     # }
     serializer = PhoneUniqueCheckSerializer(data= request.data)
     if serializer.is_valid():
-        context = {
-            'is_duplicated': False
-        }
+        return HttpResponse(False)
     else:
-        context = {
-            'is_duplicated': True
-        }
-    return JsonResponse(context)
+        return HttpResponse(True)
 
 # 이메일 중복검증
 # serializer 쓰도록? 약간 바꿔봤는데 이거는 근데 좀 난이도 있는 블로그 변형 많이 해서 쓰는거라 틀릴 수 있음
@@ -62,14 +57,9 @@ def filtering_email(request):
 
     serializer = EmailUniqueCheckSerializer(data= request.data)
     if serializer.is_valid():
-        context = {
-            'is_duplicated': False
-        }
+        return HttpResponse(False)
     else:
-        context = {
-            'is_duplicated': True
-        }
-    return JsonResponse(context)
+        return HttpResponse(True)
 
 # 소셜 로그인 시 유저 정보 조회 후 토큰 발급
 @api_view(['POST'])
@@ -111,8 +101,6 @@ def login2 (request):
     password = request.POST.get('password')
 
     if useremail and password:
-        context = {'key': True}
-        return JsonResponse(context)
+        return HttpResponse(True)
     else:
-        context = {'key': False}
-        return JsonResponse(context)
+        return HttpResponse(False)
