@@ -7,7 +7,6 @@ from dj_rest_auth.views import (
 urlpatterns = [
     # rest auth url customize
     path('login/', LoginView.as_view(), name='rest_login'),
-    path('logout/', LogoutView.as_view(), name='rest_logout'),
 
     path('phonecheck/', views.filtering_phone),
     path('emailcheck/', views.filtering_email),

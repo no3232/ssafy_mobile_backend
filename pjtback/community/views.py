@@ -10,12 +10,19 @@ from rest_framework.permissions import IsAuthenticated
 from django.shortcuts import get_object_or_404, get_list_or_404
 from .serializers import  CommunityListSerializer, CommunitySerializer, CommentSerializer, ArticleImageSerializer , TravelPathSerializer, LikeSerializer
 from .models import Community, Comment, ArticleImage, Travelpath, Like
+from django.contrib.auth import get_user_model
 
 # json 파싱을 위해서
 import json
 
 @api_view(['GET', 'POST'])
 def community_list(request):
+    User = get_user_model()
+    print(request.POST.get('user'))
+    print('--------------------------------------')
+    # user = get_object_or_404(User, pk=request.POST.get('user'))
+    user = User.objects.get(pk=request.POST['user'])
+    
     if request.method == 'GET':
         community = Community.objects.all()
         serializer = CommunityListSerializer(community, many=True)
@@ -24,7 +31,7 @@ def community_list(request):
     elif request.method == 'POST':
         serializer = CommunitySerializer(data=request.data)
         if serializer.is_valid(raise_exception=True):
-            serializer.save(user=request.user)
+            serializer.save(user=user)
             return Response(serializer.data, status=status.HTTP_201_CREATED)
 
 

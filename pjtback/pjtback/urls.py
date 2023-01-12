@@ -37,6 +37,8 @@ urlpatterns = [
     path('token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
     path('community/', include('community.urls')),
 
+    url('account/', include('allauth.urls')),
+
     # SWAGGER
 
     path('schema/', SpectacularAPIView.as_view(), name='schema'),
