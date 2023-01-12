@@ -58,6 +58,7 @@ SPECTACULAR_SETTINGS = {
 INSTALLED_APPS = [
 
     'accounts',
+    'community',
 
     'corsheaders',
 

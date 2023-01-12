@@ -23,6 +23,7 @@ from django.conf.urls import url
 from rest_framework import permissions
 
 from dj_rest_auth.registration.views import RegisterView
+from drf_spectacular.views import SpectacularAPIView, SpectacularSwaggerView
 
 from drf_spectacular.views import SpectacularAPIView, SpectacularSwaggerView
 
@@ -31,10 +32,13 @@ urlpatterns = [
 
     path('registration/', RegisterView.as_view() , name = 'registration'),
     path('accounts/', include('accounts.urls')),
+
     path('token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
     path('token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
+    path('community/', include('community.urls')),
 
     # SWAGGER
+
     path('schema/', SpectacularAPIView.as_view(), name='schema'),
     path('swagger/', SpectacularSwaggerView.as_view(url_name='schema'), name='swaggerui'),
 ]
