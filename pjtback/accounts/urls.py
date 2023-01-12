@@ -1,12 +1,9 @@
 from django.urls import path, include
 from . import views
-from dj_rest_auth.views import (
-    LoginView, LogoutView
-)
 
 urlpatterns = [
     # rest auth url customize
-    path('login/', LoginView.as_view(), name='rest_login'),
+    
 
     path('phonecheck/', views.filtering_phone),
     path('emailcheck/', views.filtering_email),

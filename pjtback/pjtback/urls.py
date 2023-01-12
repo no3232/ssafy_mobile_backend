@@ -23,6 +23,8 @@ from django.conf.urls import url
 from rest_framework import permissions
 
 from dj_rest_auth.registration.views import RegisterView
+from dj_rest_auth.views import ( LoginView )
+
 from drf_spectacular.views import SpectacularAPIView, SpectacularSwaggerView
 
 from drf_spectacular.views import SpectacularAPIView, SpectacularSwaggerView
@@ -31,6 +33,8 @@ urlpatterns = [
     path('admin/', admin.site.urls),
 
     path('registration/', RegisterView.as_view() , name = 'registration'),
+    path('login/', LoginView.as_view(), name='rest_login'),
+
     path('accounts/', include('accounts.urls')),
 
     path('token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
