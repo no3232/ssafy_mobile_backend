@@ -4,8 +4,7 @@ from django.contrib.auth import get_user_model
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import login
 from drf_spectacular.utils import extend_schema, OpenApiParameter , OpenApiTypes , OpenApiExample
-from django.http import JsonResponse
-from django.http import HttpResponse
+from django.http import JsonResponse, HttpResponse
 from rest_framework import status
 from rest_framework.response import Response
 
@@ -65,6 +64,8 @@ def filtering_email(request):
         return HttpResponse(True)
 
 # 소셜 로그인 시 유저 정보 조회 후 토큰 발급
+
+@extend_schema(tags=['login'],parameters=[OpenApiParameter(name="email", required=True, type=str)],summary='소셜 로그인 및 토큰 발급')
 @api_view(['POST'])
 @csrf_exempt
 def social_login(request):
@@ -108,7 +109,7 @@ def login2 (request):
     else:
         return HttpResponse(False)
 
-
+@extend_schema(tags=['registration'],summary='회원가입시 테스트용 delete 작업')
 @api_view(['DELETE'])
 @csrf_exempt
 def user_detail(request, userpk):
