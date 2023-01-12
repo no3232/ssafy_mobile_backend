@@ -33,7 +33,7 @@ class Comment(models.Model):
 class Travelpath(models.Model):
     community = models.ForeignKey(Community, on_delete=models.CASCADE)
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
-    travel_point_lst = models.JSONField(_("travel_point_json"),default=dict())
+    travel_point_lst = models.JSONField(_("travel_point_json"),default=dict)
     # 혹시나 지도 위에다 그리는 거면 필요 없는 필드가 될 수도 있음.
     travel_created_img_url = models.ImageField(_("travel_created_img_url"))
 
