@@ -1,5 +1,6 @@
 from rest_framework import serializers
 from dj_rest_auth.registration.serializers import RegisterSerializer
+from dj_rest_auth.serializers import UserDetailsSerializer
 from django.utils.translation import gettext_lazy as _
 # 회원가입 시리얼라이저
 
@@ -21,6 +22,11 @@ class CustomRegisterSerializer(RegisterSerializer):
         data['kakao_email'] = self.validated_data.get('kakao_email','')
 
         return data
+
+# 유저 디테일 시리얼라이저
+class CustomUserDetailSerializer(UserDetailsSerializer):
+    class Meta(UserDetailsSerializer.Meta):
+        fields = ('email', )
 
 
 # 토큰 시리얼라이저
