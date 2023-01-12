@@ -1,17 +1,18 @@
 from django.urls import path, include
 from . import views
-from drf_spectacular.views import SpectacularAPIView, SpectacularSwaggerView
+from dj_rest_auth.views import (
+    LoginView, LogoutView
+)
 
 urlpatterns = [
+    # rest auth url customize
+    path('login/', LoginView.as_view(), name='rest_login'),
+    path('logout/', LogoutView.as_view(), name='rest_logout'),
+
     path('phonecheck/', views.filtering_phone),
     path('emailcheck/', views.filtering_email),
-    path('social_login/', views.social_login),
+    path('social_login/<str:social_page>/', views.social_login),
     path('login2/', views.login2),
-    path('detail/<int:userpk>', views.user_detail),
-
-    # 필수라네? 이쪽 경로 드가면 yaml 파일 줌 --> 나중에 api 공유를 위한 서버 배포 하게 될 때 필요할지도?
-    path('schema/', SpectacularAPIView.as_view(), name='schema'),
-
-    # option 인데 일단 거의 필수
-    path('swagger/', SpectacularSwaggerView.as_view(url_name='schema'), name='swaggerui'),
+    path('detail/<int:userpk>/', views.user_detail),
+    path('auth/', views.auth_test),
 ]
