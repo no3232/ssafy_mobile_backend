@@ -3,17 +3,11 @@ from django.shortcuts import render
 from django.contrib.auth import get_user_model
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import login
-<<<<<<< HEAD
 from drf_spectacular.utils import extend_schema, OpenApiParameter , OpenApiTypes , OpenApiExample
 from django.http import JsonResponse
 from django.http import HttpResponse
-=======
-from drf_spectacular.utils import extend_schema
-from django.http import JsonResponse, HttpResponse
 from rest_framework import status
 from rest_framework.response import Response
-
->>>>>>> 5d88c8474e15a2189b8a135ffe9afac6cce2727b
 
 from rest_framework.decorators import api_view
 
@@ -66,17 +60,9 @@ def filtering_email(request):
 
     serializer = EmailUniqueCheckSerializer(data= request.data)
     if serializer.is_valid():
-<<<<<<< HEAD
-        return HttpResponse(True)
-    else:
-        return 
-        (False)
-    return JsonResponse(context)
-=======
         return HttpResponse(False)
     else:
         return HttpResponse(True)
->>>>>>> 5d88c8474e15a2189b8a135ffe9afac6cce2727b
 
 # 소셜 로그인 시 유저 정보 조회 후 토큰 발급
 @api_view(['POST'])
