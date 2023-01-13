@@ -34,7 +34,7 @@ class CustomRegisterSerializer(RegisterSerializer):
         data['google_email'] = self.validated_data.get('google_email','')
         data['kakao_email'] = self.validated_data.get('kakao_email','')
         data['nickname'] = self.validated_data.get('nickname','Ghost')
-        data['age'] = self.validated_data.get('age', '15')
+        data['age'] = self.validated_data.get('age')
 
         return data
 

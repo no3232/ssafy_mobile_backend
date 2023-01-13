@@ -28,8 +28,8 @@ from django.db.models import Q
 @api_view(['GET'])
 def community_list(request):
     # 요 user 는 postman test 용 user 나중에 request.user 로 바꿀 것.
-    User = get_user_model()
-    user = User.objects.get(pk=request.POST['user'])
+    # User = get_user_model()
+    # user = User.objects.get(pk=request.POST['user'])
 
     community = Community.objects.all()
     serializer = CommunityListSerializer(community, many=True)

@@ -1,8 +1,14 @@
 from rest_framework import serializers
 from .models import Community, Comment , ArticleImage, Travelpath, Like
 
-class CommunityListSerializer(serializers.ModelSerializer):
+class ArticleImageSerializer(serializers.ModelSerializer):
+    
+    class Meta:
+        model = ArticleImage
+        fields = '__all__'
 
+class CommunityListSerializer(serializers.ModelSerializer):
+    image = ArticleImageSerializer(many=True, read_only=True)
     username = serializers.CharField(source='user.username', read_only=True)
 
     class Meta:
@@ -10,7 +16,7 @@ class CommunityListSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 class CommunitySerializer(serializers.ModelSerializer):
-
+    image = ArticleImageSerializer(many=True, read_only=True)
     username = serializers.CharField(source='user.username', read_only=True)
 
     class Meta:
@@ -34,12 +40,6 @@ class CommentSerializer(serializers.ModelSerializer):
         fields = '__all__'
         read_only_fields = ('user',)
 
-
-class ArticleImageSerializer(serializers.ModelSerializer):
-    
-    class Meta:
-        model = ArticleImage
-        fields = '__all__'
 
 
 class TravelPathSerializer(serializers.ModelSerializer):
