@@ -13,10 +13,12 @@ class Community(models.Model):
     travel_region = models.CharField(_("region"), max_length=50)
     travel_start_date = models.DateTimeField(_("start_date"), auto_now=False, auto_now_add=False)    
     travel_end_date = models.DateTimeField(_("end_date"), auto_now=False, auto_now_add=False)
+    travel_theme = models.CharField(_("theme"), max_length=20)
     is_creating = models.BooleanField(_("is_creating"), default = False)
     travel_length = models.FloatField(_("travel_lenth"))
     created_at = models.DateTimeField(auto_now_add=True)
     update_at = models.DateTimeField(auto_now=True)
+
 
 
 class ArticleImage(models.Model):

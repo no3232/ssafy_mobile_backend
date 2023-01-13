@@ -3,6 +3,17 @@ from dj_rest_auth.registration.serializers import RegisterSerializer
 from dj_rest_auth.serializers import UserDetailsSerializer
 from django.utils.translation import gettext_lazy as _
 # 회원가입 시리얼라이저
+from django.conf import settings
+
+from rest_framework import serializers
+from dj_rest_auth.models import TokenModel
+from dj_rest_auth.utils import import_callable
+from dj_rest_auth.serializers import UserDetailsSerializer as DefaultUserDetailsSerializer
+
+from rest_framework.validators import UniqueValidator
+from django.contrib.auth import get_user_model
+from .models import User
+
 
 class CustomRegisterSerializer(RegisterSerializer):
     # 기본 설정 필드: username, password, email
@@ -12,6 +23,8 @@ class CustomRegisterSerializer(RegisterSerializer):
     naver_email = serializers.EmailField(required=False)
     kakao_email = serializers.EmailField(required=False)
     google_email = serializers.EmailField(required=False)
+    nickname = serializers.CharField(min_length = 1, required= True)
+    age = serializers.IntegerField(required = False)
 
     def get_cleaned_data(self):
         data = super().get_cleaned_data()
@@ -20,6 +33,8 @@ class CustomRegisterSerializer(RegisterSerializer):
         data['naver_email'] = self.validated_data.get('naver_email','')
         data['google_email'] = self.validated_data.get('google_email','')
         data['kakao_email'] = self.validated_data.get('kakao_email','')
+        data['nickname'] = self.validated_data.get('nickname','Ghost')
+        data['age'] = self.validated_data.get('age', '15')
 
         return data
 
@@ -30,16 +45,6 @@ class CustomUserDetailSerializer(UserDetailsSerializer):
 
 
 # 토큰 시리얼라이저
-
-from django.conf import settings
-
-from rest_framework import serializers
-from dj_rest_auth.models import TokenModel
-from dj_rest_auth.utils import import_callable
-from dj_rest_auth.serializers import UserDetailsSerializer as DefaultUserDetailsSerializer
-
-# This is to allow you to override the UserDetailsSerializer at any time.
-# If you're sure you won't, you can skip this and use DefaultUserDetailsSerializer directly
 rest_auth_serializers = getattr(settings, 'REST_AUTH_SERIALIZERS', {})
 UserDetailsSerializer = import_callable(
     rest_auth_serializers.get('USER_DETAILS_SERIALIZER', DefaultUserDetailsSerializer)
@@ -53,12 +58,6 @@ class CustomTokenSerializer(serializers.ModelSerializer):
         fields = ('key', 'user', )
 
 
-
-
-# 중복 검사 serializer 이런식으로 할 수도 있고 사실상 django 는 이렇게 짜는 걸 더 권장하는 것 같음
-from rest_framework.validators import UniqueValidator
-from django.contrib.auth import get_user_model
-from .models import User
 
 class EmailUniqueCheckSerializer(serializers.ModelSerializer):
     email = serializers.CharField(required=True, min_length=3, max_length=30, validators=[UniqueValidator(queryset=get_user_model().objects.all())])
