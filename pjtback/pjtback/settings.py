@@ -68,6 +68,10 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    
+    # django graph QL
+    "graphene_django",
+    'django_filters',
 
 
     # drf-yasg 뺌 밑에게 낫다는 말이 있어서
@@ -90,11 +94,11 @@ REST_FRAMEWORK = {
     #phone_number_check 나 email_check 도 인증으로 막아버리길래 일단 제거했다.
     #그 view 함수 들에 permission_classes 데코레이터 붙여주거나 밑에 default_classes 를 수정하거나
 
-    # 'DEFAULT_PERMISSION_CLASSES': (
-    #     'rest_framework.permissions.IsAuthenticated',
-    # ),
+    'DEFAULT_PERMISSION_CLASSES': (
+        'rest_framework.permissions.IsAuthenticated',
+    ),
     'DEFAULT_AUTHENTICATION_CLASSES': (
-        'rest_framework.authentication.TokenAuthentication',
+        # 'rest_framework.authentication.TokenAuthentication',
         'rest_framework_simplejwt.authentication.JWTAuthentication',
     ),
 
@@ -271,3 +275,8 @@ REST_USE_JWT = True
 
 # 스태틱 파일 BASEROOT
 STATIC_ROOT = BASE_DIR / 'staticfiles'
+
+# django graphene
+GRAPHENE = {
+    "SCHEMA": "schema.schema"
+}

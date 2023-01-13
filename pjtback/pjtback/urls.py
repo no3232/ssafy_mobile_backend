@@ -25,6 +25,10 @@ from rest_framework import permissions
 from dj_rest_auth.registration.views import RegisterView
 from dj_rest_auth.views import ( LoginView )
 
+# django graphene
+from django.views.decorators.csrf import csrf_exempt
+from graphene_django.views import GraphQLView
+
 from drf_spectacular.views import SpectacularAPIView, SpectacularSwaggerView
 
 from drf_spectacular.views import SpectacularAPIView, SpectacularSwaggerView
@@ -42,6 +46,9 @@ urlpatterns = [
     path('community/', include('community.urls')),
 
     url('account/', include('allauth.urls')),
+
+    # django graphene
+    path("graphql/", csrf_exempt(GraphQLView.as_view(graphiql=True))),
 
     # SWAGGER
 
