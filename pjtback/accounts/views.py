@@ -93,7 +93,7 @@ def social_login(request, social_page):
     try:
         user = get_object_or_404(User, email=useremail)
     except:
-        return JsonResponse({"no one": False})
+        return HttpResponse(False)
     token = get_tokens_for_user(user)
     context = {
         "token": {"refresh": token["refresh"],
