@@ -20,10 +20,9 @@ class Community(models.Model):
     update_at = models.DateTimeField(auto_now=True)
 
 
-
 class ArticleImage(models.Model):
     img_url = models.ImageField(_("article_image_url"))
-    Community = models.ForeignKey(Community, on_delete=models.CASCADE)
+    Community = models.ForeignKey(Community, on_delete=models.CASCADE, related_name="image")
 
 class Comment(models.Model):
     community = models.ForeignKey(Community, on_delete=models.CASCADE)

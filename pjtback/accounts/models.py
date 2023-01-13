@@ -17,7 +17,7 @@ class User(AbstractUser):
         options={'quality': 70},
     )
     nickname = models.CharField(_("nickname"), max_length=50)
-    age = models.IntegerField(_("age"))
+    age = models.IntegerField(_("age"), null=True)
     naver_email = models.EmailField(_("naver_email"), null=True)
     kakao_email = models.EmailField(_("kakao_email"), null=True)
     google_email = models.EmailField(_("google_email"), null=True)
