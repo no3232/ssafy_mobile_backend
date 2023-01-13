@@ -15,14 +15,18 @@ from django.contrib.auth import get_user_model
 # json 파싱을 위해서
 import json
 
+#for swagger
+from drf_spectacular.utils import extend_schema, OpenApiParameter, OpenApiTypes, OpenApiExample,inline_serializer
+from rest_framework.decorators import api_view
+from rest_framework import serializers
+
+
+@extend_schema(request=inline_serializer(name="a",fields={"community_pk": serializers.CharField()}), responses=CommunityListSerializer, summary='커뮤니티 게시글 개요 목록')
 @api_view(['GET', 'POST'])
 def community_list(request):
     User = get_user_model()
-    print(request.POST.get('user'))
-    print('--------------------------------------')
-    # user = get_object_or_404(User, pk=request.POST.get('user'))
     user = User.objects.get(pk=request.POST['user'])
-    
+
     if request.method == 'GET':
         community = Community.objects.all()
         serializer = CommunityListSerializer(community, many=True)
