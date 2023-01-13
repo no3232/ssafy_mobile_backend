@@ -19,6 +19,12 @@ class CommunitySerializer(serializers.ModelSerializer):
         read_only_fields = ('user',)
 
 
+class CommunityCreateSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Community
+        fields = ('title','content','secret_type','travel_region','travel_start_date','travel_end_date','travel_theme','is_creating','travel_length',)
+
+
 class CommentSerializer(serializers.ModelSerializer):
 
     username = serializers.CharField(source='user.username', read_only=True)
