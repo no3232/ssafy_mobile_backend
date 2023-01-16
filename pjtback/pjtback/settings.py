@@ -68,6 +68,10 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    
+    # django graph QL
+    "graphene_django",
+    'django_filters',
 
 
     # drf-yasg 뺌 밑에게 낫다는 말이 있어서
@@ -89,10 +93,11 @@ INSTALLED_APPS = [
 REST_FRAMEWORK = {
     #phone_number_check 나 email_check 도 인증으로 막아버리길래 일단 제거했다.
     #그 view 함수 들에 permission_classes 데코레이터 붙여주거나 밑에 default_classes 를 수정하거나
-
-    # 'DEFAULT_PERMISSION_CLASSES': (
-    #     'rest_framework.permissions.IsAuthenticated',
-    # ),
+    
+    'DEFAULT_PERMISSION_CLASSES': (
+        'rest_framework.permissions.AllowAny',
+        # 'rest_framework.permissions.IsAuthenticated',
+    ),
     'DEFAULT_AUTHENTICATION_CLASSES': (
         'rest_framework.authentication.TokenAuthentication',
         'rest_framework_simplejwt.authentication.JWTAuthentication',
@@ -112,7 +117,7 @@ REST_FRAMEWORK = {
 
 # JWT 토큰
 SIMPLE_JWT = {
-    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=5),
+    'ACCESS_TOKEN_LIFETIME': timedelta(hours=5),
     'REFRESH_TOKEN_LIFETIME': timedelta(days=1),
     'ROTATE_REFRESH_TOKENS': False,
     'BLACKLIST_AFTER_ROTATION': False,
@@ -263,7 +268,8 @@ ACCOUNT_ADAPTER = 'accounts.adapter.CustomAccountAdapter'
 
 # 토큰 시리얼라이저 추가
 REST_AUTH_SERIALIZERS = {
-    'TOKEN_SERIALIZER': 'accounts.serializers.CustomTokenSerializer', # import path to CustomTokenSerializer defined above.
+    # 'TOKEN_SERIALIZER': 'accounts.serializers.CustomTokenSerializer', # import path to CustomTokenSerializer defined above.
+
     'USER_DETAILS_SERIALIZER': 'accounts.serializers.CustomUserDetailSerializer',
 }
 # JWT 사용
@@ -271,3 +277,27 @@ REST_USE_JWT = True
 
 # 스태틱 파일 BASEROOT
 STATIC_ROOT = BASE_DIR / 'staticfiles'
+
+# django graphene
+GRAPHENE = {
+    "SCHEMA": "schema.schema"
+}
+
+# 비밀번호 검증
+AUTH_PASSWORD_VALIDATORS = [
+    {
+        'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
+    },
+    {
+        'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator',
+        'OPTIONS': {
+            'min_length': 9,
+        }
+    },
+    {
+        'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator',
+    },
+    {
+        'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
+    },
+]

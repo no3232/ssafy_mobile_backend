@@ -8,8 +8,8 @@ from django.utils.translation import gettext_lazy as _
 
 class User(AbstractUser):
     email = models.EmailField(_("email_address"), unique=True)
-    phone_number = models.CharField(_("phone"), max_length=13, unique=True)
-    profile_image = ProcessedImageField(
+    phone_number = models.CharField(_("phone"), max_length=13,)
+    profileImg = ProcessedImageField(
         blank=True,
         upload_to='profile_image/%Y/%m',
         processors=[ResizeToFill(300, 300)],
@@ -18,9 +18,9 @@ class User(AbstractUser):
     )
     nickname = models.CharField(_("nickname"), max_length=50)
     age = models.IntegerField(_("age"), null=True)
-    naver_email = models.EmailField(_("naver_email"), null=True)
-    kakao_email = models.EmailField(_("kakao_email"), null=True)
-    google_email = models.EmailField(_("google_email"), null=True)
+    naver = models.EmailField(_("naver_email"), null=True)
+    kakao = models.EmailField(_("kakao_email"), null=True)
+    google = models.EmailField(_("google_email"), null=True)
 
 
     
