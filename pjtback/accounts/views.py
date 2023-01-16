@@ -13,7 +13,7 @@ from rest_framework.decorators import api_view
 from django.views.decorators.csrf import csrf_exempt
 from rest_framework import serializers
 
-from .serializers import EmailUniqueCheckSerializer , PhoneUniqueCheckSerializer
+from .serializers import EmailUniqueCheckSerializer , PhoneUniqueCheckSerializer, CustomUserDetailSerializer, JoinSerializer
 
 
 @extend_schema(tags=['registration'], request=PhoneUniqueCheckSerializer, responses=bool, summary='폰 넘버 중복 체크')
@@ -104,7 +104,6 @@ def social_login(request, social_page):
 
 # 토큰 생성 함수
 
-
 def get_tokens_for_user(user):
     refresh = RefreshToken.for_user(user)
 
@@ -113,3 +112,11 @@ def get_tokens_for_user(user):
         'access': str(refresh.access_token),
     }
 
+
+@csrf_exempt
+@api_view(['GET', 'PUT', 'DELETE'])
+def join_views(request, user_pk):
+    user = get_object_or_404(get_user_model(), pk=user_pk)
+    if request.method == 'GET':
+        serializer = JoinSerializer(user)
+        return Response(serializer.data ,status=status.HTTP_200_OK)
