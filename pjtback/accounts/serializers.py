@@ -113,9 +113,10 @@ class CustomJWTSerializer(JWTSerializer):
     writeBoard = serializers.ListField(source='user.naver')
     token = TokenSerializer(source='*')
     join = JoinSerializer(source="user")
+    totalDate = serializers.IntegerField(source='user.id')
 
     class Meta:
-        fields = ('uid', 'token',  'join', 'travel', 'myLikeBoard', 'writeBoard',)
+        fields = ('uid', 'token',  'join', 'travel', 'myLikeBoard', 'writeBoard', 'totalDate',)
 
 
 
