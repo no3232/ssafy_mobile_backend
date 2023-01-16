@@ -24,7 +24,7 @@ class BoardListSerializer(serializers.ModelSerializer):
 
     userId = serializers.IntegerField(source ='userId.pk', read_only=True)
     nickname =  serializers.CharField(source='userId.nickname', read_only=True)
-    travel = TravelSerializer(many=True,read_only= True)
+    travel = TravelSerializer(required = True)
 
     class Meta:
         model = Board

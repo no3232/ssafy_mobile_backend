@@ -17,7 +17,7 @@ class Board(models.Model):
 
 
 class Travel(models.Model):
-    board = models.ForeignKey(Board, on_delete=models.CASCADE, related_name='travel')
+    board = models.OneToOneField(Board, on_delete=models.CASCADE,related_name='travel')
     location = models.CharField(max_length=30, default='')
     startDate = models.DateTimeField(auto_now=False, auto_now_add=False)
     endDate = models.DateTimeField(auto_now=False, auto_now_add=False)
