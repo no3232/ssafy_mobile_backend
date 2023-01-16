@@ -10,6 +10,10 @@ from dj_rest_auth.models import TokenModel
 from dj_rest_auth.utils import import_callable
 from dj_rest_auth.serializers import UserDetailsSerializer as DefaultUserDetailsSerializer
 
+from allauth.account.adapter import get_adapter
+from django.core.exceptions import ValidationError as DjangoValidationError
+from allauth.account.utils import setup_user_email
+
 from rest_framework.validators import UniqueValidator
 from django.contrib.auth import get_user_model
 from .models import User
@@ -46,6 +50,23 @@ class CustomRegisterSerializer(RegisterSerializer):
         data['age'] = self.validated_data.get('age')
 
         return data
+    
+    def save(self, request):
+        adapter = get_adapter()
+        user = adapter.new_user(request)
+        self.cleaned_data = self.get_cleaned_data()
+        if "password1" in self.cleaned_data:
+            try:
+                adapter.clean_password(self.cleaned_data['password1'], user=user)
+            except DjangoValidationError as exc:
+                raise serializers.ValidationError(
+                    detail=serializers.as_serializer_error(exc)
+            )
+        user = adapter.save_user(request, user, self, commit=False)
+        user.save()
+        self.custom_signup(request, user)
+        setup_user_email(request, user, [])
+        return user
 
 class JoinSerializer(serializers.ModelSerializer):
     pw = serializers.CharField(source="password")
@@ -63,12 +84,6 @@ class CustomUserDetailSerializer(UserDetailsSerializer):
         read_only_fields = ('email', 'password',)
 
 
-class CustomTokenSerializer(serializers.ModelSerializer):
-    join = JoinSerializer(read_only=True, source="user")
-
-    class Meta:
-        model = TokenModel
-        fields = ('token', 'join', )
 
 
 

@@ -268,7 +268,8 @@ ACCOUNT_ADAPTER = 'accounts.adapter.CustomAccountAdapter'
 
 # 토큰 시리얼라이저 추가
 REST_AUTH_SERIALIZERS = {
-    'TOKEN_SERIALIZER': 'accounts.serializers.CustomTokenSerializer', # import path to CustomTokenSerializer defined above.
+    # 'TOKEN_SERIALIZER': 'accounts.serializers.CustomTokenSerializer', # import path to CustomTokenSerializer defined above.
+
     'USER_DETAILS_SERIALIZER': 'accounts.serializers.CustomUserDetailSerializer',
 }
 # JWT 사용
@@ -281,3 +282,22 @@ STATIC_ROOT = BASE_DIR / 'staticfiles'
 GRAPHENE = {
     "SCHEMA": "schema.schema"
 }
+
+# 비밀번호 검증
+AUTH_PASSWORD_VALIDATORS = [
+    {
+        'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
+    },
+    {
+        'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator',
+        'OPTIONS': {
+            'min_length': 9,
+        }
+    },
+    {
+        'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator',
+    },
+    {
+        'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
+    },
+]
