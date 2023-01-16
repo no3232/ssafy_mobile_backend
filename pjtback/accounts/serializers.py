@@ -1,6 +1,6 @@
 from rest_framework import serializers
 from dj_rest_auth.registration.serializers import RegisterSerializer
-from dj_rest_auth.serializers import UserDetailsSerializer
+from dj_rest_auth.serializers import UserDetailsSerializer, JWTSerializer
 from django.utils.translation import gettext_lazy as _
 # 회원가입 시리얼라이저
 from django.conf import settings
@@ -13,10 +13,11 @@ from dj_rest_auth.serializers import UserDetailsSerializer as DefaultUserDetails
 from allauth.account.adapter import get_adapter
 from django.core.exceptions import ValidationError as DjangoValidationError
 from allauth.account.utils import setup_user_email
+from django.utils.module_loading import import_string
 
 from rest_framework.validators import UniqueValidator
 from django.contrib.auth import get_user_model
-from .models import User
+from .models import User, Token
 
 
 class CustomRegisterSerializer(RegisterSerializer):
@@ -84,6 +85,27 @@ class CustomUserDetailSerializer(UserDetailsSerializer):
         read_only_fields = ('email', 'password',)
 
 
+
+class TokenSerializer(JWTSerializer):
+    access_token = serializers.CharField()
+    refresh_token = serializers.CharField()
+    user = ''
+    class Meta:
+        fields = ('access_token','refresh_token',)
+
+class CustomJWTSerializer(JWTSerializer):
+    """
+    Serializer for JWT authentication.
+    """
+    access_token = ''
+    refresh_token = ''
+    user = ''
+
+    token = TokenSerializer(source='*')
+    join = JoinSerializer(source="user")
+
+    class Meta:
+        fields = ('token',  'join',)
 
 
 

@@ -24,3 +24,6 @@ class User(AbstractUser):
 
 
     
+class Token(models.Model):
+    access = models.CharField(_("access"), max_length=100)
+    refresh = models.CharField(_("refresh"), max_length=100)
