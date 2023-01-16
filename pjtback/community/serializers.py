@@ -3,6 +3,7 @@ from .models import Board, Travel ,Place
 
 class PlaceSerializer(serializers.ModelSerializer):
     placeId = serializers.IntegerField(source='id')
+    saveDate = serializers.DateTimeField(input_formats=['%Y-%m-%d %H:%M:%S'])
 
     class Meta:
         model = Place
@@ -10,8 +11,9 @@ class PlaceSerializer(serializers.ModelSerializer):
 
 class TravelSerializer(serializers.ModelSerializer):
     travelId = serializers.IntegerField(source='id')
-
     placeList = PlaceSerializer(many=True, read_only= True)
+    startDate = serializers.DateTimeField(input_formats=['%Y-%m-%d %H:%M:%S'])
+    endDate = serializers.DateTimeField(input_formats=['%Y-%m-%d %H:%M:%S'])
 
     class Meta:
         model = Travel
@@ -21,10 +23,10 @@ class TravelSerializer(serializers.ModelSerializer):
 
 class BoardListSerializer(serializers.ModelSerializer):
     boardId = serializers.IntegerField(source='id')
-
     userId = serializers.IntegerField(source ='userId.pk', read_only=True)
     nickname =  serializers.CharField(source='userId.nickname', read_only=True)
     travel = TravelSerializer(required = True)
+    writeDate = serializers.DateTimeField(input_formats=['%Y-%m-%d %H:%M:%S'])
 
     class Meta:
         model = Board
