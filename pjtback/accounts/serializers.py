@@ -29,7 +29,7 @@ class CustomRegisterSerializer(RegisterSerializer):
     # 해제 후 password 하나로 만듦
     password = serializers.CharField(write_only=True, source="password1")
     phone_number = serializers.CharField(max_length=13, required=False)
-    profile_image = serializers.ImageField(use_url=True, required=False)
+    profileImg = serializers.ImageField(use_url=True, required=False)
     naver_email = serializers.EmailField(required=False)
     kakao_email = serializers.EmailField(required=False)
     google_email = serializers.EmailField(required=False)

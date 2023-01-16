@@ -10,6 +10,8 @@ class CustomAccountAdapter(DefaultAccountAdapter):
         user.naver_email = data.get('naver_email')
         user.google_email = data.get('google_email')
         user.kakao_email = data.get('kakao_email')
+        user.nickname = data.get('nickname')
+        user.age = data.get('age')
 
         user.save()
         return user
