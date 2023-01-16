@@ -3,7 +3,7 @@ from django.shortcuts import render
 from django.contrib.auth import get_user_model
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import login
-from drf_spectacular.utils import extend_schema, OpenApiParameter, OpenApiTypes, OpenApiExample,inline_serializer
+from drf_spectacular.utils import extend_schema, OpenApiParameter, OpenApiTypes, OpenApiExample, inline_serializer
 from django.http import JsonResponse, HttpResponse
 from rest_framework import status
 from rest_framework.response import Response
@@ -13,7 +13,7 @@ from rest_framework.decorators import api_view
 from django.views.decorators.csrf import csrf_exempt
 from rest_framework import serializers
 
-from .serializers import EmailUniqueCheckSerializer , PhoneUniqueCheckSerializer, CustomUserDetailSerializer, JoinSerializer
+from .serializers import EmailUniqueCheckSerializer, PhoneUniqueCheckSerializer, CustomUserDetailSerializer, JoinSerializer
 
 
 @extend_schema(tags=['registration'], request=PhoneUniqueCheckSerializer, responses=bool, summary='폰 넘버 중복 체크')
@@ -25,7 +25,6 @@ def filtering_phone(request):
         return HttpResponse(False)
     else:
         return HttpResponse(True)
-
 
 
 @extend_schema(tags=['registration'], request=EmailUniqueCheckSerializer, responses=bool, summary='email 중복 체크')
@@ -41,16 +40,16 @@ def filtering_email(request):
 
 # 소셜 로그인 시 유저 정보 조회 후 토큰 발급
 @extend_schema(tags=['login'], request=inline_serializer(
-        name="InlineFormSerializer",
-        fields={
-            "token": serializers.CharField(),
-        },
-    ), responses={"multipart/form-data": {
-                "type": "object",
-                "properties": {
-                    "token": {"type": "object", "properties":{"accesstoken":{"type":"string"}, "refreshtoken":{"type":"string"}}},
-                    "user": {"type": "object"}},
-            }} , summary='소셜 로그인 및 토큰 발급')
+    name="InlineFormSerializer",
+    fields={
+        "token": serializers.CharField(),
+    },
+), responses={"multipart/form-data": {
+    "type": "object",
+    "properties": {
+        "token": {"type": "object", "properties": {"accesstoken": {"type": "string"}, "refreshtoken": {"type": "string"}}},
+        "user": {"type": "object"}},
+}}, summary='소셜 로그인 및 토큰 발급')
 @api_view(['GET', 'POST'])
 @csrf_exempt
 def social_login(request, social_page):
@@ -104,6 +103,7 @@ def social_login(request, social_page):
 
 # 토큰 생성 함수
 
+
 def get_tokens_for_user(user):
     refresh = RefreshToken.for_user(user)
 
@@ -120,4 +120,13 @@ def join_views(request, user_pk):
     if request.method == 'GET':
         serializer = JoinSerializer(user)
         print(serializer.data)
-        return Response(serializer.data ,status=status.HTTP_200_OK)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+    elif request.method == 'POST':
+        pass
+    elif request.method == 'DELETE':
+        if request.user == user:
+            user.delete()
+            return Response(status=status.HTTP_204_NO_CONTENT)
+        else:
+            return Response(status=status.HTTP_401_UNAUTHORIZED)
+    return Response(status=status.HTTP_400_BAD_REQUEST)

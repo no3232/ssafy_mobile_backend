@@ -21,9 +21,3 @@ class User(AbstractUser):
     naver = models.EmailField(_("naver_email"), null=True)
     kakao = models.EmailField(_("kakao_email"), null=True)
     google = models.EmailField(_("google_email"), null=True)
-
-
-    
-class Token(models.Model):
-    access = models.CharField(_("access"), max_length=100)
-    refresh = models.CharField(_("refresh"), max_length=100)
