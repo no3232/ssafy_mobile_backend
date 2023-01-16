@@ -22,6 +22,7 @@ from .models import User, Token
 
 class CustomRegisterSerializer(RegisterSerializer):
     # 기본 설정 필드: username, password, email
+    username = serializers.CharField(required=False)
     # 추가 설정 필드: phone_number, profile_image, naver_email, kakao_email, google_email
     # 비밀번호 해제
     password1 = serializers.CharField(write_only=True, required=False)
@@ -69,12 +70,6 @@ class CustomRegisterSerializer(RegisterSerializer):
         setup_user_email(request, user, [])
         return user
 
-class JoinSerializer(serializers.ModelSerializer):
-    pw = serializers.CharField(source="password")
-    name = serializers.CharField(source="username")
-    class Meta:
-        model = User
-        fields = ('email', 'pw', 'name', 'nickname', 'profileImg', 'age', 'kakao', 'naver', 'google')
 
 # 유저 디테일 시리얼라이저
 class CustomUserDetailSerializer(UserDetailsSerializer):
@@ -84,7 +79,12 @@ class CustomUserDetailSerializer(UserDetailsSerializer):
         fields = ('email', 'pw', 'name', 'nickname', 'profileImg', 'age', 'kakao', 'naver', 'google')
         read_only_fields = ('email', 'password',)
 
-
+class JoinSerializer(serializers.ModelSerializer):
+    pw = serializers.CharField(source="password")
+    name = serializers.CharField(source="username")
+    class Meta:
+        model = User
+        fields = ('email', 'pw', 'name', 'nickname', 'profileImg', 'age', 'kakao', 'naver', 'google')
 
 class TokenSerializer(JWTSerializer):
     access_token = serializers.CharField()
@@ -92,6 +92,12 @@ class TokenSerializer(JWTSerializer):
     user = ''
     class Meta:
         fields = ('access_token','refresh_token',)
+
+class UserTravelSerializer(JWTSerializer):
+    access_token = ''
+    refresh_token = ''
+    user = ''
+    
 
 class CustomJWTSerializer(JWTSerializer):
     """
@@ -101,11 +107,15 @@ class CustomJWTSerializer(JWTSerializer):
     refresh_token = ''
     user = ''
 
+    uid = serializers.IntegerField(source='user.id')
+    travel = serializers.ListField(source='user.naver')
+    myLikeBoard = serializers.ListField(source='user.naver')
+    writeBoard = serializers.ListField(source='user.naver')
     token = TokenSerializer(source='*')
     join = JoinSerializer(source="user")
 
     class Meta:
-        fields = ('token',  'join',)
+        fields = ('uid', 'token',  'join', 'travel', 'myLikeBoard', 'writeBoard',)
 
 
 
