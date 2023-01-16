@@ -1,22 +1,24 @@
 from django.db import models
 from django.conf import settings
 from django.utils.translation import gettext_lazy as _
+from accounts.models import User
 
 # Create your models here.
 
 class Board(models.Model):
-    userId = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    userId = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='writeBoard')
     profileImg = models.CharField(_("profileImg"), max_length=50, default="")
-    writeDate = models.DateTimeField(auto_now = True)
+    writeDate = models.DateTimeField(auto_now = True,)
     title = models.CharField(max_length= 50 , default="")
     content = models.TextField(max_length=300)
     imageList =  models.JSONField(_("imageList"),blank=True)
     likeCount = models.IntegerField(_("likeCount"), default=0)
     commentCount = models.IntegerField(_("commentCount"), default=0)
-
+    like_user = models.ManyToManyField(User, related_name='myLikeBoard')
 
 
 class Travel(models.Model):
+    userId = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='travel')
     board = models.OneToOneField(Board, on_delete=models.CASCADE,related_name='travel')
     location = models.CharField(max_length=30, default='')
     startDate = models.DateTimeField(auto_now=False, auto_now_add=False)

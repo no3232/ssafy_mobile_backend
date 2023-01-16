@@ -268,7 +268,7 @@ ACCOUNT_ADAPTER = 'accounts.adapter.CustomAccountAdapter'
 
 # 토큰 시리얼라이저 추가
 REST_AUTH_SERIALIZERS = {
-    # 'TOKEN_SERIALIZER': 'accounts.serializers.CustomTokenSerializer', # import path to CustomTokenSerializer defined above.
+    'JWT_SERIALIZER': 'accounts.serializers.CustomJWTSerializer', # import path to CustomTokenSerializer defined above.
 
     'USER_DETAILS_SERIALIZER': 'accounts.serializers.CustomUserDetailSerializer',
 }
