@@ -10,7 +10,7 @@ from rest_framework.permissions import IsAuthenticated
 from django.shortcuts import get_object_or_404, get_list_or_404
 # from .serializers import  CommunityListSerializer, CommunitySerializer, CommentSerializer, ArticleImageSerializer , TravelPathSerializer, LikeSerializer, CommunityCreateSerializer
 from .serializers import BoardListSerializer, ImageSerializer
-from .models import Board  , Place
+from .models import Board  , Place ,Imagelist
 from django.contrib.auth import get_user_model
 
 # json 파싱을 위해서
@@ -45,16 +45,7 @@ def board_create(request):
 
 @api_view(['POST'])
 def image_serializing(request):
-    serializer = ImageSerializer(data=request.data)
-    
-    image_place = Place.objects.get(pk=1)
-    image_board = Board.objects.get(pk=1)
-    
-    if serializer.is_valid(raise_exception=True):
-        serializer.save(board=image_board)
-        return Response(serializer.data,status=status.HTTP_201_CREATED )
-    return Response(status=status.HTTP_405_METHOD_NOT_ALLOWED)
-    
+    pass
 
 
 
