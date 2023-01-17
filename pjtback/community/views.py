@@ -26,12 +26,14 @@ from rest_framework import serializers
 # for db orm query
 from django.db.models import Q
 
+@extend_schema(responses=BoardListSerializer(many=True), summary='게시글 전체 가져오기')
 @api_view(['GET'])
 def board_get(request):
     boards = Board.objects.all()
     serializer = BoardListSerializer(boards, many=True)
     return Response(serializer.data)
 
+@extend_schema(request=BoardListSerializer(), summary='게시글 생성')
 @api_view(['POST'])
 def board_create(request):
     User = get_user_model()
@@ -43,10 +45,6 @@ def board_create(request):
          
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
-
-@api_view(['POST'])
-def image_serializing(request):
-    pass
 
 
 
