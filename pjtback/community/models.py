@@ -2,21 +2,38 @@ from django.db import models
 from django.conf import settings
 from django.utils.translation import gettext_lazy as _
 from accounts.models import User
+from imagekit.models import ProcessedImageField
+from imagekit.processors import ResizeToFill
 
 # Create your models here.
 
+
+
+
 class Board(models.Model):
     userId = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='writeBoard')
-    profileImg = models.CharField(_("profileImg"), max_length=50, default="")
-    writeDate = models.DateTimeField(auto_now = True,)
+    profileImg = ProcessedImageField(
+        blank=True,
+        upload_to='profile_image/board/profile/%Y/%m',
+        processors=[ResizeToFill(300, 300)],
+        format='JPEG',
+        options={'quality': 70},
+    )
+    writeDate = models.DateTimeField(auto_now = True)
     title = models.CharField(max_length= 50 , default="")
     content = models.TextField(max_length=300)
-    imageList =  models.JSONField(_("imageList"),blank=True)
     likeCount = models.IntegerField(_("likeCount"), default=0)
     commentCount = models.IntegerField(_("commentCount"), default=0)
     like_user = models.ManyToManyField(User, related_name='myLikeBoard')
 
+    def create(self, validated_data):
+        instance = Board.objects.create(**validated_data)
+        image_set = self.context['request'].FILES
+        for image_data in image_set.getlist('image'):
+            Imagelist.objects.create(board=instance, image=image_data)
+        return instance
 
+    
 class Travel(models.Model):
     userId = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='travel')
     board = models.OneToOneField(Board, on_delete=models.CASCADE,related_name='travel')
@@ -30,13 +47,23 @@ class Place(models.Model):
     placeName = models.CharField(max_length = 20, default="대구")
     saveDate = models.DateTimeField(auto_now=False)
     memo = models.CharField(max_length=20)
-    placeImgList = models.JSONField(_("placeImgList"),blank=True)
     latitude = models.FloatField(default=0.0)
     longitude = models.FloatField(default=0.0)
     address = models.CharField(max_length=40, default='')
 
 
+def image_upload_path():
+    return f'profile_image/boards/%Y/%m'
 
+class Imagelist(models.Model):
+    board = models.ForeignKey(Board, on_delete=models.CASCADE , related_name = 'imageList')
+    image = ProcessedImageField(
+        blank=True,
+        upload_to=image_upload_path(),
+        processors=[ResizeToFill(300, 300)],
+        format='JPEG',
+        options={'quality': 70},
+    )
 
 # class ArticleImage(models.Model):
 #     img_url = models.ImageField(_("article_image_url"))

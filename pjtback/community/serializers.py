@@ -1,9 +1,17 @@
 from rest_framework import serializers
-from .models import Board, Travel ,Place 
+from .models import Board, Travel ,Place ,Imagelist
+
+class ImageSerializer(serializers.ModelSerializer):
+    image = serializers.ImageField(use_url = True)
+
+    class Meta:
+        model = Imagelist
+        fields = ('image',)
 
 class PlaceSerializer(serializers.ModelSerializer):
     placeId = serializers.IntegerField(source='id')
     saveDate = serializers.DateTimeField(input_formats=['%Y-%m-%d %H:%M:%S'])
+    placeImgList = ImageSerializer(many=True)
 
     class Meta:
         model = Place
@@ -19,19 +27,28 @@ class TravelSerializer(serializers.ModelSerializer):
         model = Travel
         fields = ('travelId','location','startDate','endDate','theme', 'placeList',)
         read_only_fields = ('placeList',)
+        
 
 
 class BoardListSerializer(serializers.ModelSerializer):
-    boardId = serializers.IntegerField(source='id')
+    boardId = serializers.IntegerField(source='id', read_only=True)
     userId = serializers.IntegerField(source ='userId.pk', read_only=True)
     nickname =  serializers.CharField(source='userId.nickname', read_only=True)
-    travel = TravelSerializer(required = True)
-    writeDate = serializers.DateTimeField(input_formats=['%Y-%m-%d %H:%M:%S'])
+    travel = TravelSerializer( read_only= True)
+    writeDate = serializers.DateTimeField(input_formats=['%Y-%m-%d %H:%M:%S'], read_only= True)
+    imageList = ImageSerializer(many=True, read_only=True)
 
     class Meta:
         model = Board
         fields = ('boardId','userId','nickname', 'profileImg','writeDate','title','content','imageList','travel','likeCount','commentCount',)
-        read_only_fields = ('userId','travel',)
+        read_only_fields = ('userId','travel','profileImg','writeDate',)
+    
+    def create(self, validated_data):
+        instance = Board.objects.create(**validated_data)
+        image_set = self.context['request'].FILES
+        for image_data in image_set.getlist('image'):
+            Imagelist.objects.create(board=instance, image=image_data)
+        return instance
 
 
 
