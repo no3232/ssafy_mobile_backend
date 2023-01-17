@@ -41,6 +41,8 @@ def filtering_email(request):
     if serializer.is_valid():
         # 이메일인증 오브젝트 생성
         vcode = get_random_string(length=6, allowed_chars='1234567890')
+        if EmailValidateModel.objects.filter(email=request.data['email']):
+            EmailValidateModel.objects.filter(email=request.data['email']).delete()
         EmailValidateModel.objects.create(email=request.data['email'], validateNumber=vcode)
         email = EmailMessage(
             '마이 풋 트립 계정 인증', #이메일 제목
