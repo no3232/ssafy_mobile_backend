@@ -1,16 +1,31 @@
 from rest_framework import serializers
 from .models import Board, Travel ,Place ,Imagelist, PlaceImage
 
-class ImageSerializer(serializers.ModelSerializer):
+class ImageSerializer(serializers.RelatedField):
     image = serializers.ImageField(use_url = True)
+
+    def to_representation(self, instance):
+        url = instance.image.url
+        request = self.context.get('request', None)
+        if request is not None:
+            return request.build_absolute_uri(url)
+        return url
 
     class Meta:
         model = Imagelist
         fields = ('image',)
 
 
-class PlaceImageSerializer(serializers.ModelSerializer):
+class PlaceImageSerializer(serializers.RelatedField):
     image = serializers.ImageField(use_url = True)
+
+
+    def to_representation(self, instance):
+        url = instance.image.url
+        request = self.context.get('request', None)
+        if request is not None:
+            return request.build_absolute_uri(url)
+        return url
 
     class Meta:
         model = PlaceImage
@@ -19,7 +34,9 @@ class PlaceImageSerializer(serializers.ModelSerializer):
 class PlaceSerializer(serializers.ModelSerializer):
     placeId = serializers.IntegerField(source='id')
     saveDate = serializers.DateTimeField(format="%Y-%m-%d %H:%M:%S")
-    placeImgList = ImageSerializer(many=True, read_only= True)
+    placeImgList = PlaceImageSerializer(many=True , read_only = True)
+
+
 
     class Meta:
         model = Place
@@ -51,7 +68,7 @@ class BoardListSerializer(serializers.ModelSerializer):
     nickname =  serializers.CharField(source='userId.nickname', read_only=True)
     travel = TravelSerializer(read_only = True)
     writeDate = serializers.DateTimeField(format="%Y-%m-%d %H:%M:%S", read_only= True)
-    imageList = ImageSerializer(many=True, read_only=True)
+    imageList = ImageSerializer(many=True , read_only = True)
 
     class Meta:
         model = Board

@@ -5,7 +5,6 @@ urlpatterns = [
 
     path('board/', views.board_get),
     path('board/create/', views.board_create),
-    path('image/', views.image_serializing),
     # path('outline', views.community_list),
     # path('filtered',views.community_filtered_list),
     # path('create',views.community_create),
