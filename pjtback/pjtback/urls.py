@@ -31,7 +31,9 @@ from graphene_django.views import GraphQLView
 
 from drf_spectacular.views import SpectacularAPIView, SpectacularSwaggerView
 
-from drf_spectacular.views import SpectacularAPIView, SpectacularSwaggerView
+# 미디어파일 url 추가
+from django.conf.urls.static import static
+from django.conf import settings
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -54,4 +56,7 @@ urlpatterns = [
 
     path('schema/', SpectacularAPIView.as_view(), name='schema'),
     path('swagger/', SpectacularSwaggerView.as_view(url_name='schema'), name='swaggerui'),
-]
+] 
+
+# 미디어파일 url 추가
+urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

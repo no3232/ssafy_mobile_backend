@@ -15,17 +15,23 @@ from rest_framework import serializers
 
 from .serializers import EmailUniqueCheckSerializer, PhoneUniqueCheckSerializer, CustomUserDetailSerializer, JoinSerializer
 
+from .models import EmailValidateModel
 
-@extend_schema(tags=['registration'], request=PhoneUniqueCheckSerializer, responses=bool, summary='폰 넘버 중복 체크')
-@api_view(['POST'])
-@csrf_exempt
-def filtering_phone(request):
-    serializer = PhoneUniqueCheckSerializer(data=request.data)
-    if serializer.is_valid():
-        return HttpResponse(False)
-    else:
-        return HttpResponse(True)
 
+# @extend_schema(tags=['registration'], request=PhoneUniqueCheckSerializer, responses=bool, summary='폰 넘버 중복 체크')
+# @api_view(['POST'])
+# @csrf_exempt
+# def filtering_phone(request):
+#     serializer = PhoneUniqueCheckSerializer(data=request.data)
+#     if serializer.is_valid():
+#         return HttpResponse(False)
+#     else:
+#         return HttpResponse(True)
+
+# 이메일 보내기
+from django.core.mail import EmailMessage
+# 랜덤 코드 생성
+from django.utils.crypto import get_random_string
 
 @extend_schema(tags=['registration'], request=EmailUniqueCheckSerializer, responses=bool, summary='email 중복 체크')
 @api_view(['POST'])
@@ -33,9 +39,31 @@ def filtering_phone(request):
 def filtering_email(request):
     serializer = EmailUniqueCheckSerializer(data=request.data)
     if serializer.is_valid():
+        # 이메일인증 오브젝트 생성
+        vcode = get_random_string(length=10).lower()
+        EmailValidateModel.objects.create(email=request.data['email'], validateNumber=vcode)
+        email = EmailMessage(
+            '마이 풋 트립 계정 인증', #이메일 제목
+            f'인증 번호 : {vcode}', #내용
+            to=[request.data['email'],], #받는 이메일
+        )
+        email.send()
         return HttpResponse(False)
     else:
         return HttpResponse(True)
+
+@api_view(['POST'])
+@csrf_exempt
+def validate_email(request):
+    try:
+        valid = EmailValidateModel.objects.get(validateNumber = request.POST['vaildateNumber'])
+    except:
+        return HttpResponse(False)
+    if valid.email == request.POST['email']:
+        valid.delete()
+        return HttpResponse(True)
+    else:
+        return HttpResponse(False)
 
 
 # 소셜 로그인 시 유저 정보 조회 후 토큰 발급
@@ -118,10 +146,10 @@ def get_tokens_for_user(user):
 def join_views(request, user_pk):
     user = get_object_or_404(get_user_model(), pk=user_pk)
     if request.method == 'GET':
-        serializer = JoinSerializer(user)
+        serializer = CustomUserDetailSerializer(user)
         print(serializer.data)
         return Response(serializer.data, status=status.HTTP_200_OK)
-    elif request.method == 'POST':
+    elif request.method == 'PUT':
         pass
     elif request.method == 'DELETE':
         if request.user == user:
