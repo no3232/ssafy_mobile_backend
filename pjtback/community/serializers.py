@@ -51,7 +51,11 @@ class BoardListSerializer(serializers.ModelSerializer):
     nickname =  serializers.CharField(source='userId.nickname', read_only=True)
     travel = TravelSerializer(read_only = True)
     writeDate = serializers.DateTimeField(format="%Y-%m-%d %H:%M:%S", read_only= True)
-    imageList = ImageSerializer(many=True, read_only=True)
+    imageList = serializers.SlugRelatedField(
+        many=True,
+        read_only=True,
+        slug_field='image'
+    )
 
     class Meta:
         model = Board
