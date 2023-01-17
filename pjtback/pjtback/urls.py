@@ -31,11 +31,7 @@ from graphene_django.views import GraphQLView
 
 from drf_spectacular.views import SpectacularAPIView, SpectacularSwaggerView
 
-<<<<<<< HEAD
-from drf_spectacular.views import SpectacularAPIView, SpectacularSwaggerView
-=======
 # 미디어파일 url 추가
->>>>>>> 3626bbc56168e44c2cbf5739e7f2c92e9ad01b65
 from django.conf.urls.static import static
 from django.conf import settings
 
