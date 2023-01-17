@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Board, Travel ,Place ,Imagelist
+from .models import Board, Travel ,Place ,Imagelist, PlaceImage
 
 class ImageSerializer(serializers.ModelSerializer):
     image = serializers.ImageField(use_url = True)
@@ -8,20 +8,35 @@ class ImageSerializer(serializers.ModelSerializer):
         model = Imagelist
         fields = ('image',)
 
+
+class PlaceImageSerializer(serializers.ModelSerializer):
+    image = serializers.ImageField(use_url = True)
+
+    class Meta:
+        model = PlaceImage
+        fields = ('image')
+
 class PlaceSerializer(serializers.ModelSerializer):
     placeId = serializers.IntegerField(source='id')
-    saveDate = serializers.DateTimeField(input_formats=['%Y-%m-%d %H:%M:%S'])
-    placeImgList = ImageSerializer(many=True)
+    saveDate = serializers.DateTimeField(format="%d-%m-%Y %H:%M:%S")
+    placeImgList = ImageSerializer(many=True, read_only= True)
 
     class Meta:
         model = Place
         fields = ('placeId','placeName','saveDate','memo','placeImgList','latitude','longitude','address',)
 
+    def create(self, validated_data):
+        instance = Place.objects.create(**validated_data)
+        image_set = self.context['request'].FILES
+        for image_data in image_set.getlist('image'):
+            PlaceImage.objects.create(place=instance, image=image_data)
+        return instance
+
 class TravelSerializer(serializers.ModelSerializer):
     travelId = serializers.IntegerField(source='id')
     placeList = PlaceSerializer(many=True, read_only= True)
-    startDate = serializers.DateTimeField(input_formats=['%Y-%m-%d %H:%M:%S'])
-    endDate = serializers.DateTimeField(input_formats=['%Y-%m-%d %H:%M:%S'])
+    startDate = serializers.DateTimeField(format="%d-%m-%Y %H:%M:%S")
+    endDate = serializers.DateTimeField(format="%d-%m-%Y %H:%M:%S")
 
     class Meta:
         model = Travel
@@ -34,8 +49,8 @@ class BoardListSerializer(serializers.ModelSerializer):
     boardId = serializers.IntegerField(source='id', read_only=True)
     userId = serializers.IntegerField(source ='userId.pk', read_only=True)
     nickname =  serializers.CharField(source='userId.nickname', read_only=True)
-    travel = TravelSerializer( read_only= True)
-    writeDate = serializers.DateTimeField(input_formats=['%Y-%m-%d %H:%M:%S'], read_only= True)
+    travel = TravelSerializer(read_only = True)
+    writeDate = serializers.DateTimeField(format="%d-%m-%Y %H:%M:%S", read_only= True)
     imageList = ImageSerializer(many=True, read_only=True)
 
     class Meta:
