@@ -56,6 +56,7 @@ class CustomRegisterSerializer(RegisterSerializer):
     def save(self, request):
         adapter = get_adapter()
         user = adapter.new_user(request)
+        print(request.FILES)
         self.cleaned_data = self.get_cleaned_data()
         if "password1" in self.cleaned_data:
             try:
@@ -101,11 +102,6 @@ class TokenSerializer(JWTSerializer):
     class Meta:
         fields = ('access_token', 'refresh_token',)
 
-
-class UserTravelSerializer(JWTSerializer):
-    access_token = ''
-    refresh_token = ''
-    user = ''
 
 
 class CustomJWTSerializer(JWTSerializer):

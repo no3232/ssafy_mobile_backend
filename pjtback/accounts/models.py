@@ -21,3 +21,7 @@ class User(AbstractUser):
     naver = models.EmailField(_("naver_email"), null=True)
     kakao = models.EmailField(_("kakao_email"), null=True)
     google = models.EmailField(_("google_email"), null=True)
+
+class EmailValidateModel(models.Model):
+    email = models.EmailField()
+    validateNumber = models.CharField(max_length=10)
