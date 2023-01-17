@@ -40,7 +40,7 @@ def filtering_email(request):
     serializer = EmailUniqueCheckSerializer(data=request.data)
     if serializer.is_valid():
         # 이메일인증 오브젝트 생성
-        vcode = get_random_string(length=10).lower()
+        vcode = get_random_string(length=6, allowed_chars='1234567890')
         EmailValidateModel.objects.create(email=request.data['email'], validateNumber=vcode)
         email = EmailMessage(
             '마이 풋 트립 계정 인증', #이메일 제목
@@ -56,10 +56,10 @@ def filtering_email(request):
 @csrf_exempt
 def validate_email(request):
     try:
-        valid = EmailValidateModel.objects.get(validateNumber = request.POST['validateNumber'])
+        valid = EmailValidateModel.objects.get(email = request.POST['email'])
     except:
         return HttpResponse(False)
-    if valid.email == request.POST['email']:
+    if valid.validateNumber == request.POST['validateNumber']:
         valid.delete()
         return HttpResponse(True)
     else:
