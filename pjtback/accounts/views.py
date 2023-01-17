@@ -56,7 +56,7 @@ def filtering_email(request):
 @csrf_exempt
 def validate_email(request):
     try:
-        valid = EmailValidateModel.objects.get(validateNumber = request.POST['validateNumber'])
+        valid = EmailValidateModel.objects.get(validateNumber = request.POST['vaildateNumber'])
     except:
         return HttpResponse(False)
     if valid.email == request.POST['email']:
