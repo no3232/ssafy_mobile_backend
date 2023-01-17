@@ -9,8 +9,8 @@ from rest_framework.permissions import IsAuthenticated
 
 from django.shortcuts import get_object_or_404, get_list_or_404
 # from .serializers import  CommunityListSerializer, CommunitySerializer, CommentSerializer, ArticleImageSerializer , TravelPathSerializer, LikeSerializer, CommunityCreateSerializer
-from .serializers import BoardListSerializer
-from .models import Board
+from .serializers import BoardListSerializer, ImageSerializer
+from .models import Board  , Place
 from django.contrib.auth import get_user_model
 
 # json 파싱을 위해서
@@ -26,19 +26,34 @@ from rest_framework import serializers
 # for db orm query
 from django.db.models import Q
 
-@api_view(['GET', 'POST'])
-def board_test(request):
-    if request.method == 'GET':
-        boards = Board.objects.all()
-        serializer = BoardListSerializer(boards, many=True)
-        return Response(serializer.data)
-    elif request.method == 'POST':
-        User = get_user_model()
-        user = User.objects.get(pk=request.POST['user'])
-        serializer = BoardListSerializer(data=request.data)
-        if serializer.is_valid(raise_exception=True):
-            serializer.save(userId=user)
-            return Response(status=status.HTTP_201_CREATED)
+@api_view(['GET'])
+def board_get(request):
+    boards = Board.objects.all()
+    serializer = BoardListSerializer(boards, many=True)
+    return Response(serializer.data)
+
+@api_view(['POST'])
+def board_create(request):
+    User = get_user_model()
+    user = User.objects.get(pk=request.POST['user'])
+    
+    serializer = BoardListSerializer(data=request.data)
+    if serializer.is_valid(raise_exception=True):
+        serializer.save(userId=user)
+        return Response(status=status.HTTP_201_CREATED)
+
+
+@api_view(['POST'])
+def image_serializing(request):
+    serializer = ImageSerializer(data=request.data)
+    
+    image_place = Place.objects.get(pk=1)
+    image_board = Board.objects.get(pk=1)
+    
+    if serializer.is_valid(raise_exception=True):
+        serializer.save(board=image_board)
+        return Response(serializer.data,status=status.HTTP_201_CREATED )
+    return Response(status=status.HTTP_405_METHOD_NOT_ALLOWED)
     
 
 
