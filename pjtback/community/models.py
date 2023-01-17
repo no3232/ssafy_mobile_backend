@@ -58,6 +58,17 @@ class Imagelist(models.Model):
         options={'quality': 70},
     )
 
+
+class PlaceImage(models.Model):
+    place = models.ForeignKey(Place, on_delete=models.CASCADE , related_name= 'placeImgList')
+    image = ProcessedImageField(
+        blank=True,
+        upload_to='profile_image/place/%Y/%m',
+        processors=[ResizeToFill(300, 300)],
+        format='JPEG',
+        options={'quality': 70},
+    )
+
 # class ArticleImage(models.Model):
 #     img_url = models.ImageField(_("article_image_url"))
 #     Community = models.ForeignKey(Community, on_delete=models.CASCADE)
