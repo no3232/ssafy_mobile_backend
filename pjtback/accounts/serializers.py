@@ -17,7 +17,7 @@ from rest_framework.validators import UniqueValidator
 from django.contrib.auth import get_user_model
 from .models import User
 
-from community.serializers import  PlaceSerializer, BoardListSerializer
+from community.serializers import PlaceSerializer, BoardListSerializer
 
 
 class CustomRegisterSerializer(RegisterSerializer):
@@ -103,7 +103,6 @@ class TokenSerializer(JWTSerializer):
         fields = ('access_token', 'refresh_token',)
 
 
-
 class CustomJWTSerializer(JWTSerializer):
     """
     Serializer for JWT authentication.
@@ -119,6 +118,7 @@ class CustomJWTSerializer(JWTSerializer):
     token = TokenSerializer(source='*')
     join = JoinSerializer(source="user")
     totalDate = serializers.IntegerField(source='user.id')
+    
 
     class Meta:
         fields = ('uid', 'token',  'join', 'travel',
@@ -141,3 +141,13 @@ class PhoneUniqueCheckSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = ('phone_number', )
+
+
+class UserForignSerializer(serializers.ModelSerializer):
+    travel = PlaceSerializer(many=True)
+    myLikeBoard = BoardListSerializer(many=True)
+    writeBoard = BoardListSerializer(many=True)
+
+    class Meta:
+        model = User
+        fields = ('travel', 'myLikeBoard', 'writeBoard',)
