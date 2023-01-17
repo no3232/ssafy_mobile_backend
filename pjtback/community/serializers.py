@@ -18,7 +18,7 @@ class PlaceImageSerializer(serializers.ModelSerializer):
 
 class PlaceSerializer(serializers.ModelSerializer):
     placeId = serializers.IntegerField(source='id')
-    saveDate = serializers.DateTimeField(format="%d-%m-%Y %H:%M:%S")
+    saveDate = serializers.DateTimeField(format="%Y-%m-%d %H:%M:%S")
     placeImgList = ImageSerializer(many=True, read_only= True)
 
     class Meta:
@@ -35,8 +35,8 @@ class PlaceSerializer(serializers.ModelSerializer):
 class TravelSerializer(serializers.ModelSerializer):
     travelId = serializers.IntegerField(source='id')
     placeList = PlaceSerializer(many=True, read_only= True)
-    startDate = serializers.DateTimeField(format="%d-%m-%Y %H:%M:%S")
-    endDate = serializers.DateTimeField(format="%d-%m-%Y %H:%M:%S")
+    startDate = serializers.DateTimeField(format="%Y-%m-%d %H:%M:%S")
+    endDate = serializers.DateTimeField(format="%Y-%m-%d %H:%M:%S")
 
     class Meta:
         model = Travel
@@ -50,7 +50,7 @@ class BoardListSerializer(serializers.ModelSerializer):
     userId = serializers.IntegerField(source ='userId.pk', read_only=True)
     nickname =  serializers.CharField(source='userId.nickname', read_only=True)
     travel = TravelSerializer(read_only = True)
-    writeDate = serializers.DateTimeField(format="%d-%m-%Y %H:%M:%S", read_only= True)
+    writeDate = serializers.DateTimeField(format="%Y-%m-%d %H:%M:%S", read_only= True)
     imageList = ImageSerializer(many=True, read_only=True)
 
     class Meta:
