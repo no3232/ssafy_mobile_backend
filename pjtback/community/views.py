@@ -37,10 +37,11 @@ def board_create(request):
     User = get_user_model()
     user = User.objects.get(pk=request.POST['user'])
     
-    serializer = BoardListSerializer(data=request.data)
+    serializer = BoardListSerializer(data=request.data, context = {'request' : request})
     if serializer.is_valid(raise_exception=True):
         serializer.save(userId=user)
-        return Response(status=status.HTTP_201_CREATED)
+         
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
 
 
 @api_view(['POST'])

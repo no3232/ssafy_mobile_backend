@@ -26,13 +26,6 @@ class Board(models.Model):
     commentCount = models.IntegerField(_("commentCount"), default=0)
     like_user = models.ManyToManyField(User, related_name='myLikeBoard')
 
-    def create(self, validated_data):
-        instance = Board.objects.create(**validated_data)
-        image_set = self.context['request'].FILES
-        for image_data in image_set.getlist('image'):
-            Imagelist.objects.create(board=instance, image=image_data)
-        return instance
-
     
 class Travel(models.Model):
     userId = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='travel')
