@@ -1,7 +1,7 @@
 from rest_framework_simplejwt.tokens import RefreshToken
 from django.shortcuts import render
 from django.contrib.auth import get_user_model
-from django.shortcuts import render, redirect, get_object_or_404
+from django.shortcuts import render, redirect, get_object_or_404, get_list_or_404
 from django.contrib.auth import login
 from drf_spectacular.utils import extend_schema, OpenApiParameter, OpenApiTypes, OpenApiExample, inline_serializer
 from django.http import JsonResponse, HttpResponse
@@ -13,9 +13,9 @@ from rest_framework.decorators import api_view
 from django.views.decorators.csrf import csrf_exempt
 from rest_framework import serializers
 
-from .serializers import EmailUniqueCheckSerializer, PhoneUniqueCheckSerializer, CustomUserDetailSerializer, JoinSerializer
+from .serializers import EmailUniqueCheckSerializer, PhoneUniqueCheckSerializer, CustomUserDetailSerializer, JoinSerializer, ImageTestSerializer
 
-from .models import EmailValidateModel
+from .models import EmailValidateModel, ImageTest
 
 
 # @extend_schema(tags=['registration'], request=PhoneUniqueCheckSerializer, responses=bool, summary='폰 넘버 중복 체크')
@@ -154,13 +154,13 @@ def join_views(request, user_pk):
         return Response(serializer.data, status=status.HTTP_200_OK)
     elif request.method == 'PUT':
         if request.user == user:
-            serializer = CustomUserDetailSerializer(user, data=request.data)
+            serializer = CustomUserDetailSerializer(instance=user, data=request.data)
             print(serializer)
             if serializer.is_valid():
                 serializer.save()
                 return Response(serializer.data, status=status.HTTP_202_ACCEPTED)
             else:
-                return Response(status=status.HTTP_400_BAD_REQUEST)
+                return Response(serializer.errors, status = status.HTTP_400_BAD_REQUEST)
         else:
             return
     elif request.method == 'DELETE':
@@ -170,3 +170,19 @@ def join_views(request, user_pk):
         else:
             return Response(status=status.HTTP_401_UNAUTHORIZED)
     return Response(status=status.HTTP_400_BAD_REQUEST)
+
+@api_view(['POST', 'GET'])
+def image_test(request):
+    print(request.data)
+    # ImageTest.objects.create(profileImg = request.FILES)
+    if request.method == "POST":
+        serializer = ImageTestSerializer(data = request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_202_ACCEPTED)
+        else:
+            return Response(serializer.errors, status = status.HTTP_400_BAD_REQUEST)
+    else:
+        img = get_list_or_404(ImageTest)
+        serializer = ImageTestSerializer(img, many=True)
+        return Response(serializer.data)
