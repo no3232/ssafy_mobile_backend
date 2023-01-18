@@ -37,7 +37,7 @@ def board_get(request):
 @api_view(['POST'])
 def board_create(request):
     User = get_user_model()
-    user = User.objects.get(pk=request.POST['user'])
+    user = User.objects.get(pk=request.data['user'])
     
     serializer = BoardListSerializer(data=request.data, context = {'request' : request})
     if serializer.is_valid(raise_exception=True):
