@@ -34,12 +34,12 @@ from django.core.mail import EmailMessage
 from django.utils.crypto import get_random_string
 
 @extend_schema(tags=['registration'], request=EmailUniqueCheckSerializer, responses=bool, summary='email 중복 체크')
-@api_view(['POST', 'GET'])
+@api_view(['POST'])
 @csrf_exempt
 def filtering_email(request):
-    print(request.GET)
+    print(request.data)
     # emailobj = {"email": request.data['']}
-    serializer = EmailUniqueCheckSerializer(data=request.GET)
+    serializer = EmailUniqueCheckSerializer(data=request.data)
     if serializer.is_valid():
         # 이메일인증 오브젝트 생성
         vcode = get_random_string(length=6, allowed_chars='1234567890')
@@ -49,14 +49,14 @@ def filtering_email(request):
         email = EmailMessage(
             '마이 풋 트립 계정 인증', #이메일 제목
             f'인증 번호 : {vcode}', #내용
-            to=[request.GET['email'],], #받는 이메일
+            to=[request.data['email'],], #받는 이메일
         )
         email.send()
         return HttpResponse(False)
     else:
         return HttpResponse(True)
 
-@api_view(['POST', 'GET'])
+@api_view(['POST'])
 @csrf_exempt
 def validate_email(request):
     try:
@@ -151,10 +151,18 @@ def join_views(request, user_pk):
     user = get_object_or_404(get_user_model(), pk=user_pk)
     if request.method == 'GET':
         serializer = CustomUserDetailSerializer(user)
-        
         return Response(serializer.data, status=status.HTTP_200_OK)
     elif request.method == 'PUT':
-        pass
+        if request.user == user:
+            serializer = CustomUserDetailSerializer(user, data=request.data)
+            print(serializer)
+            if serializer.is_valid():
+                serializer.save()
+                return Response(serializer.data, status=status.HTTP_202_ACCEPTED)
+            else:
+                return Response(status=status.HTTP_400_BAD_REQUEST)
+        else:
+            return
     elif request.method == 'DELETE':
         if request.user == user:
             user.delete()
