@@ -1,3 +1,5 @@
+import datetime
+from django.db.models import F
 from rest_framework.response import Response
 from rest_framework.decorators import api_view
 from rest_framework import status
@@ -9,22 +11,22 @@ from rest_framework.permissions import IsAuthenticated
 
 from django.shortcuts import get_object_or_404, get_list_or_404
 # from .serializers import  CommunityListSerializer, CommunitySerializer, CommentSerializer, ArticleImageSerializer , TravelPathSerializer, LikeSerializer, CommunityCreateSerializer
-from .serializers import BoardListSerializer, ImageSerializer
-from .models import Board  , Place ,Imagelist
+from .serializers import BoardListSerializer, ImageSerializer, PlaceSerializer, TravelSerializer
+from .models import Board, Place, Imagelist, Travel
 from django.contrib.auth import get_user_model
 
 # json 파싱을 위해서
 import json
 
-#for swagger
-from drf_spectacular.utils import extend_schema, OpenApiParameter, OpenApiTypes, OpenApiExample,inline_serializer
+# for swagger
+from drf_spectacular.utils import extend_schema, OpenApiParameter, OpenApiTypes, OpenApiExample, inline_serializer
 from rest_framework.decorators import api_view
 from rest_framework import serializers
 
 
-
 # for db orm query
 from django.db.models import Q
+
 
 @extend_schema(responses=BoardListSerializer(many=True), summary='게시글 전체 가져오기')
 @api_view(['GET'])
@@ -33,65 +35,124 @@ def board_get(request):
     serializer = BoardListSerializer(boards, many=True)
     return Response(serializer.data)
 
+
 @extend_schema(request=BoardListSerializer(), summary='게시글 생성')
 @api_view(['POST'])
 def board_create(request):
     User = get_user_model()
     user = User.objects.get(pk=request.data['user'])
-    
-    serializer = BoardListSerializer(data=request.data, context = {'request' : request})
+
+    serializer = BoardListSerializer(
+        data=request.data, context={'request': request})
     if serializer.is_valid(raise_exception=True):
         serializer.save(userId=user)
-         
+
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
+@api_view(['GET'])
+def place_get(request):
+    travel_id = request.data.get('travel_id')
+    if not travel_id:
+        return Response(status=status.HTTP_404_NOT_FOUND)
+    travelObj = Travel.objects.get(id=travel_id)
+    
+    places = Place.objects.filter(travel = travelObj)
+    placedatas = PlaceSerializer(places, many=True)
+    
+    return Response(placedatas.data, status=status.HTTP_200_OK)
+
+@api_view(['POST'])
+def travel_create(request):
+    user_id = request.data.get('user_id')
+    # user = request.user
+    user = get_object_or_404(get_user_model(), id = user_id)
+    board_id = request.data.get('board_id')
+    board = get_object_or_404(Board, id = board_id)
+    if not user_id or not board_id:
+        return Response(status=status.HTTP_404_NOT_FOUND)
+    serializer = TravelSerializer(data = request.data)
+    if serializer.is_valid():
+        serializer.save(board = board, userId = user)
+        return Response(serializer.data, status=status.HTTP_202_ACCEPTED)
+    else:
+        return Response(serializer.errors, status = status.HTTP_400_BAD_REQUEST)
+
+
 # 쿼리 형식으로 db 접근 할 수 있는 라이브러리
-from django.db.models import Q
+
 
 @extend_schema(summary='게시글 필터 필터 부분 바디에 담아서 보내주시면 됨')
 @api_view(['POST'])
 def board_filtered(request):
+    boards = Board.objects.annotate(
+        day=F('travel__endDate') - F('travel__startDate'))
     # 기본 전략은 4가지 필터 부분으로 분리하고, get 으로 접근
     # get 했을 때 none 이면 필터 pass 하는 식
 
-    age = request.data.get('age')
-    periods = request.data.get('periods')
-    theme = request.data.get('theme')
-    region = request.data.get('region')
+    ageFlist = request.data.get('age')
+    periodsFlist = request.data.get('periods')
+    themeFlist = request.data.get('theme')
+    regionFlist = request.data.get('region')
 
     # 일단 하드 코딩에 가깝긴 한데, 프엔에서 넘겨주는 타이밍 까지 만드는게 아니면 그냥 이런식으로 쓰고 수정하는게 나을듯?
-    age_lst = ['1o대', '20대', '30대', '40대', '50대 이상']
-    periods_lst = ['당일치기', '1박2일', '3박4일', '4박5일+']
-    theme_lst = ['혼자여행', '커플여행', '효도여행', '우정여행', '직장여행']
-    region_lst = ["서울","경기","강원","부산","경북·대구","전남·광주","제주","충남·대전","경남","충북","경남","전북","인천"]
+    age_lst = {'1o대': Q(user__age__gte=10) & Q(user__age__lt=20),
+               '20대': Q(user__age__gte=20) & Q(user__age__lt=30),
+               '30대': Q(user__age__gte=30) & Q(user__age__lt=40),
+               '40대': Q(user__age__gte=40) & Q(user__age__lt=50),
+               '50대 이상': Q(user__age__gte=50)}
+    periods_lst = {'당일치기': Q(day__lte=datetime.timedelta(days=1)),
+                   '1박2일': Q(day__lte=datetime.timedelta(days=2)) & Q(day__gt=datetime.timedelta(days=1)),
+                   '3박4일': Q(day__lte=datetime.timedelta(days=3)) & Q(day__gt=datetime.timedelta(days=2)),
+                   '4박5일+': Q(day__gt=datetime.timedelta(days=3))}
+    theme_lst = {'혼자여행': Q(theme='혼자여행'),
+                 '커플여행': Q(theme='커플여행'),
+                 '효도여행': Q(theme='효도여행'),
+                 '우정여행': Q(theme='우정여행'),
+                 '직장여행': Q(theme='혼자여행')}
+    region_lst = {"서울": Q(travel__placeList__placeName='서울'),
+                  "경기": Q(travel__placeList__placeName='경기'),
+                  "강원": Q(travel__placeList__placeName='강원'),
+                  "부산": Q(travel__placeList__placeName='부산'),
+                  "경북·대구": Q(travel__placeList__placeName='경북·대구'),
+                  "전남·광주": Q(travel__placeList__placeName='전남·광주'),
+                  "제주": Q(travel__placeList__placeName='제주'),
+                  "충남·대전": Q(travel__placeList__placeName='충남·대전'),
+                  "경남": Q(travel__placeList__placeName='경남'),
+                  "충북": Q(travel__placeList__placeName='충북'),
+                  "경남": Q(travel__placeList__placeName='경남'),
+                  "전북": Q(travel__placeList__placeName='전북'),
+                  "인천": Q(travel__placeList__placeName='인천')}
 
     result_query = Q()
+    
+    if ageFlist:
+        for age in ageFlist:
+            result_query |= age_lst[age]
+    if periodsFlist:
+        for periods in periodsFlist:
+            result_query |= periods_lst[periods]
+    if themeFlist:
+        for theme in themeFlist:
+            result_query |= theme_lst[theme]
+    if regionFlist:
+        for region in regionFlist:
+            result_query |= region_lst[region]
+    print("===================================")
+    result = boards.filter(result_query)
+    result_data = BoardListSerializer(result, many=True)
+    return Response(result_data.data, status=status.HTTP_200_OK)
+    
 
-    for age_filter in age:
-        age_query = Q()
-        if age_filter == '10대':
-            age_query = age_query | Q(Board, user__age__gte=10) & Q(Board,user__age__lt=20)
-        elif age_filter == '20대':
-            age_query = age_query | Q(Board,user__age__gte=20) & Q(Board,user__age__lt=30)
-        elif age_filter == '30대':
-            age_query = age_query | Q(Board,user__age__gte=30) & Q(Board,user__age__lt=40)
-        elif age_filter == '40대':
-            age_query = age_query | Q(Board,user__age__gte=40) & Q(Board,user__age__lt=50)
-        elif age_filter == '50대 이상':
-            age_query = age_query | Q(Board,user__age__gte=50)
-        
-    for periods_filter in periods:
-        periods_query = Q()
-        if periods_filter == '당일치기':
-            pass
-            
-        
-
-
-
-
-
-
+# @api_view(['POST'])
+# def board_filtered(request):
+#     boards = Board.objects.annotate(day = F('travel__endDate') - F('travel__startDate'))
+#     print(boards.values())
+#     result = boards.filter(day__lt = datetime.timedelta(days=2))
+#     returndata = BoardListSerializer(result, many=True)
+#     print(result.values())
+#     # print(result)
+#     return Response(returndata.data, status=status.HTTP_200_OK)
+#     Q(age_list.sadfaf | age_list.sadfaf | age_list.sadfaf| age_list.sadfaf| )
 
 
 # 밑에 주석은 참고 사항 때매 남겨 놓은것 나중에 지우겠습니다.
@@ -141,7 +202,7 @@ def board_filtered(request):
 # @api_view(['GET', 'PUT', 'DELETE'])
 # def community_detail(request, community_pk):
 #     community = get_object_or_404(Community, pk=community_pk)
-    
+
 #     if request.method == 'GET':
 #         serializer = CommunitySerializer(community)
 #         return Response(serializer.data)
@@ -149,7 +210,7 @@ def board_filtered(request):
 #     elif request.method == 'DELETE':
 #         community.delete()
 #         return Response(status=status.HTTP_204_NO_CONTENT)
-    
+
 #     elif request.method == 'PUT':
 #         serializer = CommunitySerializer(community, data=request.data)
 #         if serializer.is_valid(raise_exception=True):
@@ -182,7 +243,7 @@ def board_filtered(request):
 #     if request.method == 'DELETE':
 #         comment.delete()
 #         return Response(status=status.HTTP_204_NO_CONTENT)
-    
+
 #     elif request.method == 'PUT':
 #         community = Community.objects.get(pk=request.data['community_pk'])
 #         serializer = CommentSerializer(comment, data=request.data)
@@ -242,7 +303,7 @@ def board_filtered(request):
 #     point_dic = {}
 #     for i in range(len(point_lst)):
 #         point_dic[i] = point_lst[i]
-    
+
 #     travel_point_lst = json.dumps(point_dic)
 #     travel_path_recording.travel_point_lst = travel_point_lst
 
@@ -251,4 +312,3 @@ def board_filtered(request):
 #     if serializer.is_valid(raise_exception=True):
 #         serializer.save()
 #         return Response(status=status.HTTP_200_OK)
-

@@ -50,14 +50,14 @@ class PlaceSerializer(serializers.ModelSerializer):
         return instance
 
 class TravelSerializer(serializers.ModelSerializer):
-    travelId = serializers.IntegerField(source='id')
-    placeList = PlaceSerializer(many=True, required = False, allow_null = True)
+    travelId = serializers.IntegerField(source='id', required=False)
+    placeList = PlaceSerializer(many=True, required = False, allow_null = True )
     startDate = serializers.DateTimeField(format="%Y-%m-%d %H:%M:%S")
     endDate = serializers.DateTimeField(format="%Y-%m-%d %H:%M:%S")
 
     class Meta:
         model = Travel
-        fields = ('travelId','location','startDate','endDate','theme', 'placeList',)
+        fields = ('travelId','location','startDate','endDate', 'placeList',)
         read_only_fields = ('placeList',)
         
 
@@ -69,11 +69,11 @@ class BoardListSerializer(serializers.ModelSerializer):
     travel = TravelSerializer(required=False, allow_null = True)
     writeDate = serializers.DateTimeField(format="%Y-%m-%d %H:%M:%S", read_only= True)
     imageList = ImageSerializer(many=True , read_only = True)
-    profileImg = serializers.ImageField(use_url = True)
+    profileImg = serializers.ImageField(use_url = True, required=False, )
 
     class Meta:
         model = Board
-        fields = ('boardId','userId','nickname', 'profileImg','writeDate','title','content','imageList','travel','likeCount','commentCount',)
+        fields = ('boardId','userId','nickname', 'profileImg','writeDate', 'theme','title','content','imageList','travel','likeCount','commentCount',)
         read_only_fields = ('userId','travel','profileImg','writeDate',)
     
     def create(self, validated_data):
@@ -82,7 +82,6 @@ class BoardListSerializer(serializers.ModelSerializer):
         for image_data in image_set.getlist('imageList'):
             Imagelist.objects.create(board=instance, image=image_data)
         return instance
-
 
 
 # class CommunityListSerializer(serializers.ModelSerializer):

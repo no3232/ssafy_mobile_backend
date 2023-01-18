@@ -20,6 +20,7 @@ class Board(models.Model):
         options={'quality': 70},
     )
     writeDate = models.DateTimeField(auto_now = True)
+    theme = models.CharField(max_length=20, default='')
     title = models.CharField(max_length= 50 , default="")
     content = models.TextField(max_length=300)
     likeCount = models.IntegerField(_("likeCount"), default=0)
@@ -33,12 +34,11 @@ class Travel(models.Model):
     location = models.CharField(max_length=30, default='')
     startDate = models.DateTimeField(auto_now=False, auto_now_add=False)
     endDate = models.DateTimeField(auto_now=False, auto_now_add=False)
-    theme = models.CharField(max_length=20, default='')
 
 class Place(models.Model):
     travel = models.ForeignKey(Travel, on_delete=models.CASCADE, related_name='placeList')
     placeName = models.CharField(max_length = 20, default="대구")
-    saveDate = models.DateTimeField(auto_now=False)
+    saveDate = models.DateTimeField(auto_now=False, auto_now_add=True)
     memo = models.CharField(max_length=20)
     latitude = models.FloatField(default=0.0)
     longitude = models.FloatField(default=0.0)
