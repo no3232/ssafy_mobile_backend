@@ -17,7 +17,7 @@ from rest_framework.validators import UniqueValidator
 from django.contrib.auth import get_user_model
 from .models import User, ImageTest
 
-from community.serializers import PlaceSerializer, BoardListSerializer
+from community.serializers import PlaceSerializer, BoardListSerializer, TravelSerializer
 
 
 class CustomRegisterSerializer(RegisterSerializer):
@@ -112,7 +112,7 @@ class CustomJWTSerializer(JWTSerializer):
     user = ''
 
     uid = serializers.IntegerField(source='user.id')
-    travel = PlaceSerializer(source='user.travel', many=True)
+    travel = TravelSerializer(source='user.travel', many=True)
     myLikeBoard = BoardListSerializer(source='user.myLikeBoard', many=True)
     writeBoard = BoardListSerializer(source='user.writeBoard', many=True)
     token = TokenSerializer(source='*')
