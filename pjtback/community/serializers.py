@@ -57,7 +57,7 @@ class TravelSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Travel
-        fields = ('travelId','location','startDate','endDate','theme', 'placeList',)
+        fields = ('travelId','location','startDate','endDate','placeList',)
         read_only_fields = ('placeList',)
         
 
@@ -73,7 +73,7 @@ class BoardListSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Board
-        fields = ('boardId','userId','nickname', 'profileImg','writeDate','title','content','imageList','travel','likeCount','commentCount',)
+        fields = ('boardId','userId','nickname', 'profileImg','writeDate','theme','title','content','imageList','travel','likeCount','commentCount',)
         read_only_fields = ('userId','travel','profileImg','writeDate',)
     
     def create(self, validated_data):
