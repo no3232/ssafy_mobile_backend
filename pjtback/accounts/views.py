@@ -34,32 +34,36 @@ from django.core.mail import EmailMessage
 from django.utils.crypto import get_random_string
 
 @extend_schema(tags=['registration'], request=EmailUniqueCheckSerializer, responses=bool, summary='email 중복 체크')
-@api_view(['POST'])
+@api_view(['POST', 'GET'])
 @csrf_exempt
 def filtering_email(request):
-    serializer = EmailUniqueCheckSerializer(data=request.data)
+    print(request.GET)
+    # emailobj = {"email": request.data['']}
+    serializer = EmailUniqueCheckSerializer(data=request.GET)
     if serializer.is_valid():
         # 이메일인증 오브젝트 생성
-        vcode = get_random_string(length=10).lower()
+        vcode = get_random_string(length=6, allowed_chars='1234567890')
+        if EmailValidateModel.objects.filter(email=request.data['email']):
+            EmailValidateModel.objects.filter(email=request.data['email']).delete()
         EmailValidateModel.objects.create(email=request.data['email'], validateNumber=vcode)
         email = EmailMessage(
             '마이 풋 트립 계정 인증', #이메일 제목
             f'인증 번호 : {vcode}', #내용
-            to=[request.data['email'],], #받는 이메일
+            to=[request.GET['email'],], #받는 이메일
         )
         email.send()
         return HttpResponse(False)
     else:
         return HttpResponse(True)
 
-@api_view(['POST'])
+@api_view(['POST', 'GET'])
 @csrf_exempt
 def validate_email(request):
     try:
-        valid = EmailValidateModel.objects.get(validateNumber = request.POST['validateNumber'])
+        valid = EmailValidateModel.objects.get(email = request.data['email'])
     except:
         return HttpResponse(False)
-    if valid.email == request.POST['email']:
+    if valid.validateNumber == request.data['validateNumber']:
         valid.delete()
         return HttpResponse(True)
     else:
@@ -147,7 +151,7 @@ def join_views(request, user_pk):
     user = get_object_or_404(get_user_model(), pk=user_pk)
     if request.method == 'GET':
         serializer = CustomUserDetailSerializer(user)
-        print(serializer.data)
+        
         return Response(serializer.data, status=status.HTTP_200_OK)
     elif request.method == 'PUT':
         pass
