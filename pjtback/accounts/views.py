@@ -155,6 +155,7 @@ def join_views(request, user_pk):
     elif request.method == 'PUT':
         if request.user == user:
             serializer = CustomUserDetailSerializer(user, data=request.data)
+            print(serializer)
             if serializer.is_valid():
                 serializer.save()
                 return Response(serializer.data, status=status.HTTP_202_ACCEPTED)

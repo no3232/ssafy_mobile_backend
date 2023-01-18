@@ -81,7 +81,7 @@ class CustomUserDetailSerializer(UserDetailsSerializer):
     class Meta(UserDetailsSerializer.Meta):
         fields = ('email', 'pw', 'name', 'nickname',
                   'profileImg', 'age', 'kakao', 'naver', 'google')
-        read_only_fields = ('email', 'password',)
+        read_only_fields = ('email', 'pw',)
 
 
 class JoinSerializer(serializers.ModelSerializer):
