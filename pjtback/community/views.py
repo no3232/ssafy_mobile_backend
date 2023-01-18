@@ -54,10 +54,10 @@ from datetime import timedelta
 def board_filtered(request):
     # 기본 전략은 4가지 필터 부분으로 분리하고, get 으로 접근
     # get 했을 때 none 이면 필터 pass 하는 식
-    age = request.data.get('age')
-    periods = request.data.get('periods')
-    theme = request.data.get('theme')
-    region = request.data.get('region')
+    age = request.data.get('ageList')
+    periods = request.data.get('periodList')
+    theme = request.data.get('themeList')
+    region = request.data.get('regionList')
 
     boards = Board.objects.annotate(day = F('travel__endDate') - F('travel__startDate'))
 
