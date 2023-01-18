@@ -45,8 +45,56 @@ def board_create(request):
          
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
+# 쿼리 형식으로 db 접근 할 수 있는 라이브러리
+from django.db.models import Q
+
+@extend_schema(summary='게시글 필터 필터 부분 바디에 담아서 보내주시면 됨')
+@api_view(['POST'])
+def board_filtered(request):
+    # 기본 전략은 4가지 필터 부분으로 분리하고, get 으로 접근
+    # get 했을 때 none 이면 필터 pass 하는 식
+
+    age = request.data.get('age')
+    periods = request.data.get('periods')
+    theme = request.data.get('theme')
+    region = request.data.get('region')
+
+    # 일단 하드 코딩에 가깝긴 한데, 프엔에서 넘겨주는 타이밍 까지 만드는게 아니면 그냥 이런식으로 쓰고 수정하는게 나을듯?
+    age_lst = ['1o대', '20대', '30대', '40대', '50대 이상']
+    periods_lst = ['당일치기', '1박2일', '3박4일', '4박5일+']
+    theme_lst = ['혼자여행', '커플여행', '효도여행', '우정여행', '직장여행']
+    region_lst = ["서울","경기","강원","부산","경북·대구","전남·광주","제주","충남·대전","경남","충북","경남","전북","인천"]
+
+    result_query = Q()
+
+    for age_filter in age:
+        age_query = Q()
+        if age_filter == '10대':
+            age_query = age_query | Q(Board, user__age__gte=10) & Q(Board,user__age__lt=20)
+        elif age_filter == '20대':
+            age_query = age_query | Q(Board,user__age__gte=20) & Q(Board,user__age__lt=30)
+        elif age_filter == '30대':
+            age_query = age_query | Q(Board,user__age__gte=30) & Q(Board,user__age__lt=40)
+        elif age_filter == '40대':
+            age_query = age_query | Q(Board,user__age__gte=40) & Q(Board,user__age__lt=50)
+        elif age_filter == '50대 이상':
+            age_query = age_query | Q(Board,user__age__gte=50)
+        
+    for periods_filter in periods:
+        periods_query = Q()
+        if periods_filter == '당일치기':
+            pass
+            
+        
 
 
+
+
+
+
+
+
+# 밑에 주석은 참고 사항 때매 남겨 놓은것 나중에 지우겠습니다.
 
 
 # @extend_schema(responses=CommunityListSerializer(many=True), summary='커뮤니티 게시글 개요 목록')
