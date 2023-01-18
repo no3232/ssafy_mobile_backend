@@ -15,7 +15,7 @@ from django.utils.module_loading import import_string
 
 from rest_framework.validators import UniqueValidator
 from django.contrib.auth import get_user_model
-from .models import User
+from .models import User, ImageTest
 
 from community.serializers import PlaceSerializer, BoardListSerializer
 
@@ -75,8 +75,8 @@ class CustomRegisterSerializer(RegisterSerializer):
 
 # 유저 디테일 시리얼라이저
 class CustomUserDetailSerializer(UserDetailsSerializer):
-    pw = serializers.CharField(source="password")
-    name = serializers.CharField(source="username")
+    pw = serializers.CharField(source="password", read_only=True)
+    name = serializers.CharField(source="username", required=False)
 
     class Meta(UserDetailsSerializer.Meta):
         fields = ('email', 'pw', 'name', 'nickname',
@@ -151,3 +151,9 @@ class UserForignSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = ('travel', 'myLikeBoard', 'writeBoard',)
+
+class ImageTestSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = ImageTest
+        fields = "__all__"
