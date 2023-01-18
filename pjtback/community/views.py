@@ -40,10 +40,9 @@ def board_get(request):
 @api_view(['POST'])
 def board_create(request):
     User = get_user_model()
-    user = User.objects.get(pk=request.data['user'])
-
-    serializer = BoardListSerializer(
-        data=request.data, context={'request': request})
+    user = User.objects.get(pk=request.data['userId'])
+    
+    serializer = BoardListSerializer(data=request.data, context = {'request' : request})
     if serializer.is_valid(raise_exception=True):
         serializer.save(userId=user)
 
@@ -79,7 +78,8 @@ def travel_create(request):
 
 
 # 쿼리 형식으로 db 접근 할 수 있는 라이브러리
-
+from django.db.models import Q, F
+from datetime import timedelta
 
 @extend_schema(summary='게시글 필터 필터 부분 바디에 담아서 보내주시면 됨')
 @api_view(['POST'])
@@ -88,71 +88,67 @@ def board_filtered(request):
         day=F('travel__endDate') - F('travel__startDate'))
     # 기본 전략은 4가지 필터 부분으로 분리하고, get 으로 접근
     # get 했을 때 none 이면 필터 pass 하는 식
+    age = request.data.get('ageList')
+    periods = request.data.get('periodList')
+    theme = request.data.get('themeList')
+    region = request.data.get('regionList')
 
-    ageFlist = request.data.get('age')
-    periodsFlist = request.data.get('periods')
-    themeFlist = request.data.get('theme')
-    regionFlist = request.data.get('region')
+    boards = Board.objects.annotate(day = F('travel__endDate') - F('travel__startDate'))
 
     # 일단 하드 코딩에 가깝긴 한데, 프엔에서 넘겨주는 타이밍 까지 만드는게 아니면 그냥 이런식으로 쓰고 수정하는게 나을듯?
-    age_lst = {'1o대': Q(user__age__gte=10) & Q(user__age__lt=20),
-               '20대': Q(user__age__gte=20) & Q(user__age__lt=30),
-               '30대': Q(user__age__gte=30) & Q(user__age__lt=40),
-               '40대': Q(user__age__gte=40) & Q(user__age__lt=50),
-               '50대 이상': Q(user__age__gte=50)}
-    periods_lst = {'당일치기': Q(day__lte=datetime.timedelta(days=1)),
-                   '1박2일': Q(day__lte=datetime.timedelta(days=2)) & Q(day__gt=datetime.timedelta(days=1)),
-                   '3박4일': Q(day__lte=datetime.timedelta(days=3)) & Q(day__gt=datetime.timedelta(days=2)),
-                   '4박5일+': Q(day__gt=datetime.timedelta(days=3))}
-    theme_lst = {'혼자여행': Q(theme='혼자여행'),
-                 '커플여행': Q(theme='커플여행'),
-                 '효도여행': Q(theme='효도여행'),
-                 '우정여행': Q(theme='우정여행'),
-                 '직장여행': Q(theme='혼자여행')}
-    region_lst = {"서울": Q(travel__placeList__placeName='서울'),
-                  "경기": Q(travel__placeList__placeName='경기'),
-                  "강원": Q(travel__placeList__placeName='강원'),
-                  "부산": Q(travel__placeList__placeName='부산'),
-                  "경북·대구": Q(travel__placeList__placeName='경북·대구'),
-                  "전남·광주": Q(travel__placeList__placeName='전남·광주'),
-                  "제주": Q(travel__placeList__placeName='제주'),
-                  "충남·대전": Q(travel__placeList__placeName='충남·대전'),
-                  "경남": Q(travel__placeList__placeName='경남'),
-                  "충북": Q(travel__placeList__placeName='충북'),
-                  "경남": Q(travel__placeList__placeName='경남'),
-                  "전북": Q(travel__placeList__placeName='전북'),
-                  "인천": Q(travel__placeList__placeName='인천')}
+    age_dic = { '10대' : [10,20], '20대': [20,30] , '30대' : [30,40] , '40대': [40,50], '50대 이상': [50,100]}
+    periods_dic = {'당일치기': 1, '1박2일': 2, '3박4일': 3, '4박5일+': 4}
+    theme_lst = ['혼자여행', '커플여행', '효도여행', '우정여행', '직장여행']
+    region_lst = ["서울","경기","강원","부산","경북·대구","전남·광주","제주","충남·대전","경남","충북","경남","전북","인천"]
 
-    result_query = Q()
-    
-    if ageFlist:
-        for age in ageFlist:
-            result_query |= age_lst[age]
-    if periodsFlist:
-        for periods in periodsFlist:
-            result_query |= periods_lst[periods]
-    if themeFlist:
-        for theme in themeFlist:
-            result_query |= theme_lst[theme]
-    if regionFlist:
-        for region in regionFlist:
-            result_query |= region_lst[region]
-    print("===================================")
-    result = boards.filter(result_query)
-    result_data = BoardListSerializer(result, many=True)
-    return Response(result_data.data, status=status.HTTP_200_OK)
-    
 
-# @api_view(['POST'])
-# def board_filtered(request):
-#     boards = Board.objects.annotate(day = F('travel__endDate') - F('travel__startDate'))
-#     print(boards.values())
-#     result = boards.filter(day__lt = datetime.timedelta(days=2))
-#     returndata = BoardListSerializer(result, many=True)
-#     print(result.values())
-#     # print(result)
-#     return Response(returndata.data, status=status.HTTP_200_OK)
-#     Q(age_list.sadfaf | age_list.sadfaf | age_list.sadfaf| age_list.sadfaf| )
+    # alyways true q object 찾아보니까 이렇더라 이거 default로 추가해가면 될 것 같음.
+    # result_query = ~Q(pk__in=[])
+    age_query = Q(pk__in=[])
+    period_query = Q(pk__in=[])
+    theme_query = Q(pk__in=[])
+    region_query = Q(pk__in=[])
+
+    if age:
+        for age_str in age:
+            age_query  |= Q(userId__age__gte = age_dic[age_str][0] , userId__age__lt = age_dic[age_str][1])
+    else:
+        age_query = ~Q(pk__in=[])
+    
+    if periods:
+        for period_str in periods:
+            period_query |= Q(day__lt = timedelta(days=periods_dic[period_str]))
+    else:
+        period_query = ~Q(pk__in=[])
+
+    if theme:
+        for theme_str in theme:
+            theme_query |= Q(theme = theme_str)
+    else:
+        theme_query = ~Q(pk__in=[])
+
+    if region:    
+        for region_str in region:
+            region_query |= Q(travel__location = region_str)
+    else:
+        region_query = ~Q(pk__in=[])
+    
+    result_query = age_query & period_query & theme_query & region_query
+    result_board = boards.filter(result_query)
+
+    print(result_query)
+
+    serializer = BoardListSerializer(result_board, many= True)
+
+    return Response(serializer.data, status= status.HTTP_200_OK)
+            
+        
+
+
+
+
+
+
 
 
 # 밑에 주석은 참고 사항 때매 남겨 놓은것 나중에 지우겠습니다.
