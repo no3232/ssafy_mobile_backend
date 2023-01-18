@@ -8,4 +8,5 @@ urlpatterns = [
     path('emailvalidate/', views.validate_email),
     path('social_login/<str:social_page>/', views.social_login),
     path('join/<int:user_pk>/', views.join_views),
+    path('image_test/', views.image_test),
 ]
