@@ -37,7 +37,7 @@ def board_get(request):
 @api_view(['POST'])
 def board_create(request):
     User = get_user_model()
-    user = User.objects.get(pk=request.data['user'])
+    user = User.objects.get(pk=request.data['userId'])
     
     serializer = BoardListSerializer(data=request.data, context = {'request' : request})
     if serializer.is_valid(raise_exception=True):
@@ -101,6 +101,8 @@ def board_filtered(request):
     
     result_query = age_query & period_query & theme_query & region_query
     result_board = boards.filter(result_query)
+
+    print(result_query)
 
     serializer = BoardListSerializer(result_board, many= True)
 
