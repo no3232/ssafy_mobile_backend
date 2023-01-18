@@ -69,6 +69,7 @@ class BoardListSerializer(serializers.ModelSerializer):
     travel = TravelSerializer(read_only = True)
     writeDate = serializers.DateTimeField(format="%Y-%m-%d %H:%M:%S", read_only= True)
     imageList = ImageSerializer(many=True , read_only = True)
+    profileImg = serializers.ImageField(use_url = True)
 
     class Meta:
         model = Board

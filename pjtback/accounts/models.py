@@ -11,7 +11,7 @@ class User(AbstractUser):
     phone_number = models.CharField(_("phone"), max_length=13,)
     profileImg = ProcessedImageField(
         blank=True,
-        upload_to='profile_image/%Y/%m',
+        upload_to='profile_image/accounts/%Y/%m',
         processors=[ResizeToFill(300, 300)],
         format='JPEG',
         options={'quality': 70},
