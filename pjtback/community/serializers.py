@@ -45,13 +45,13 @@ class PlaceSerializer(serializers.ModelSerializer):
     def create(self, validated_data):
         instance = Place.objects.create(**validated_data)
         image_set = self.context['request'].FILES
-        for image_data in image_set.getlist('image'):
+        for image_data in image_set.getlist('imageList'):
             PlaceImage.objects.create(place=instance, image=image_data)
         return instance
 
 class TravelSerializer(serializers.ModelSerializer):
     travelId = serializers.IntegerField(source='id')
-    placeList = PlaceSerializer(many=True, read_only= True)
+    placeList = PlaceSerializer(many=True, required = False, allow_null = True)
     startDate = serializers.DateTimeField(format="%Y-%m-%d %H:%M:%S")
     endDate = serializers.DateTimeField(format="%Y-%m-%d %H:%M:%S")
 
@@ -66,7 +66,7 @@ class BoardListSerializer(serializers.ModelSerializer):
     boardId = serializers.IntegerField(source='id', read_only=True)
     userId = serializers.IntegerField(source ='userId.pk', read_only=True)
     nickname =  serializers.CharField(source='userId.nickname', read_only=True)
-    travel = TravelSerializer(read_only = True)
+    travel = TravelSerializer(required=False, allow_null = True)
     writeDate = serializers.DateTimeField(format="%Y-%m-%d %H:%M:%S", read_only= True)
     imageList = ImageSerializer(many=True , read_only = True)
     profileImg = serializers.ImageField(use_url = True)
@@ -79,7 +79,7 @@ class BoardListSerializer(serializers.ModelSerializer):
     def create(self, validated_data):
         instance = Board.objects.create(**validated_data)
         image_set = self.context['request'].FILES
-        for image_data in image_set.getlist('image'):
+        for image_data in image_set.getlist('imageList'):
             Imagelist.objects.create(board=instance, image=image_data)
         return instance
 
