@@ -141,7 +141,24 @@ def board_filtered(request):
     serializer = BoardListSerializer(result_board, many= True)
 
     return Response(serializer.data, status= status.HTTP_200_OK)
-            
+
+
+@api_view(['GET'])
+def travel_get(request):
+    travels = Travel.objects.all()
+    serializer = TravelSerializer(travels, many=True)
+    return Response(serializer.data)
+
+@api_view(['POST'])
+def travel_post(request):
+    User = get_user_model()
+    user = User.objects.get(pk=request.data['userId'])
+    
+    serializer = TravelSerializer(data=request.data, context = {'request' : request})
+    if serializer.is_valid(raise_exception=True):
+        serializer.save(userId=user)
+         
+        return Response(serializer.data, status=status.HTTP_201_CREATED)       
         
 
 

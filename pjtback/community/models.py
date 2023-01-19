@@ -5,20 +5,8 @@ from accounts.models import User
 from imagekit.models import ProcessedImageField
 from imagekit.processors import ResizeToFill
 
-# Create your models here.
-
-
-
-
 class Board(models.Model):
     userId = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='writeBoard')
-    profileImg = ProcessedImageField(
-        blank=True,
-        upload_to='profile_image/board/profile/%Y/%m',
-        processors=[ResizeToFill(300, 300)],
-        format='JPEG',
-        options={'quality': 70},
-    )
     writeDate = models.DateTimeField(auto_now = True)
     theme = models.CharField(max_length=20, default='')
     title = models.CharField(max_length= 50 , default="")
@@ -26,6 +14,8 @@ class Board(models.Model):
     likeCount = models.IntegerField(_("likeCount"), default=0)
     commentCount = models.IntegerField(_("commentCount"), default=0)
     like_user = models.ManyToManyField(User, related_name='myLikeBoard')
+    char_profile_img = models.CharField(max_length=100)
+    char_image_lst = models.JSONField()
 
     
 class Travel(models.Model):
@@ -56,7 +46,10 @@ class Imagelist(models.Model):
         processors=[ResizeToFill(300, 300)],
         format='JPEG',
         options={'quality': 70},
-    )
+)
+
+class CharImage(models.Model):
+    char_image = models.CharField(max_length=100)
 
 
 class PlaceImage(models.Model):
@@ -69,26 +62,15 @@ class PlaceImage(models.Model):
         options={'quality': 70},
     )
 
-# class ArticleImage(models.Model):
-#     img_url = models.ImageField(_("article_image_url"))
-#     Community = models.ForeignKey(Community, on_delete=models.CASCADE)
-
-# class Comment(models.Model):
-#     community = models.ForeignKey(Community, on_delete=models.CASCADE)
-#     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
-#     content = models.TextField(max_length=34)
-#     created_at = models.DateTimeField(auto_now_add=True)
-#     update_at = models.DateTimeField(auto_now=True)
-
-# class Travelpath(models.Model):
-#     community = models.ForeignKey(Community, on_delete=models.CASCADE)
-#     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
-#     travel_point_lst = models.JSONField(_("travel_point_json"),default=dict)
-#     # 혹시나 지도 위에다 그리는 거면 필요 없는 필드가 될 수도 있음.
-#     travel_created_img_url = models.ImageField(_("travel_created_img_url"))
+class Comment(models.Model):
+    board = models.ForeignKey(Board, on_delete=models.CASCADE)
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    nickname = models.CharField(max_length = 30)
+    content = models.TextField(max_length=34)
+    write_date = models.DateTimeField(auto_now_add=True)
 
 
-# class Like(models.Model):
-#     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
-#     community = models.ForeignKey(Community, on_delete=models.CASCADE)
+class Like(models.Model):
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    board = models.ForeignKey(Board, on_delete=models.CASCADE)
 
