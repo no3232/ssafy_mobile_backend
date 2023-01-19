@@ -278,7 +278,8 @@ REST_AUTH_SERIALIZERS = {
 REST_USE_JWT = True
 
 # 스태틱 파일 BASEROOT
-STATIC_ROOT = BASE_DIR / 'staticfiles'
+# STATIC_ROOT = BASE_DIR / 'staticfiles'
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 
 # django graphene
 GRAPHENE = {

@@ -107,22 +107,21 @@ class CustomJWTSerializer(JWTSerializer):
     """
     Serializer for JWT authentication.
     """
-    access_token = ''
-    refresh_token = ''
+    # access_token = ''
+    # refresh_token = ''
     user = ''
 
-    uid = serializers.IntegerField(source='user.id')
-    travel = TravelSerializer(source='user.travel', many=True)
-    myLikeBoard = BoardListSerializer(source='user.myLikeBoard', many=True)
-    writeBoard = BoardListSerializer(source='user.writeBoard', many=True)
-    token = TokenSerializer(source='*')
-    join = JoinSerializer(source="user")
-    totalDate = serializers.IntegerField(source='user.id')
+    # uid = serializers.IntegerField(source='user.id')
+    # travel = TravelSerializer(source='user.travel', many=True)
+    # myLikeBoard = BoardListSerializer(source='user.myLikeBoard', many=True)
+    # writeBoard = BoardListSerializer(source='user.writeBoard', many=True)
+    # token = TokenSerializer(source='*')
+    # join = JoinSerializer(source="user")
+    # totalDate = serializers.IntegerField(source='user.id')
     
 
     class Meta:
-        fields = ('uid', 'token',  'join', 'travel',
-                  'myLikeBoard', 'writeBoard', 'totalDate',)
+        fields = ('access_token', 'refresh_token')
 
 
 class EmailUniqueCheckSerializer(serializers.ModelSerializer):
