@@ -1,14 +1,24 @@
 from rest_framework import serializers
-from .models import Board, Travel ,Place , Comment, Like 
+from .models import Board, Travel ,Place , Comment, Like
+from rest_framework.response import Response
+from rest_framework import status 
 
 class PlaceSerializer(serializers.ModelSerializer):
-    placeId = serializers.IntegerField(source='id')
-    saveDate = serializers.DateTimeField(format="%Y-%m-%d %H:%M:%S")
+    placeId = serializers.IntegerField(source='id', read_only = True)
+    saveDate = serializers.DateTimeField(format="%Y-%m-%d %H:%M:%S", read_only= True)
     placeImgList = serializers.JSONField(required=False)
 
     class Meta:
         model = Place
         fields = ('placeId','placeName','saveDate','memo','placeImgList','latitude','longitude','address',)
+
+
+    # def create(self, request, *args, **kwargs):
+    #         kwargs["many"] = isinstance(request.data, list)
+    #         serializer = self.get_serializer(data=request.data, **kwargs)
+    #         serializer.is_valid(raise_exception=True)
+    #         serializer.save()
+    #         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
 
 class TravelSerializer(serializers.ModelSerializer):
@@ -21,7 +31,16 @@ class TravelSerializer(serializers.ModelSerializer):
     class Meta:
         model = Travel
         fields = ( 'travelId','location','startDate','endDate','placeList',)
-        read_only_fields = ('placeList',)
+    
+    def create(self, validated_data):
+        instance = Travel.objects.create(**validated_data)
+
+        places = self.context['request'].data['placeList']
+        if places:
+            for place in places:
+                new_place = Place.objects.create(travel = instance, **place)
+
+        return instance
         
 
 
@@ -38,8 +57,6 @@ class BoardListSerializer(serializers.ModelSerializer):
         model = Board
         fields = ('boardId','userId','nickname', 'profileImg','writeDate','theme','title','content','imageList','travel','likeCount','commentCount',)
         read_only_fields = ('userId','travel','profileImg','writeDate',)
-
-    
 
     # 요거는 혹시나 해서 참고로 남겨 둠
     # def create(self, validated_data):
