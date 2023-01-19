@@ -25,6 +25,8 @@ class Migration(migrations.Migration):
                 ('imageList', models.JSONField()),
                 ('likeCount', models.IntegerField(default=0, verbose_name='likeCount')),
                 ('commentCount', models.IntegerField(default=0, verbose_name='commentCount')),
+                ('char_profile_img', models.CharField(max_length=100)),
+                ('char_image_lst', models.JSONField()),
                 ('like_user', models.ManyToManyField(related_name='myLikeBoard', to=settings.AUTH_USER_MODEL)),
             ],
         ),
@@ -79,5 +81,16 @@ class Migration(migrations.Migration):
             model_name='board',
             name='userId',
             field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='writeBoard', to=settings.AUTH_USER_MODEL),
+        ),
+        migrations.CreateModel(
+            name='Comment',
+            fields=[
+                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
+                ('nickname', models.CharField(max_length=30)),
+                ('content', models.TextField(max_length=34)),
+                ('write_date', models.DateTimeField(auto_now_add=True)),
+                ('board', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='community.board')),
+                ('user', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to=settings.AUTH_USER_MODEL)),
+            ],
         ),
     ]
