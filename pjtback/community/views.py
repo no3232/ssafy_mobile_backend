@@ -122,21 +122,12 @@ def travel_get(request):
     serializer = TravelSerializer(travels, many=True)
     return Response(serializer.data)
 
-@api_view(['GET', 'POST', 'PUT', 'DELETE'])
+@api_view(['GET', 'PUT', 'DELETE'])
 def travel_detail(request, travel_id):
     travel = get_object_or_404(Travel, id = travel_id)
     if request.method == 'GET':
         serializer = TravelSerializer(travel)
         return Response(serializer.data)
-
-    # elif request.method == 'POST':
-    #     # user = request.user
-    #     User = get_user_model()
-    #     user = User.objects.get(pk=1)
-    #     serializer = TravelSerializer(data=request.data)
-    #     if serializer.is_valid(raise_exception=True):
-    #         serializer.save(userId=user)
-    #     return Response(serializer.data, status=status.HTTP_201_CREATED)
 
     elif request.method == 'PUT':
         # user = request.user
@@ -167,7 +158,14 @@ def travel_create(request):
     if serializer.is_valid(raise_exception=True):
         serializer.save(userId=user)
 
-        return Response(serializer.data, status=status.HTTP_201_CREATED)       
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
+
+@api_view(['GET'])
+def travel_user(request, user_id):
+    travels = Travel.objects.filter(userId__id = user_id)
+    serializer = TravelSerializer(travels, many = True)
+
+    return Response(serializer.data)
         
 
 
