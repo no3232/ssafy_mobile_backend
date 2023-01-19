@@ -12,14 +12,15 @@ class PlaceSerializer(serializers.ModelSerializer):
 
 
 class TravelSerializer(serializers.ModelSerializer):
-    travelId = serializers.IntegerField(source='id', required=False)
-    placeList = PlaceSerializer(many=True, required = False, allow_null = True )
+    userId = serializers.IntegerField(source='userId.id', read_only=True)
+    travelId = serializers.IntegerField(source='id', required=False, read_only=True)
+    placeList = PlaceSerializer(many=True, required = False, allow_null = True ,read_only=True)
     startDate = serializers.DateTimeField(format="%Y-%m-%d %H:%M:%S")
     endDate = serializers.DateTimeField(format="%Y-%m-%d %H:%M:%S")
 
     class Meta:
         model = Travel
-        fields = ('travelId','location','startDate','endDate','placeList',)
+        fields = ('userId', 'travelId','location','startDate','endDate','placeList',)
         read_only_fields = ('placeList',)
         
 

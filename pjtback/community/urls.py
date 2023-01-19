@@ -7,7 +7,9 @@ urlpatterns = [
     path('board/create/', views.board_create),
     path('board/filter/', views.board_filtered),
     path('place/', views.place_get),
-    path('travel/create/', views.travel_create)
+    path('travel/', views.travel_get),
+    path('travel/create/', views.travel_create),
+    path('traveldetail/<int:travel_id>/', views.travel_detail),
     # path('travel/create/', views.travel_create),
     # path('outline', views.community_list),
     # path('filtered',views.community_filtered_list),
