@@ -9,7 +9,7 @@ from imagekit.processors import ResizeToFill
     
 class Travel(models.Model):
     userId = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='travel')
-    location = models.CharField(max_length=30, default='')
+    location = models.JSONField()
     startDate = models.DateTimeField(auto_now=False, auto_now_add=False)
     endDate = models.DateTimeField(auto_now=False, auto_now_add=False)
     
@@ -30,6 +30,7 @@ class Place(models.Model):
     placeName = models.CharField(max_length = 20, default="대구")
     saveDate = models.DateTimeField(auto_now=False, auto_now_add=True)
     memo = models.CharField(max_length=20)
+    placeImgList = models.JSONField()
     latitude = models.FloatField(default=0.0)
     longitude = models.FloatField(default=0.0)
     address = models.CharField(max_length=40, default='')
