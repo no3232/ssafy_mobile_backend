@@ -122,15 +122,51 @@ def travel_get(request):
     serializer = TravelSerializer(travels, many=True)
     return Response(serializer.data)
 
-@api_view(['POST'])
-def travel_post(request):
-    User = get_user_model()
-    user = User.objects.get(pk=request.data['userId'])
+@api_view(['GET', 'POST', 'PUT', 'DELETE'])
+def travel_detail(request, travel_id):
+    travel = get_object_or_404(Travel, id = travel_id)
+    if request.method == 'GET':
+        serializer = TravelSerializer(travel)
+        return Response(serializer.data)
+
+    # elif request.method == 'POST':
+    #     # user = request.user
+    #     User = get_user_model()
+    #     user = User.objects.get(pk=1)
+    #     serializer = TravelSerializer(data=request.data)
+    #     if serializer.is_valid(raise_exception=True):
+    #         serializer.save(userId=user)
+    #     return Response(serializer.data, status=status.HTTP_201_CREATED)
+
+    elif request.method == 'PUT':
+        # user = request.user
+        # if travel.userId == user:
+        User = get_user_model()
+        user = User.objects.get(id=1)
+        serializer = TravelSerializer(travel, data=request.data)
+        if serializer.is_valid(raise_exception=True):
+            serializer.save(userId = user)
+            
+            return Response(serializer.data, status=status.HTTP_201_CREATED)  
     
+    elif request.method == 'DELETE':
+        # if request.user == travel.userId:
+        #     travel.delete()
+        #     return Response(status=status.HTTP_204_NO_CONTENT)
+        # else:
+        #     return Response(status=status.HTTP_401_UNAUTHORIZED)
+        travel.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
+
+@api_view(['POST'])
+def travel_create(request):
+    # user = request.user
+    User = get_user_model()
+    user = User.objects.get(id=1)
     serializer = TravelSerializer(data=request.data)
     if serializer.is_valid(raise_exception=True):
         serializer.save(userId=user)
-         
+
         return Response(serializer.data, status=status.HTTP_201_CREATED)       
         
 
