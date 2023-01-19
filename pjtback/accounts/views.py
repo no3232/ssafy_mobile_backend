@@ -153,16 +153,23 @@ def join_views(request, user_pk):
         serializer = CustomUserDetailSerializer(user)
         return Response(serializer.data, status=status.HTTP_200_OK)
     elif request.method == 'PUT':
-        if request.user == user:
-            serializer = CustomUserDetailSerializer(instance=user, data=request.data)
-            print(serializer)
-            if serializer.is_valid():
-                serializer.save()
-                return Response(serializer.data, status=status.HTTP_202_ACCEPTED)
-            else:
-                return Response(serializer.errors, status = status.HTTP_400_BAD_REQUEST)
+        # if request.user == user:
+        #     serializer = CustomUserDetailSerializer(instance=user, data=request.data)
+        #     print(serializer)
+        #     if serializer.is_valid():
+        #         serializer.save()
+        #         return Response(serializer.data, status=status.HTTP_202_ACCEPTED)
+        #     else:
+        #         return Response(serializer.errors, status = status.HTTP_400_BAD_REQUEST)
+        # else:
+        #     return Response(status = status.HTTP_401_UNAUTHORIZED)
+        serializer = JoinSerializer(instance=user, data=request.data)
+        print(serializer)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_202_ACCEPTED)
         else:
-            return
+            return Response(serializer.errors, status = status.HTTP_400_BAD_REQUEST)
     elif request.method == 'DELETE':
         if request.user == user:
             user.delete()

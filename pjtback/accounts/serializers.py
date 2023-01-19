@@ -35,7 +35,7 @@ class CustomRegisterSerializer(RegisterSerializer):
     kakao_email = serializers.EmailField(required=False)
     google_email = serializers.EmailField(required=False)
     nickname = serializers.CharField(min_length=1, required=True)
-    age = serializers.IntegerField(required=False)
+    age = serializers.CharField(required=False)
 
     # password1, password2, 검증 해제
     def validate(self, data):
@@ -49,7 +49,7 @@ class CustomRegisterSerializer(RegisterSerializer):
         data['google'] = self.validated_data.get('google', '')
         data['kakao'] = self.validated_data.get('kakao', '')
         data['nickname'] = self.validated_data.get('nickname', 'Ghost')
-        data['age'] = self.validated_data.get('age')
+        data['age'] = int(self.validated_data.get('age'))
 
         return data
 
@@ -77,6 +77,7 @@ class CustomRegisterSerializer(RegisterSerializer):
 class CustomUserDetailSerializer(UserDetailsSerializer):
     pw = serializers.CharField(source="password", read_only=True)
     name = serializers.CharField(source="username", required=False)
+    age = serializers.CharField()
 
     class Meta(UserDetailsSerializer.Meta):
         fields = ('email', 'pw', 'name', 'nickname',
@@ -85,13 +86,14 @@ class CustomUserDetailSerializer(UserDetailsSerializer):
 
 
 class JoinSerializer(serializers.ModelSerializer):
-    pw = serializers.CharField(source="password")
+    pw = serializers.CharField(source="password", read_only=True, required=False)
     name = serializers.CharField(source="username")
 
     class Meta:
         model = User
         fields = ('email', 'pw', 'name', 'nickname',
                   'profileImg', 'age', 'kakao', 'naver', 'google')
+        read_only_fields = ('email', 'pw',)
 
 
 class TokenSerializer(JWTSerializer):
