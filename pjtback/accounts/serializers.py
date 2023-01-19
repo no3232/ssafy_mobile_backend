@@ -86,14 +86,12 @@ class CustomUserDetailSerializer(UserDetailsSerializer):
 
 
 class JoinSerializer(serializers.ModelSerializer):
-    pw = serializers.CharField(source="password", read_only=True, required=False)
-    name = serializers.CharField(source="username")
-
+    
     class Meta:
         model = User
-        fields = ('email', 'pw', 'name', 'nickname',
+        fields = ('email', 'password', 'username', 'nickname',
                   'profileImg', 'age', 'kakao', 'naver', 'google')
-        read_only_fields = ('email', 'pw',)
+        read_only_fields = ('email', 'password',)
 
 
 class TokenSerializer(JWTSerializer):
