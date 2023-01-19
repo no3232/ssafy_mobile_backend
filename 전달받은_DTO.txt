@@ -30,7 +30,6 @@ data class Travel @JvmOverloads constructor(
     val location : String,
     val startDate : Date,
     val endDate : Date,
-    val theme : String, //여행 테마(복수선택 가능)
     val placeList : ArrayList<Place>
 )
 
@@ -53,6 +52,7 @@ data class Board(
     val nickname : String,
     val profileImg : String, //프로필 이미지
     var writeDate : Date, //작성 날짜
+    val theme : String, //여행 테마(복수선택 가능)
     val title : String,
     val content: String,
     val imageList : ArrayList<String>,

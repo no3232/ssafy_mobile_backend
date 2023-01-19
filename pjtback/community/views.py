@@ -11,8 +11,8 @@ from rest_framework.permissions import IsAuthenticated
 
 from django.shortcuts import get_object_or_404, get_list_or_404
 # from .serializers import  CommunityListSerializer, CommunitySerializer, CommentSerializer, ArticleImageSerializer , TravelPathSerializer, LikeSerializer, CommunityCreateSerializer
-from .serializers import BoardListSerializer, ImageSerializer, PlaceSerializer, TravelSerializer
-from .models import Board, Place, Imagelist, Travel
+from .serializers import BoardListSerializer, PlaceSerializer, TravelSerializer
+from .models import Board, Place, Travel
 from django.contrib.auth import get_user_model
 
 # json 파싱을 위해서
