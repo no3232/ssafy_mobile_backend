@@ -42,39 +42,12 @@ def board_create(request):
     User = get_user_model()
     user = User.objects.get(pk=request.data['userId'])
     
-    serializer = BoardListSerializer(data=request.data, context = {'request' : request})
+    serializer = BoardListSerializer(data=request.data)
+    wanted_travel = get_object_or_404(Travel, pk=request.data['travel']['travelId'])
+
     if serializer.is_valid(raise_exception=True):
-        serializer.save(userId=user)
-
+        serializer.save(userId=user, travel_id=wanted_travel)
         return Response(serializer.data, status=status.HTTP_201_CREATED)
-
-@api_view(['GET'])
-def place_get(request):
-    travel_id = request.data.get('travel_id')
-    if not travel_id:
-        return Response(status=status.HTTP_404_NOT_FOUND)
-    travelObj = Travel.objects.get(id=travel_id)
-    
-    places = Place.objects.filter(travel = travelObj)
-    placedatas = PlaceSerializer(places, many=True)
-    
-    return Response(placedatas.data, status=status.HTTP_200_OK)
-
-@api_view(['POST'])
-def travel_create(request):
-    user_id = request.data.get('user_id')
-    # user = request.user
-    user = get_object_or_404(get_user_model(), id = user_id)
-    board_id = request.data.get('board_id')
-    board = get_object_or_404(Board, id = board_id)
-    if not user_id or not board_id:
-        return Response(status=status.HTTP_404_NOT_FOUND)
-    serializer = TravelSerializer(data = request.data)
-    if serializer.is_valid():
-        serializer.save(board = board, userId = user)
-        return Response(serializer.data, status=status.HTTP_202_ACCEPTED)
-    else:
-        return Response(serializer.errors, status = status.HTTP_400_BAD_REQUEST)
 
 
 # 쿼리 형식으로 db 접근 할 수 있는 라이브러리
