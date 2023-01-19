@@ -127,8 +127,8 @@ def social_login(request, social_page):
         return HttpResponse(False)
     token = get_tokens_for_user(user)
     context = {
-        "token": {"refresh": token["refresh"],
-                  "access": token["access"], },
+        "token": {"refresh_token": token["refresh"],
+                  "access_token": token["access"], },
         "user": {"email": user.email}
     }
     return JsonResponse(context, status=status.HTTP_200_OK)
@@ -178,18 +178,20 @@ def join_views(request, user_pk):
             return Response(status=status.HTTP_401_UNAUTHORIZED)
     return Response(status=status.HTTP_400_BAD_REQUEST)
 
-@api_view(['POST', 'GET'])
-def image_test(request):
-    print(request.data)
-    # ImageTest.objects.create(profileImg = request.FILES)
-    if request.method == "POST":
-        serializer = ImageTestSerializer(data = request.data)
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data, status=status.HTTP_202_ACCEPTED)
-        else:
-            return Response(serializer.errors, status = status.HTTP_400_BAD_REQUEST)
-    else:
-        img = get_list_or_404(ImageTest)
-        serializer = ImageTestSerializer(img, many=True)
-        return Response(serializer.data)
+
+
+# @api_view(['POST', 'GET'])
+# def image_test(request):
+#     print(request.data)
+#     # ImageTest.objects.create(profileImg = request.FILES)
+#     if request.method == "POST":
+#         serializer = ImageTestSerializer(data = request.data)
+#         if serializer.is_valid():
+#             serializer.save()
+#             return Response(serializer.data, status=status.HTTP_202_ACCEPTED)
+#         else:
+#             return Response(serializer.errors, status = status.HTTP_400_BAD_REQUEST)
+#     else:
+#         img = get_list_or_404(ImageTest)
+#         serializer = ImageTestSerializer(img, many=True)
+#         return Response(serializer.data)
