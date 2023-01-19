@@ -1,0 +1,81 @@
+data class Join @JvmOverloads
+    constructor(
+    val email: String, //아이디
+    var pw: String,
+    var name: String = "",
+    var nickname: String = "",
+    var profileImg : String?,
+    var age : Int = 0 , //연령대
+    val kakao : String = "", //카카오 이메일
+    val naver : String = "", //네이버 이메일
+    val google : String = "", //구글 이메일
+) : java.io.Serializable
+
+
+
+data class User @JvmOverloads constructor(
+    val uid : Int,
+    val join : Join,
+    val travel : ArrayList<Travel>,
+    val myLikeBoard : ArrayList<Board>,
+    val writeBoard : ArrayList<Board>,
+    val totalDate : Int,
+    val token : Token,
+)
+
+
+
+data class Travel @JvmOverloads constructor(
+    val travelId : String,
+    val location : String,
+    val startDate : Date,
+    val endDate : Date,
+    val theme : String, //여행 테마(복수선택 가능)
+    val placeList : ArrayList<Place>
+)
+
+
+data class Place(
+    val placeId : Int, //장소 아이디
+    val placeName : String, //장소 이름
+    val saveDate : Long, //기록 시간
+    val memo : String, // 기록
+    val placeImgList : ArrayList<String>, //장소 사진 리스트
+    val latitude : Double, //위도
+    val longitude : Double, //경도
+    val address : String, //해당 위치 주소
+)
+
+
+data class Board(
+    val boardId: Int, //게시글 번호
+    val userId : Int,
+    val nickname : String,
+    val profileImg : String, //프로필 이미지
+    var writeDate : Date, //작성 날짜
+    val title : String,
+    val content: String,
+    val imageList : ArrayList<String>,
+    val travel : Travel, //여정 정보 객체
+    var likeCount : Int = 0, //좋아요 수
+    var commentCount : Int = 0, //댓글 수
+)
+
+
+data class Filter @JvmOverloads constructor(
+    val themeList : ArrayList<String>, //여행 테마
+    val regionList : ArrayList<String>, //여행 지역
+    val periodList : ArrayList<String>, //여행 기간
+    val ageList : ArrayList<String> //연령대
+)
+
+
+data class Comment @JvmOverloads constructor(
+    val commentId : Int, //댓글 아이디
+    val boardId : Int, //게시물 아이디
+    val profileImg : String,
+    val userId : Int, //사용자 아이디
+    val nickname : String,
+    val content : String,
+    val writeDate : Date,
+    )

@@ -9,8 +9,8 @@ from rest_framework.permissions import IsAuthenticated
 
 from django.shortcuts import get_object_or_404, get_list_or_404
 # from .serializers import  CommunityListSerializer, CommunitySerializer, CommentSerializer, ArticleImageSerializer , TravelPathSerializer, LikeSerializer, CommunityCreateSerializer
-from .serializers import BoardListSerializer, ImageSerializer
-from .models import Board  , Place ,Imagelist
+from .serializers import BoardListSerializer, ImageSerializer , TravelSerializer
+from .models import Board  , Place ,Imagelist, Travel
 from django.contrib.auth import get_user_model
 
 # json 파싱을 위해서
@@ -107,7 +107,24 @@ def board_filtered(request):
     serializer = BoardListSerializer(result_board, many= True)
 
     return Response(serializer.data, status= status.HTTP_200_OK)
-            
+
+
+@api_view(['GET'])
+def travel_get(request):
+    travels = Travel.objects.all()
+    serializer = TravelSerializer(travels, many=True)
+    return Response(serializer.data)
+
+@api_view(['POST'])
+def travel_post(request):
+    User = get_user_model()
+    user = User.objects.get(pk=request.data['userId'])
+    
+    serializer = TravelSerializer(data=request.data, context = {'request' : request})
+    if serializer.is_valid(raise_exception=True):
+        serializer.save(userId=user)
+         
+        return Response(serializer.data, status=status.HTTP_201_CREATED)       
         
 
 

@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Board, Travel ,Place ,Imagelist, PlaceImage
+from .models import Board, Travel ,Place ,Imagelist, PlaceImage, Comment, Like , CharImage
 
 class ImageSerializer(serializers.RelatedField):
     image = serializers.ImageField(use_url = True)
@@ -15,10 +15,15 @@ class ImageSerializer(serializers.RelatedField):
         model = Imagelist
         fields = ('image',)
 
+class CharImageSerializer(serializers.RelatedField):
+
+    class Meta:
+        model = CharImage
+        fields = ('char_image',)
+
 
 class PlaceImageSerializer(serializers.RelatedField):
     image = serializers.ImageField(use_url = True)
-
 
     def to_representation(self, instance):
         url = instance.image.url
@@ -35,8 +40,6 @@ class PlaceSerializer(serializers.ModelSerializer):
     placeId = serializers.IntegerField(source='id')
     saveDate = serializers.DateTimeField(format="%Y-%m-%d %H:%M:%S")
     placeImgList = PlaceImageSerializer(many=True , read_only = True)
-
-
 
     class Meta:
         model = Place
@@ -68,8 +71,8 @@ class BoardListSerializer(serializers.ModelSerializer):
     nickname =  serializers.CharField(source='userId.nickname', read_only=True)
     travel = TravelSerializer(required=False, allow_null = True)
     writeDate = serializers.DateTimeField(format="%Y-%m-%d %H:%M:%S", read_only= True)
-    imageList = ImageSerializer(many=True , read_only = True)
-    profileImg = serializers.ImageField(use_url = True)
+    imageList = serializers.JSONField(source='char_image_lst', required=False)
+    profileImg = serializers.CharField(source = 'char_profile_img')
 
     class Meta:
         model = Board
@@ -84,56 +87,20 @@ class BoardListSerializer(serializers.ModelSerializer):
         return instance
 
 
+class CommentSerializer(serializers.ModelSerializer):
+    commentId = serializers.IntegerField(source='id', read_only=True)
+    boardId = serializers.IntegerField(source='board.pk', read_only=True)
+    userId = serializers.CharField(source='user.pk', read_only=True)
+    nickname = serializers.CharField(source = 'user.nickname', read_only = True)
+    profileImg = serializers.CharField(source = 'user.profileImg')
 
-# class CommunityListSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Comment
+        fields = '__all__'
+        read_only_fields = ('user',)
 
-#     username = serializers.CharField(source='user.username', read_only=True)
+class LikeSerializer(serializers.ModelSerializer):
 
-#     class Meta:
-#         model = Community
-#         fields = '__all__'
-
-# class CommunitySerializer(serializers.ModelSerializer):
-
-#     username = serializers.CharField(source='user.username', read_only=True)
-
-#     class Meta:
-#         model = Community
-#         fields = '__all__'
-#         read_only_fields = ('user',)
-
-
-# class CommunityCreateSerializer(serializers.ModelSerializer):
-#     class Meta:
-#         model = Community
-#         fields = ('title','content','secret_type','travel_region','travel_start_date','travel_end_date','travel_theme','is_creating','travel_length',)
-
-
-# class CommentSerializer(serializers.ModelSerializer):
-
-#     username = serializers.CharField(source='user.username', read_only=True)
-
-#     class Meta:
-#         model = Comment
-#         fields = '__all__'
-#         read_only_fields = ('user',)
-
-
-# class ArticleImageSerializer(serializers.ModelSerializer):
-    
-#     class Meta:
-#         model = ArticleImage
-#         fields = '__all__'
-
-
-# class TravelPathSerializer(serializers.ModelSerializer):
-
-#     class Meta:
-#         model = Travelpath
-#         fields = '__all__'
-
-# class LikeSerializer(serializers.ModelSerializer):
-
-#     class Meta:
-#         model = Like
-#         fields = '__all__'
+    class Meta:
+        model = Like
+        fields = '__all__'
