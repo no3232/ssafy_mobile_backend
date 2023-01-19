@@ -79,3 +79,21 @@ data class Comment @JvmOverloads constructor(
     val content : String,
     val writeDate : Date,
     )
+
+
+{
+    "title" : "travel 포함",
+    "content" : "포함되라 머리 머리",
+    "likeCount": 3,
+    "commentCount" :4,
+    "imageList" : ["adsds", "sdsds"],
+    "userId" : 1,
+    "travel" : {
+        "travelId" : 1,
+        "location": "서울",
+        "startDate": "2023-01-05 10:55:32",
+        "endDate": "2023-01-07 09:40:22",
+        "placeList": []
+    }
+
+}
