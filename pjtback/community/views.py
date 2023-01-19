@@ -1,3 +1,5 @@
+import datetime
+from django.db.models import F
 from rest_framework.response import Response
 from rest_framework.decorators import api_view
 from rest_framework import status
@@ -9,22 +11,22 @@ from rest_framework.permissions import IsAuthenticated
 
 from django.shortcuts import get_object_or_404, get_list_or_404
 # from .serializers import  CommunityListSerializer, CommunitySerializer, CommentSerializer, ArticleImageSerializer , TravelPathSerializer, LikeSerializer, CommunityCreateSerializer
-from .serializers import BoardListSerializer, ImageSerializer , TravelSerializer
-from .models import Board  , Place ,Imagelist, Travel
+from .serializers import BoardListSerializer, ImageSerializer, PlaceSerializer, TravelSerializer
+from .models import Board, Place, Imagelist, Travel
 from django.contrib.auth import get_user_model
 
 # json 파싱을 위해서
 import json
 
-#for swagger
-from drf_spectacular.utils import extend_schema, OpenApiParameter, OpenApiTypes, OpenApiExample,inline_serializer
+# for swagger
+from drf_spectacular.utils import extend_schema, OpenApiParameter, OpenApiTypes, OpenApiExample, inline_serializer
 from rest_framework.decorators import api_view
 from rest_framework import serializers
 
 
-
 # for db orm query
 from django.db.models import Q
+
 
 @extend_schema(responses=BoardListSerializer(many=True), summary='게시글 전체 가져오기')
 @api_view(['GET'])
@@ -32,6 +34,7 @@ def board_get(request):
     boards = Board.objects.all()
     serializer = BoardListSerializer(boards, many=True)
     return Response(serializer.data)
+
 
 @extend_schema(request=BoardListSerializer(), summary='게시글 생성')
 @api_view(['POST'])
@@ -42,8 +45,37 @@ def board_create(request):
     serializer = BoardListSerializer(data=request.data, context = {'request' : request})
     if serializer.is_valid(raise_exception=True):
         serializer.save(userId=user)
-         
+
         return Response(serializer.data, status=status.HTTP_201_CREATED)
+
+@api_view(['GET'])
+def place_get(request):
+    travel_id = request.data.get('travel_id')
+    if not travel_id:
+        return Response(status=status.HTTP_404_NOT_FOUND)
+    travelObj = Travel.objects.get(id=travel_id)
+    
+    places = Place.objects.filter(travel = travelObj)
+    placedatas = PlaceSerializer(places, many=True)
+    
+    return Response(placedatas.data, status=status.HTTP_200_OK)
+
+@api_view(['POST'])
+def travel_create(request):
+    user_id = request.data.get('user_id')
+    # user = request.user
+    user = get_object_or_404(get_user_model(), id = user_id)
+    board_id = request.data.get('board_id')
+    board = get_object_or_404(Board, id = board_id)
+    if not user_id or not board_id:
+        return Response(status=status.HTTP_404_NOT_FOUND)
+    serializer = TravelSerializer(data = request.data)
+    if serializer.is_valid():
+        serializer.save(board = board, userId = user)
+        return Response(serializer.data, status=status.HTTP_202_ACCEPTED)
+    else:
+        return Response(serializer.errors, status = status.HTTP_400_BAD_REQUEST)
+
 
 # 쿼리 형식으로 db 접근 할 수 있는 라이브러리
 from django.db.models import Q, F
@@ -52,6 +84,8 @@ from datetime import timedelta
 @extend_schema(summary='게시글 필터 필터 부분 바디에 담아서 보내주시면 됨')
 @api_view(['POST'])
 def board_filtered(request):
+    boards = Board.objects.annotate(
+        day=F('travel__endDate') - F('travel__startDate'))
     # 기본 전략은 4가지 필터 부분으로 분리하고, get 으로 접근
     # get 했을 때 none 이면 필터 pass 하는 식
     age = request.data.get('ageList')
@@ -181,7 +215,7 @@ def travel_post(request):
 # @api_view(['GET', 'PUT', 'DELETE'])
 # def community_detail(request, community_pk):
 #     community = get_object_or_404(Community, pk=community_pk)
-    
+
 #     if request.method == 'GET':
 #         serializer = CommunitySerializer(community)
 #         return Response(serializer.data)
@@ -189,7 +223,7 @@ def travel_post(request):
 #     elif request.method == 'DELETE':
 #         community.delete()
 #         return Response(status=status.HTTP_204_NO_CONTENT)
-    
+
 #     elif request.method == 'PUT':
 #         serializer = CommunitySerializer(community, data=request.data)
 #         if serializer.is_valid(raise_exception=True):
@@ -222,7 +256,7 @@ def travel_post(request):
 #     if request.method == 'DELETE':
 #         comment.delete()
 #         return Response(status=status.HTTP_204_NO_CONTENT)
-    
+
 #     elif request.method == 'PUT':
 #         community = Community.objects.get(pk=request.data['community_pk'])
 #         serializer = CommentSerializer(comment, data=request.data)
@@ -282,7 +316,7 @@ def travel_post(request):
 #     point_dic = {}
 #     for i in range(len(point_lst)):
 #         point_dic[i] = point_lst[i]
-    
+
 #     travel_point_lst = json.dumps(point_dic)
 #     travel_path_recording.travel_point_lst = travel_point_lst
 
@@ -291,4 +325,3 @@ def travel_post(request):
 #     if serializer.is_valid(raise_exception=True):
 #         serializer.save()
 #         return Response(status=status.HTTP_200_OK)
-

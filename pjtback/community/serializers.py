@@ -53,8 +53,8 @@ class PlaceSerializer(serializers.ModelSerializer):
         return instance
 
 class TravelSerializer(serializers.ModelSerializer):
-    travelId = serializers.IntegerField(source='id')
-    placeList = PlaceSerializer(many=True, required = False, allow_null = True)
+    travelId = serializers.IntegerField(source='id', required=False)
+    placeList = PlaceSerializer(many=True, required = False, allow_null = True )
     startDate = serializers.DateTimeField(format="%Y-%m-%d %H:%M:%S")
     endDate = serializers.DateTimeField(format="%Y-%m-%d %H:%M:%S")
 

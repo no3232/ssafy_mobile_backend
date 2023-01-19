@@ -28,7 +28,7 @@ class Travel(models.Model):
 class Place(models.Model):
     travel = models.ForeignKey(Travel, on_delete=models.CASCADE, related_name='placeList')
     placeName = models.CharField(max_length = 20, default="대구")
-    saveDate = models.DateTimeField(auto_now=False)
+    saveDate = models.DateTimeField(auto_now=False, auto_now_add=True)
     memo = models.CharField(max_length=20)
     latitude = models.FloatField(default=0.0)
     longitude = models.FloatField(default=0.0)
