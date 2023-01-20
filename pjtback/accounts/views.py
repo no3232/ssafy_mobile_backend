@@ -126,12 +126,7 @@ def social_login(request, social_page):
     except:
         return HttpResponse(False)
     token = get_tokens_for_user(user)
-    context = {
-        "token": {"refresh_token": token["refresh"],
-                  "access_token": token["access"], },
-        "user": {"email": user.email}
-    }
-    return JsonResponse(context, status=status.HTTP_200_OK)
+    return JsonResponse(token, status=status.HTTP_200_OK)
 
 # 토큰 생성 함수
 
@@ -140,8 +135,8 @@ def get_tokens_for_user(user):
     refresh = RefreshToken.for_user(user)
 
     return {
-        'refresh': str(refresh),
-        'access': str(refresh.access_token),
+        'refresh_token': str(refresh),
+        'access_token': str(refresh.access_token),
     }
 
 

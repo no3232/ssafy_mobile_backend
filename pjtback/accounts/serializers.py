@@ -69,7 +69,7 @@ class CustomRegisterSerializer(RegisterSerializer):
         user = adapter.save_user(request, user, self, commit=False)
         user.save()
         self.custom_signup(request, user)
-        setup_user_email(request, user, [])
+        # setup_user_email(request, user, [])
         return user
 
 

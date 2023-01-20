@@ -36,3 +36,9 @@ server {
                 proxy_pass http://127.0.0.1:8000;
         }
 }
+
+[log]
+tail -f /var/log/syslog
+구니콘 로그
+tail -f /var/log/nginx/access.log
+tail -f /var/log/nginx/error.log
