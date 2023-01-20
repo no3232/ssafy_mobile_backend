@@ -42,7 +42,7 @@ class BoardListSerializer(serializers.ModelSerializer):
     nickname =  serializers.CharField(source='userId.nickname', read_only=True)
     profileImg = serializers.ImageField(source = 'user.profileImg', read_only= True)
     writeDate = serializers.DateTimeField(format="%Y-%m-%d %H:%M:%S", read_only= True)
-    travel = TravelSerializer()
+    travel = TravelSerializer(read_only = True)
     imageList = serializers.JSONField(required=False)
 
     class Meta:
