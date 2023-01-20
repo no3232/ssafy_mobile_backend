@@ -97,15 +97,6 @@ class JoinSerializer(serializers.ModelSerializer):
         read_only_fields = ('email', 'password',)
 
 
-class TokenSerializer(JWTSerializer):
-    access_token = serializers.CharField()
-    refresh_token = serializers.CharField()
-    user = ''
-
-    class Meta:
-        fields = ('access_token', 'refresh_token',)
-
-
 class CustomJWTSerializer(JWTSerializer):
     """
     Serializer for JWT authentication.
