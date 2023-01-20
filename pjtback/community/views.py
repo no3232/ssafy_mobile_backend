@@ -172,11 +172,36 @@ def travel_user(request, user_id):
     serializer = TravelSerializer(travels, many = True)
 
     return Response(serializer.data)
-        
 
+@extend_schema(summary='Board 상세페이지 조회, 수정, 삭제')
+@api_view(['GET', 'PUT', 'DELETE'])
+def board_detail(request, board_id):
 
+    board = get_object_or_404(Board, id = board_id)
+    if request.method == 'GET':
+        serializer = BoardListSerializer(board)
+        return Response(serializer.data)
 
-
+    elif request.method == 'PUT':
+        # user = request.user
+        # if travel.userId == user:
+        User = get_user_model()
+        user = User.objects.get(id=1)
+        wanted_travel = get_object_or_404(Travel, pk=request.data['travel']['travelId'])
+        serializer = BoardListSerializer(board, data=request.data)
+        if serializer.is_valid(raise_exception=True):
+            serializer.save(userId=user, travel=wanted_travel)
+            
+        return Response(serializer.data, status=status.HTTP_201_CREATED)  
+    
+    elif request.method == 'DELETE':
+        # if request.user == travel.userId:
+        #     travel.delete()
+        #     return Response(status=status.HTTP_204_NO_CONTENT)
+        # else:
+        #     return Response(status=status.HTTP_401_UNAUTHORIZED)
+        board.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
 
 
 

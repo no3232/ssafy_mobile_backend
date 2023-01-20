@@ -1,8 +1,18 @@
+### ssh 로 서버 접속
+
+ssh -i ./sangjun.pem ubuntu@54.248.64.154
+
+### mysql DB Create
+
+```bash
+create database django_mobile character set utf8mb4 collate utf8mb4_general_ci;
+```
+
+뒤에 붙은 인자는 모든 문자를 mysql에 입력할 수 있는 거라는데 그렇게 필요는 없는듯?
+
 ### 구니콘 시범 접속
 
 gunicorn --bind 0.0.0.0:8000 pjtback.wsgi:application
-
-
 
 ### nginx config 수정
 
@@ -14,19 +24,11 @@ sudo vi /etc/nginx/sites-available/django_test
 
 sudo vi /etc/systemd/system/gunicorn.service
 
-
-
 ### 9기 노션으로 바뀌어서 싸피 노션 주소 바뀜
-
-
 
 https://hyper-growth.notion.site/SSAFY-Public-Document-9dc94ea8a050472ca00ffe8ea58586da?p=3518928727484a2e840ac15ea06b0864&pm=s
 
-
-
 ### gunicorn config 양식
-
-
 
 [Unit]
 Description=gunicorn daemon
@@ -44,11 +46,7 @@ ExecStart=/home/ubuntu/mobile_pjt/pjtback/venv/bin/gunicorn \
 [Install]
 WantedBy=multi-user.target
 
-
-
 ### Nginx config 양식
-
-
 
 server {
         listen 80;
@@ -65,8 +63,6 @@ server {
 
 }
 
-
-
 ### 서버에서 로그 보기
 
 #### Nginx 성공로그 에러로그
@@ -78,11 +74,7 @@ tail -f /var/log/nginx/access.log
 
 tail -f /var/log/syslog
 
-
-
 ### 전달 받은 DTO
-
-
 
 ```java
 data class Join @JvmOverloads
@@ -166,19 +158,11 @@ data class Comment @JvmOverloads constructor(
     val content : String,
     val writeDate : Date,
     )
-
-
-
 ```
-
-
-
-
 
 ### post man 복잡한 json 데이터 raw 로 보내기 예시
 
 ```javascript
-
 {
     "title" : "travel 포함",
     "content" : "포함되라 머리 머리",
@@ -197,11 +181,7 @@ data class Comment @JvmOverloads constructor(
 }
 ```
 
-
-
 ### 전달받은 필터 항목들
-
-
 
 = 테마 = 
 
