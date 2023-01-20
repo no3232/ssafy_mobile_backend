@@ -115,13 +115,15 @@ def board_filtered(request):
 
     return Response(serializer.data, status= status.HTTP_200_OK)
 
-
+@extend_schema(responses=TravelSerializer(many = True), summary='게시글 전체 조회')
 @api_view(['GET'])
 def travel_get(request):
     travels = Travel.objects.all()
     serializer = TravelSerializer(travels, many=True)
     return Response(serializer.data)
 
+
+@extend_schema(request=TravelSerializer(), summary='단일 게시글 조회 수정 삭제')
 @api_view(['GET', 'PUT', 'DELETE'])
 def travel_detail(request, travel_id):
     travel = get_object_or_404(Travel, id = travel_id)
@@ -149,6 +151,8 @@ def travel_detail(request, travel_id):
         travel.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
+
+@extend_schema(request=TravelSerializer(), summary='여정 생성')
 @api_view(['POST'])
 def travel_create(request):
     # user = request.user
@@ -160,6 +164,8 @@ def travel_create(request):
 
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
+
+@extend_schema(summary='user_id 파라미터로 넣어 주면 해당 유저의 travel')
 @api_view(['GET'])
 def travel_user(request, user_id):
     travels = Travel.objects.filter(userId__id = user_id)

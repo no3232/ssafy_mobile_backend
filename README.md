@@ -1,92 +1,243 @@
-# mobile_pjt
+### 구니콘 시범 접속
+
+gunicorn --bind 0.0.0.0:8000 pjtback.wsgi:application
 
 
 
-## Getting started
+### nginx config 수정
 
-To make it easy for you to get started with GitLab, here's a list of recommended next steps.
+sudo vi /etc/nginx/sites-available/django_test
 
-Already a pro? Just edit this README.md and make it your own. Want to make it easy? [Use the template at the bottom](#editing-this-readme)!
+### 
 
-## Add your files
+### gunicorn config 수정
 
-- [ ] [Create](https://docs.gitlab.com/ee/user/project/repository/web_editor.html#create-a-file) or [upload](https://docs.gitlab.com/ee/user/project/repository/web_editor.html#upload-a-file) files
-- [ ] [Add files using the command line](https://docs.gitlab.com/ee/gitlab-basics/add-file.html#add-a-file-using-the-command-line) or push an existing Git repository with the following command:
+sudo vi /etc/systemd/system/gunicorn.service
+
+
+
+### 9기 노션으로 바뀌어서 싸피 노션 주소 바뀜
+
+
+
+https://hyper-growth.notion.site/SSAFY-Public-Document-9dc94ea8a050472ca00ffe8ea58586da?p=3518928727484a2e840ac15ea06b0864&pm=s
+
+
+
+### gunicorn config 양식
+
+
+
+[Unit]
+Description=gunicorn daemon
+After=network.target
+
+[Service]
+User=ubuntu
+Group=www-data
+WorkingDirectory=/home/ubuntu/mobile_pjt/pjtback
+ExecStart=/home/ubuntu/mobile_pjt/pjtback/venv/bin/gunicorn \
+        --workers 3 \
+        --bind 127.0.0.1:8000 \
+        pjtback.wsgi:application
+
+[Install]
+WantedBy=multi-user.target
+
+
+
+### Nginx config 양식
+
+
+
+server {
+        listen 80;
+        server_name 13.231.102.118;
+
+    location /static/ {
+            root /home/ubuntu/mobile_pjt/pjtback/staticfiles/;
+    }
+
+    location / {
+            include proxy_params;
+            proxy_pass http://127.0.0.1:8000;
+    }
+
+}
+
+
+
+### 서버에서 로그 보기
+
+#### Nginx 성공로그 에러로그
+
+tail -f /var/log/nginx/error.log
+tail -f /var/log/nginx/access.log
+
+#### 구니콘로그
+
+tail -f /var/log/syslog
+
+
+
+### 전달 받은 DTO
+
+
+
+```java
+data class Join @JvmOverloads
+    constructor(
+    val email: String, //아이디
+    var pw: String,
+    var name: String = "",
+    var nickname: String = "",
+    var profileImg : String?,
+    var age : Int = 0 , //연령대
+    val kakao : String = "", //카카오 이메일
+    val naver : String = "", //네이버 이메일
+    val google : String = "", //구글 이메일
+) : java.io.Serializable
+
+
+
+data class User @JvmOverloads constructor(
+    val uid : Int,
+    val join : Join,
+   val travel : ArrayList<Travel>,
+    val myLikeBoard : ArrayList<Board>,
+    val writeBoard : ArrayList<Board>,
+    val totalDate : Int,
+    val token : Token,
+)
+
+
+
+data class Travel @JvmOverloads constructor(
+    val travelId : String,
+    val location : String,
+    val startDate : Date,
+    val endDate : Date,
+    val placeList : ArrayList<Place>
+)
+
+
+data class Place(
+    val placeId : Int, //장소 아이디
+    val placeName : String, //장소 이름
+    val saveDate : Long, //기록 시간
+    val memo : String, // 기록
+    val placeImgList : ArrayList<String>, //장소 사진 리스트
+    val latitude : Double, //위도
+    val longitude : Double, //경도
+    val address : String, //해당 위치 주소
+)
+
+
+data class Board(
+    val boardId: Int, //게시글 번호
+    val userId : Int,
+    val nickname : String,
+    val profileImg : String, //프로필 이미지
+    var writeDate : Date, //작성 날짜
+    val theme : String, //여행 테마(복수선택 가능)
+    val title : String,
+    val content: String,
+    val imageList : ArrayList<String>,
+    val travel : Travel, //여정 정보 객체
+    var likeCount : Int = 0, //좋아요 수
+    var commentCount : Int = 0, //댓글 수
+)
+
+
+data class Filter @JvmOverloads constructor(
+    val themeList : ArrayList<String>, //여행 테마
+    val regionList : ArrayList<String>, //여행 지역
+    val periodList : ArrayList<String>, //여행 기간
+    val ageList : ArrayList<String> //연령대
+)
+
+
+data class Comment @JvmOverloads constructor(
+    val commentId : Int, //댓글 아이디
+    val boardId : Int, //게시물 아이디
+    val profileImg : String,
+    val userId : Int, //사용자 아이디
+    val nickname : String,
+    val content : String,
+    val writeDate : Date,
+    )
+
+
 
 ```
-cd existing_repo
-git remote add origin https://lab.ssafy.com/luminaries1/mobile_pjt.git
-git branch -M master
-git push -uf origin master
+
+
+
+
+
+### post man 복잡한 json 데이터 raw 로 보내기 예시
+
+```javascript
+
+{
+    "title" : "travel 포함",
+    "content" : "포함되라 머리 머리",
+    "likeCount": 3,
+    "commentCount" :4,
+    "imageList" : ["adsds", "sdsds"],
+    "userId" : 1,
+    "travel" : {
+        "travelId" : 1,
+        "location": "서울",
+        "startDate": "2023-01-05 10:55:32",
+        "endDate": "2023-01-07 09:40:22",
+        "placeList": []
+    }
+
+}
 ```
 
-## Integrate with your tools
 
-- [ ] [Set up project integrations](https://lab.ssafy.com/luminaries1/mobile_pjt/-/settings/integrations)
 
-## Collaborate with your team
+### 전달받은 필터 항목들
 
-- [ ] [Invite team members and collaborators](https://docs.gitlab.com/ee/user/project/members/)
-- [ ] [Create a new merge request](https://docs.gitlab.com/ee/user/project/merge_requests/creating_merge_requests.html)
-- [ ] [Automatically close issues from merge requests](https://docs.gitlab.com/ee/user/project/issues/managing_issues.html#closing-issues-automatically)
-- [ ] [Enable merge request approvals](https://docs.gitlab.com/ee/user/project/merge_requests/approvals/)
-- [ ] [Automatically merge when pipeline succeeds](https://docs.gitlab.com/ee/user/project/merge_requests/merge_when_pipeline_succeeds.html)
 
-## Test and Deploy
 
-Use the built-in continuous integration in GitLab.
+= 테마 = 
 
-- [ ] [Get started with GitLab CI/CD](https://docs.gitlab.com/ee/ci/quick_start/index.html)
-- [ ] [Analyze your code for known vulnerabilities with Static Application Security Testing(SAST)](https://docs.gitlab.com/ee/user/application_security/sast/)
-- [ ] [Deploy to Kubernetes, Amazon EC2, or Amazon ECS using Auto Deploy](https://docs.gitlab.com/ee/topics/autodevops/requirements.html)
-- [ ] [Use pull-based deployments for improved Kubernetes management](https://docs.gitlab.com/ee/user/clusters/agent/)
-- [ ] [Set up protected environments](https://docs.gitlab.com/ee/ci/environments/protected_environments.html)
+- 혼자 여행
+- 커플 여행
+- 효도 여행
+- 우정 여행
+- 직장 여행
 
-***
+= 지역 = 
 
-# Editing this README
+- 강원
+- 서울
+- 경북*대구
+- 경기
+- 부산
+- 전남*광주
+- 제주
+- 충남*대전
+- 경남
+- 충북
+- 전북
+- 인천
 
-When you're ready to make this README your own, just edit this file and use the handy template below (or feel free to structure it however you want - this is just a starting point!). Thank you to [makeareadme.com](https://www.makeareadme.com/) for this template.
+= 여행 기간 = 
+당일치기
+1박2일
+2박3일
+3박 4일 
+4박5일+  
 
-## Suggestions for a good README
-Every project is different, so consider which of these sections apply to yours. The sections used in the template are suggestions for most open source projects. Also keep in mind that while a README can be too long and detailed, too long is better than too short. If you think your README is too long, consider utilizing another form of documentation rather than cutting out information.
+= 연령대 = 
+10대
+20대
+30대
+40대
+50대 이상
 
-## Name
-Choose a self-explaining name for your project.
-
-## Description
-Let people know what your project can do specifically. Provide context and add a link to any reference visitors might be unfamiliar with. A list of Features or a Background subsection can also be added here. If there are alternatives to your project, this is a good place to list differentiating factors.
-
-## Badges
-On some READMEs, you may see small images that convey metadata, such as whether or not all the tests are passing for the project. You can use Shields to add some to your README. Many services also have instructions for adding a badge.
-
-## Visuals
-Depending on what you are making, it can be a good idea to include screenshots or even a video (you'll frequently see GIFs rather than actual videos). Tools like ttygif can help, but check out Asciinema for a more sophisticated method.
-
-## Installation
-Within a particular ecosystem, there may be a common way of installing things, such as using Yarn, NuGet, or Homebrew. However, consider the possibility that whoever is reading your README is a novice and would like more guidance. Listing specific steps helps remove ambiguity and gets people to using your project as quickly as possible. If it only runs in a specific context like a particular programming language version or operating system or has dependencies that have to be installed manually, also add a Requirements subsection.
-
-## Usage
-Use examples liberally, and show the expected output if you can. It's helpful to have inline the smallest example of usage that you can demonstrate, while providing links to more sophisticated examples if they are too long to reasonably include in the README.
-
-## Support
-Tell people where they can go to for help. It can be any combination of an issue tracker, a chat room, an email address, etc.
-
-## Roadmap
-If you have ideas for releases in the future, it is a good idea to list them in the README.
-
-## Contributing
-State if you are open to contributions and what your requirements are for accepting them.
-
-For people who want to make changes to your project, it's helpful to have some documentation on how to get started. Perhaps there is a script that they should run or some environment variables that they need to set. Make these steps explicit. These instructions could also be useful to your future self.
-
-You can also document commands to lint the code or run tests. These steps help to ensure high code quality and reduce the likelihood that the changes inadvertently break something. Having instructions for running tests is especially helpful if it requires external setup, such as starting a Selenium server for testing in a browser.
-
-## Authors and acknowledgment
-Show your appreciation to those who have contributed to the project.
-
-## License
-For open source projects, say how it is licensed.
-
-## Project status
-If you have run out of energy or time for your project, put a note at the top of the README saying that development has slowed down or stopped completely. Someone may choose to fork your project or volunteer to step in as a maintainer or owner, allowing your project to keep going. You can also make an explicit request for maintainers.
+"서울","경기","강원","부산","경북·대구","전남·광주","제주","충남·대전","경남","충북","경남","전북","인천"
