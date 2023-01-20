@@ -49,7 +49,10 @@ class CustomRegisterSerializer(RegisterSerializer):
         data['google'] = self.validated_data.get('google', '')
         data['kakao'] = self.validated_data.get('kakao', '')
         data['nickname'] = self.validated_data.get('nickname', 'Ghost')
-        data['age'] = int(self.validated_data.get('age'))
+        if self.validated_data.get('age'):
+            data['age'] = int(self.validated_data.get('age'))
+        else:
+            data['age'] = self.validated_data.get('age')
 
         return data
 
