@@ -1,6 +1,7 @@
 from django.urls import path
 from . import views
 from dj_rest_auth.views import (UserDetailsView)
+from . import serializers
 
 urlpatterns = [
     # path('phonecheck/', views.filtering_phone),

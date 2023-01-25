@@ -57,6 +57,7 @@ class CustomRegisterSerializer(RegisterSerializer):
         return data
 
     def save(self, request):
+        print(request.data)
         adapter = get_adapter()
         user = adapter.new_user(request)
         print(request.FILES)
@@ -150,3 +151,34 @@ class ImageTestSerializer(serializers.ModelSerializer):
     class Meta:
         model = ImageTest
         fields = "__all__"
+
+from rest_framework_simplejwt.serializers import TokenRefreshSerializer
+from rest_framework_simplejwt.settings import api_settings
+from rest_framework_simplejwt.serializers import RefreshToken
+class CustomTokenRefreshSerializer(TokenRefreshSerializer):
+    refresh = serializers.CharField()
+    access = serializers.CharField(read_only=True)
+    token_class = RefreshToken
+
+    def validate(self, attrs):
+        refresh = self.token_class(attrs["refresh"])
+
+        data = {"access_token": str(refresh.access_token), "refresh_token": str(refresh)}
+
+        if api_settings.ROTATE_REFRESH_TOKENS:
+            if api_settings.BLACKLIST_AFTER_ROTATION:
+                try:
+                    # Attempt to blacklist the given refresh token
+                    refresh.blacklist()
+                except AttributeError:
+                    # If blacklist app not installed, `blacklist` method will
+                    # not be present
+                    pass
+
+            refresh.set_jti()
+            refresh.set_exp()
+            refresh.set_iat()
+
+            data["refresh"] = str(refresh)
+
+        return data
