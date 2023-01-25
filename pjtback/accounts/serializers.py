@@ -43,7 +43,7 @@ class CustomRegisterSerializer(RegisterSerializer):
 
     def get_cleaned_data(self):
         data = super().get_cleaned_data()
-        data['profileImg'] = self.validated_data.get('profileImg', '')
+        data['profileImg'] = self.validated_data.get('profileImg', 'default_image.jpg')
         data['phone_number'] = self.validated_data.get('phone_number', '')
         data['naver'] = self.validated_data.get('naver', '')
         data['google'] = self.validated_data.get('google', '')
@@ -95,15 +95,6 @@ class JoinSerializer(serializers.ModelSerializer):
         fields = ('email', 'password', 'username', 'nickname',
                   'profileImg', 'age', 'kakao', 'naver', 'google')
         read_only_fields = ('email', 'password',)
-
-
-class TokenSerializer(JWTSerializer):
-    access_token = serializers.CharField()
-    refresh_token = serializers.CharField()
-    user = ''
-
-    class Meta:
-        fields = ('access_token', 'refresh_token',)
 
 
 class CustomJWTSerializer(JWTSerializer):
