@@ -44,7 +44,7 @@ def board_create(request):
     
     serializer = BoardListSerializer(data=request.data)
     wanted_travel = get_object_or_404(Travel, pk=request.data['travel']['travelId'])
-
+    
     if serializer.is_valid(raise_exception=True):
         serializer.save(userId=user, travel=wanted_travel)
         return Response(serializer.data, status=status.HTTP_201_CREATED)
