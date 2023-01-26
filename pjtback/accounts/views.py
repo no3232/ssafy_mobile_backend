@@ -37,7 +37,6 @@ from django.utils.crypto import get_random_string
 @api_view(['POST'])
 @csrf_exempt
 def filtering_email(request):
-    print(request.data)
     # emailobj = {"email": request.data['']}
     serializer = EmailUniqueCheckSerializer(data=request.data)
     if serializer.is_valid():
