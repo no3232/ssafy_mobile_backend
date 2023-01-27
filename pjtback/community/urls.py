@@ -10,4 +10,5 @@ urlpatterns = [
     path('travel/create/', views.travel_create),
     path('traveldetail/<int:travel_id>/', views.travel_detail),
     path('travel/user/<int:user_id>/',views.travel_user),
+    path('board/like/<int:board_id>', views.like),
 ]
