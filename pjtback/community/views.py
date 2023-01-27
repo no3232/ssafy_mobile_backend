@@ -36,11 +36,13 @@ def board_get(request):
     return Response(serializer.data)
 
 
+
 @extend_schema(request=BoardListSerializer(), summary='게시글 생성')
 @api_view(['POST'])
 def board_create(request):
-    User = get_user_model()
-    user = User.objects.get(pk=request.data['userId'])
+    # User = get_user_model()
+    # user = User.objects.get(pk=request.data['userId'])
+    user = request.user
     
     serializer = BoardListSerializer(data=request.data)
     wanted_travel = get_object_or_404(Travel, pk=request.data['travel']['travelId'])
@@ -130,32 +132,32 @@ def travel_detail(request, travel_id):
         return Response(serializer.data)
 
     elif request.method == 'PUT':
-        # user = request.user
-        # if travel.userId == user:
-        User = get_user_model()
-        user = User.objects.get(id=1)
-        serializer = TravelSerializer(travel, data=request.data)
-        if serializer.is_valid(raise_exception=True):
-            serializer.save(userId = user)
-            
-            return Response(serializer.data, status=status.HTTP_201_CREATED)  
+        user = request.user
+        if travel.userId == user:
+        # User = get_user_model()
+        # user = User.objects.get(id=1)
+            serializer = TravelSerializer(travel, data=request.data)
+            if serializer.is_valid(raise_exception=True):
+                serializer.save(userId = user)
+                
+                return Response(serializer.data, status=status.HTTP_201_CREATED)  
     
     elif request.method == 'DELETE':
-        # if request.user == travel.userId:
-        #     travel.delete()
-        #     return Response(status=status.HTTP_204_NO_CONTENT)
-        # else:
-        #     return Response(status=status.HTTP_401_UNAUTHORIZED)
-        travel.delete()
-        return Response(status=status.HTTP_204_NO_CONTENT)
+        if request.user == travel.userId:
+            travel.delete()
+            return Response(status=status.HTTP_204_NO_CONTENT)
+        else:
+            return Response(status=status.HTTP_401_UNAUTHORIZED)
+        # travel.delete()
+        # return Response(status=status.HTTP_204_NO_CONTENT)
 
 
 @extend_schema(request=TravelSerializer(), summary='여정 생성')
 @api_view(['POST'])
 def travel_create(request):
-    # user = request.user
-    User = get_user_model()
-    user = User.objects.get(id=1)
+    user = request.user
+    # User = get_user_model()
+    # user = User.objects.get(id=1)
     serializer = TravelSerializer(data=request.data, context ={'request': request})
     if serializer.is_valid(raise_exception=True):
         serializer.save(userId=user)
@@ -181,25 +183,38 @@ def board_detail(request, board_id):
         return Response(serializer.data)
 
     elif request.method == 'PUT':
-        # user = request.user
-        # if travel.userId == user:
-        User = get_user_model()
-        user = User.objects.get(id=1)
-        wanted_travel = get_object_or_404(Travel, pk=request.data['travel']['travelId'])
-        serializer = BoardListSerializer(board, data=request.data)
-        if serializer.is_valid(raise_exception=True):
-            serializer.save(userId=user, travel=wanted_travel)
-            
-        return Response(serializer.data, status=status.HTTP_201_CREATED)  
+        user = request.user
+        if board.userId == user:
+        # User = get_user_model()
+        # user = User.objects.get(id=1)
+            wanted_travel = get_object_or_404(Travel, pk=request.data['travel']['travelId'])
+            serializer = BoardListSerializer(board, data=request.data)
+            if serializer.is_valid(raise_exception=True):
+                serializer.save(userId=user, travel=wanted_travel)
+                
+            return Response(serializer.data, status=status.HTTP_201_CREATED)  
     
     elif request.method == 'DELETE':
-        # if request.user == travel.userId:
-        #     travel.delete()
-        #     return Response(status=status.HTTP_204_NO_CONTENT)
-        # else:
-        #     return Response(status=status.HTTP_401_UNAUTHORIZED)
-        board.delete()
-        return Response(status=status.HTTP_204_NO_CONTENT)
+        if request.user == board.userId:
+            board.delete()
+            return Response(status=status.HTTP_204_NO_CONTENT)
+        else:
+            return Response(status=status.HTTP_401_UNAUTHORIZED)
+        # board.delete()
+        # return Response(status=status.HTTP_204_NO_CONTENT)
+
+@api_view(['POST'])
+def like(request, board_id):
+    board = Board.objects.get(id = board_id)
+    user = request.user
+    # User = get_user_model()
+    # user = User.objects.get(id=1)
+    if board.likeList.filter(id=request.user.id).exists():
+        board.likeList.remove(user)
+        return Response(status=status.HTTP_202_ACCEPTED)
+    else:
+        board.likeList.add(user)
+        return Response(status=status.HTTP_202_ACCEPTED)
 
 
 

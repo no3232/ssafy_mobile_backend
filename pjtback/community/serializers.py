@@ -34,23 +34,6 @@ class TravelSerializer(serializers.ModelSerializer):
 
         return instance
         
-
-
-class BoardListSerializer(serializers.ModelSerializer):
-    boardId = serializers.IntegerField(source='id', read_only=True)
-    userId = serializers.IntegerField(source ='userId.pk', read_only=True)
-    nickname =  serializers.CharField(source='userId.nickname', read_only=True)
-    profileImg = serializers.ImageField(source = 'user.profileImg', read_only= True)
-    writeDate = serializers.DateTimeField(format="%Y-%m-%d %H:%M:%S", read_only= True)
-    travel = TravelSerializer(read_only = True)
-    imageList = serializers.JSONField(required=False)
-
-    class Meta:
-        model = Board
-        fields = ('boardId','userId','nickname', 'profileImg','writeDate','theme','title','content','imageList','travel','likeCount','commentCount',)
-        read_only_fields = ('userId','travel','profileImg','writeDate',)
-
-
 class CommentSerializer(serializers.ModelSerializer):
     commentId = serializers.IntegerField(source='id', read_only=True)
     boardId = serializers.IntegerField(source='board.pk', read_only=True)
@@ -62,6 +45,24 @@ class CommentSerializer(serializers.ModelSerializer):
         model = Comment
         fields = '__all__'
         read_only_fields = ('user',)
+
+class BoardListSerializer(serializers.ModelSerializer):
+    boardId = serializers.IntegerField(source='id', read_only=True)
+    userId = serializers.IntegerField(source ='userId.pk', read_only=True)
+    nickname =  serializers.CharField(source='userId.nickname', read_only=True)
+    profileImg = serializers.ImageField(source = 'user.profileImg', read_only= True)
+    writeDate = serializers.DateTimeField(format="%Y-%m-%d %H:%M:%S", read_only= True)
+    travel = TravelSerializer(read_only = True)
+    imageList = serializers.JSONField(required=False)
+    commentList = CommentSerializer(many=True, required = False, allow_null = True ,read_only=True)
+
+    class Meta:
+        model = Board
+        fields = ('boardId','userId','nickname', 'profileImg','writeDate','theme','title','content','imageList','travel','likeList','commentList')
+        read_only_fields = ('userId','travel','profileImg','writeDate')
+
+
+
 
 class LikeSerializer(serializers.ModelSerializer):
 
