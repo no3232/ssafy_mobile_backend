@@ -211,10 +211,10 @@ def like(request, board_id):
     # user = User.objects.get(id=1)
     if board.likeList.filter(id=request.user.id).exists():
         board.likeList.remove(user)
-        return Response(status=status.HTTP_202_ACCEPTED)
+        return Response(data = {False},status=status.HTTP_202_ACCEPTED)
     else:
         board.likeList.add(user)
-        return Response(status=status.HTTP_202_ACCEPTED)
+        return Response(data = {True}, status=status.HTTP_202_ACCEPTED)
 
 
 
