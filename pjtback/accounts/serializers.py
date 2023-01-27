@@ -10,14 +10,13 @@ from dj_rest_auth.serializers import UserDetailsSerializer
 
 from allauth.account.adapter import get_adapter
 from django.core.exceptions import ValidationError as DjangoValidationError
-from allauth.account.utils import setup_user_email
-from django.utils.module_loading import import_string
 
 from rest_framework.validators import UniqueValidator
 from django.contrib.auth import get_user_model
 from .models import User, ImageTest
 
-from community.serializers import PlaceSerializer, BoardListSerializer, TravelSerializer
+from community.serializers import PlaceSerializer, BoardListSerializer, TravelSerializer, CommentSerializer
+
 
 
 class CustomRegisterSerializer(RegisterSerializer):
@@ -183,3 +182,16 @@ class CustomTokenRefreshSerializer(TokenRefreshSerializer):
             data["refresh_token"] = str(refresh)
 
         return data
+
+# 유저 디테일 시리얼라이저
+class TestUserDetailSerializer(UserDetailsSerializer):
+    uid = serializers.IntegerField(source="id", read_only=True)
+    join = JoinSerializer(source="*")
+    travel = TravelSerializer(many=True, read_only=True)
+    myLikeBoard = BoardListSerializer(many=True, read_only=True)
+    writeBoard = BoardListSerializer( many=True, read_only=True)
+    commentList = CommentSerializer(many=True, read_only=True)
+
+    class Meta(UserDetailsSerializer.Meta):
+        fields = ('uid', 'join', 'travel', 'myLikeBoard', 'commentList', 'writeBoard')
+        read_only_fields = ()
