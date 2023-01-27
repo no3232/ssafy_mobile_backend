@@ -39,6 +39,7 @@ def board_get(request):
 
 @extend_schema(request=BoardListSerializer(), summary='게시글 생성')
 @api_view(['POST'])
+@permission_classes([IsAuthenticated])
 def board_create(request):
     # User = get_user_model()
     # user = User.objects.get(pk=request.data['userId'])
@@ -125,6 +126,7 @@ def travel_get(request):
 
 @extend_schema(request=TravelSerializer(), summary='단일 게시글 조회 수정 삭제')
 @api_view(['GET', 'PUT', 'DELETE'])
+@permission_classes([IsAuthenticated])
 def travel_detail(request, travel_id):
     travel = get_object_or_404(Travel, id = travel_id)
     if request.method == 'GET':
@@ -154,6 +156,7 @@ def travel_detail(request, travel_id):
 
 @extend_schema(request=TravelSerializer(), summary='여정 생성')
 @api_view(['POST'])
+@permission_classes([IsAuthenticated])
 def travel_create(request):
     user = request.user
     # User = get_user_model()
@@ -175,6 +178,7 @@ def travel_user(request, user_id):
 
 @extend_schema(summary='Board 상세페이지 조회, 수정, 삭제')
 @api_view(['GET', 'PUT', 'DELETE'])
+@permission_classes([IsAuthenticated])
 def board_detail(request, board_id):
 
     board = get_object_or_404(Board, id = board_id)
@@ -204,6 +208,7 @@ def board_detail(request, board_id):
         # return Response(status=status.HTTP_204_NO_CONTENT)
 
 @api_view(['POST'])
+@permission_classes([IsAuthenticated])
 def like(request, board_id):
     board = Board.objects.get(id = board_id)
     user = request.user
