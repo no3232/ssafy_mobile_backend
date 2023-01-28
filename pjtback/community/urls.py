@@ -6,9 +6,11 @@ urlpatterns = [
     path('board/create/', views.board_create),
     path('board/filter/', views.board_filtered),
     path('board/detail/<int:board_id>/', views.board_detail),
+    path('board/like/<int:board_id>/', views.like),
+    path('board/detail/<int:board_id>/comment/create/', views.comment_create),
+    path('board/detail/<int:board_id>/comment/<int:comment_id>/',views.comments),
     path('travel/', views.travel_get),
     path('travel/create/', views.travel_create),
-    path('traveldetail/<int:travel_id>/', views.travel_detail),
+    path('travel/detail/<int:travel_id>/', views.travel_detail),
     path('travel/user/<int:user_id>/',views.travel_user),
-    path('board/like/<int:board_id>', views.like),
 ]

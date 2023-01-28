@@ -1,18 +1,15 @@
-import datetime
 from django.db.models import F
 from rest_framework.response import Response
 from rest_framework.decorators import api_view
 from rest_framework import status
-import requests
 
 # permission Decorators
 from rest_framework.decorators import permission_classes
 from rest_framework.permissions import IsAuthenticated
 
 from django.shortcuts import get_object_or_404, get_list_or_404
-# from .serializers import  CommunityListSerializer, CommunitySerializer, CommentSerializer, ArticleImageSerializer , TravelPathSerializer, LikeSerializer, CommunityCreateSerializer
-from .serializers import BoardListSerializer, PlaceSerializer, TravelSerializer
-from .models import Board, Place, Travel
+from .serializers import BoardListSerializer, PlaceSerializer, TravelSerializer , CommentSerializer
+from .models import Board, Place, Travel, Comment
 from django.contrib.auth import get_user_model
 
 # json 파싱을 위해서
@@ -22,7 +19,6 @@ import json
 from drf_spectacular.utils import extend_schema, OpenApiParameter, OpenApiTypes, OpenApiExample, inline_serializer
 from rest_framework.decorators import api_view
 from rest_framework import serializers
-
 
 # for db orm query
 from django.db.models import Q
@@ -41,8 +37,6 @@ def board_get(request):
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
 def board_create(request):
-    # User = get_user_model()
-    # user = User.objects.get(pk=request.data['userId'])
     user = request.user
     
     serializer = BoardListSerializer(data=request.data)
@@ -136,8 +130,6 @@ def travel_detail(request, travel_id):
     elif request.method == 'PUT':
         user = request.user
         if travel.userId == user:
-        # User = get_user_model()
-        # user = User.objects.get(id=1)
             serializer = TravelSerializer(travel, data=request.data)
             if serializer.is_valid(raise_exception=True):
                 serializer.save(userId = user)
@@ -150,8 +142,6 @@ def travel_detail(request, travel_id):
             return Response(status=status.HTTP_204_NO_CONTENT)
         else:
             return Response(status=status.HTTP_401_UNAUTHORIZED)
-        # travel.delete()
-        # return Response(status=status.HTTP_204_NO_CONTENT)
 
 
 @extend_schema(request=TravelSerializer(), summary='여정 생성')
@@ -159,8 +149,6 @@ def travel_detail(request, travel_id):
 @permission_classes([IsAuthenticated])
 def travel_create(request):
     user = request.user
-    # User = get_user_model()
-    # user = User.objects.get(id=1)
     serializer = TravelSerializer(data=request.data, context ={'request': request})
     if serializer.is_valid(raise_exception=True):
         serializer.save(userId=user)
@@ -189,8 +177,6 @@ def board_detail(request, board_id):
     elif request.method == 'PUT':
         user = request.user
         if board.userId == user:
-        # User = get_user_model()
-        # user = User.objects.get(id=1)
             wanted_travel = get_object_or_404(Travel, pk=request.data['travel']['travelId'])
             serializer = BoardListSerializer(board, data=request.data)
             if serializer.is_valid(raise_exception=True):
@@ -204,16 +190,13 @@ def board_detail(request, board_id):
             return Response(status=status.HTTP_204_NO_CONTENT)
         else:
             return Response(status=status.HTTP_401_UNAUTHORIZED)
-        # board.delete()
-        # return Response(status=status.HTTP_204_NO_CONTENT)
 
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
 def like(request, board_id):
     board = Board.objects.get(id = board_id)
     user = request.user
-    # User = get_user_model()
-    # user = User.objects.get(id=1)
+
     if board.likeList.filter(id=request.user.id).exists():
         board.likeList.remove(user)
         return Response(data = {False},status=status.HTTP_202_ACCEPTED)
@@ -221,35 +204,30 @@ def like(request, board_id):
         board.likeList.add(user)
         return Response(data = {True}, status=status.HTTP_202_ACCEPTED)
 
+@extend_schema(responses = CommentSerializer , request=CommentSerializer ,summary='코멘트 생성')
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def comment_create(request, board_id):
+    board = Board.objects.get(id=board_id)
+    serializer = CommentSerializer(data=request.data)
+    if serializer.is_valid(raise_exception=True):
+        serializer.save(board=board, user=request.user)
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
 
+@extend_schema(responses = CommentSerializer , request=CommentSerializer ,summary='코멘트 수정, 삭제')
+@api_view(['DELETE', 'PUT'])
+@permission_classes([IsAuthenticated])
+def comments(request,board_id,comment_id):
+    comment = get_object_or_404(Comment, id=comment_id)
 
-
-# 밑에 주석은 참고 사항 때매 남겨 놓은것 나중에 지우겠습니다. get, post, put , delete 와 swagger 를 위해 함수 2개만 남겨 두었습니다.
-# @extend_schema(request=CommunitySerializer,responses=CommunitySerializer,summary='게시글 상세, 삭제, 수정')
-# @api_view(['GET', 'PUT', 'DELETE'])
-# def community_detail(request, community_pk):
-#     community = get_object_or_404(Community, pk=community_pk)
-
-#     if request.method == 'GET':
-#         serializer = CommunitySerializer(community)
-#         return Response(serializer.data)
-
-#     elif request.method == 'DELETE':
-#         community.delete()
-#         return Response(status=status.HTTP_204_NO_CONTENT)
-
-#     elif request.method == 'PUT':
-#         serializer = CommunitySerializer(community, data=request.data)
-#         if serializer.is_valid(raise_exception=True):
-#             serializer.save(user=request.user)
-#             return Response(serializer.data)
-
-# @extend_schema(responses = CommentSerializer , request=None ,summary='코멘트 생성')
-# @api_view(['POST'])
-# def comment_create(request, community_pk):
-#     community = Community.objects.get(pk=community_pk)
-#     serializer = CommentSerializer(data=request.data)
-#     if serializer.is_valid(raise_exception=True):
-#         serializer.save(community=community, user=request.user)
-#         return Response(serializer.data, status=status.HTTP_201_CREATED)
+    if request.method == 'DELETE':
+        comment.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
+    
+    elif request.method == 'PUT':
+        board = Board.objects.get(id=board_id)
+        serializer = CommentSerializer(comment, data=request.data)
+        if serializer.is_valid(raise_exception=True):
+            serializer.save(user=request.user, board=board)
+            return Response(serializer.data)
 

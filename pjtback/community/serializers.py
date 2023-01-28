@@ -37,14 +37,16 @@ class TravelSerializer(serializers.ModelSerializer):
 class CommentSerializer(serializers.ModelSerializer):
     commentId = serializers.IntegerField(source='id', read_only=True)
     boardId = serializers.IntegerField(source='board.pk', read_only=True)
+    nickname =  serializers.CharField(source='userId.nickname', read_only=True)
+    profileImg = serializers.ImageField(source = 'user.profileImg', read_only= True)
     userId = serializers.CharField(source='user.pk', read_only=True)
     nickname = serializers.CharField(source = 'user.nickname', read_only = True)
-    profileImg = serializers.ImageField(source = 'user.profileImg')
+    writeDate = serializers.DateTimeField(source = 'write_date', read_only = True)
 
     class Meta:
         model = Comment
-        fields = '__all__'
-        read_only_fields = ('user',)
+        fields = ('commentId', 'boardId', 'profileImg', 'userId', 'nickname', 'content', 'writeDate',)
+        read_only_fields = ('user','board','profileImg',)
 
 class BoardListSerializer(serializers.ModelSerializer):
     boardId = serializers.IntegerField(source='id', read_only=True)

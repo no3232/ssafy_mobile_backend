@@ -37,8 +37,7 @@ class Place(models.Model):
 class Comment(models.Model):
     board = models.ForeignKey(Board, on_delete=models.CASCADE, related_name='commentList')
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="commentList")
-    nickname = models.CharField(max_length = 30)
-    content = models.TextField(max_length=34)
+    content = models.TextField(max_length=50)
     write_date = models.DateTimeField(auto_now_add=True)
 
 
