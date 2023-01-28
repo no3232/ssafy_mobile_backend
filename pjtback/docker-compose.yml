@@ -21,7 +21,7 @@ services:
             - db                                            
         volumes:                                            
             - .:/pjtback
-    nginx:                                                  # 서비스명                                    
+    nginx:                                                                                    
         image: nginx                             
         container_name: ng01
         ports:                                              # 포트 개방 "hostPort:dockerPort"으로 포워딩한다
