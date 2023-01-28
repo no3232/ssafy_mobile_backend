@@ -2,7 +2,7 @@ version: "3.0"                                                # docker-compose �
 services:
     nginx:                                                                                    
         image: nginx                             
-        container_name: ng01
+        container_name: nginx
         ports:                                              # 포트 개방 "hostPort:dockerPort"으로 포워딩한다
             - "80:80"                                       
         volumes:                                            # 볼륨 마운트. 호스트의 파일을 사용하려면 필요하다                             
@@ -12,7 +12,7 @@ services:
             - web                                                                                                        
     web:                                                
         build: .                           # 메인으로 빌드될 Dockerfile을 적는다. 지금은 현재 폴더에 있다고 알린다
-        container_name: dg01                                
+        container_name: web                             
         command: > 
             bash -c "python3 manage.py collectstatic --no-input &&   
             python3 manage.py makemigrations &&             
@@ -28,12 +28,14 @@ services:
         volumes:                                            
             - .:/pjtback
     db:                                                     
-        image: mysql                                
-        container_name: mysql01
+        image: mysql:latest                                
+        container_name: db
         ports:
-            - "3306:3306"                            
+            - "3307:3306"                            
         environment:
-            MYSQL_DATABASE: django_mobile                                   
+            MYSQL_DATABASE: django_mobile
+            MYSQL_USER: root
+            MYSQL_PASSWORD: sangjun1324                              
             MYSQL_ROOT_PASSWORD: sangjun1324                                      
 
 
