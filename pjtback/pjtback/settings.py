@@ -194,7 +194,7 @@ DATABASES = {
         'NAME': 'django_mobile',
         'USER': 'root',
         'PASSWORD': 'sangjun1324',
-        'HOST': 'localhost',
+        'HOST': 'mysql01',
         'PORT': '3306'
     }
 }
