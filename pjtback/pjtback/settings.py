@@ -193,7 +193,7 @@ DATABASES = {
         'ENGINE': 'django.db.backends.mysql',
         'NAME': 'django_mobile',
         'USER': 'root',
-        'PASSWORD': 'hedonism1@',
+        'PASSWORD': 'sangjun1324',
         'HOST': 'localhost',
         'PORT': '3306'
     }
