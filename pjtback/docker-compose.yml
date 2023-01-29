@@ -1,4 +1,4 @@
-version: "3.8"                                                # docker-compose 버전이다
+version: "3.3"                                                # docker-compose 버전이다
 services:
     nginx:                                                                                    
         image: nginx                             
