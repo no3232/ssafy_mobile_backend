@@ -1,6 +1,7 @@
 echo " 1. 최초"
 echo " 2. 소스코드 수정시 배포"
 
+rootdir = "mobile_pjt"
 
 read value
 if [ ${value} -eq 1 ]
@@ -14,7 +15,9 @@ then
 	./init-letsencrypt.sh
 fi
 if [ ${value} -eq 2 ]
-	sudo docker-compose down
-	sudo docker-compose up -d
+	cd ~/${rootdir}/
+	git reset --hard
+	git pull
+	sudo docker-compose up -d --build
 fi
 
