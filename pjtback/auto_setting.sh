@@ -15,6 +15,7 @@ then
 	./init-letsencrypt.sh
 fi
 if [ ${value} -eq 2 ]
+then
 	cd ~/${rootdir}/
 	git reset --hard
 	git pull
