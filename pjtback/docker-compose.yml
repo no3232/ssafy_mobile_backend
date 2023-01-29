@@ -1,4 +1,4 @@
-version: "3.0"                                                # docker-compose 버전이다
+version: "3.8"                                                # docker-compose 버전이다
 services:
     nginx:                                                                                    
         image: nginx                             
@@ -17,12 +17,10 @@ services:
             bash -c "python3 manage.py collectstatic --no-input &&   
             python3 manage.py makemigrations &&             
             python3 manage.py migrate &&                    
-            gunicorn pjtback.wsgi:application -b 0:80"
+            gunicorn pjtback.wsgi:application --bind 0.0.0.0:8000"
         depends_on:
           db:
-            condition: service_started
-        links:
-            - db
+            condition: service_healthy
         ports:
             - "8000:8000"                                            
         volumes:                                            
@@ -35,6 +33,12 @@ services:
         environment:
             MYSQL_DATABASE: django_mobile
             MYSQL_PASSWORD: sangjun1324                              
-            MYSQL_ROOT_PASSWORD: sangjun1324                                      
+            MYSQL_ROOT_PASSWORD: sangjun1324
+        healthcheck:
+            test: ["CMD", "mysqladmin" ,"ping", "-h", "localhost"]
+            interval: "60s"
+            timeout: "3s"
+            start_period: "5s"
+            retries: 3                                      
 
 
