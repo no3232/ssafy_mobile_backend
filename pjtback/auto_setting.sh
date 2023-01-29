@@ -1,7 +1,7 @@
 echo " 1. 최초"
 echo " 2. 소스코드 수정시 배포"
 
-rootdir="mobile_pjt"
+rootdir="mobile_pjt/pjtback"
 
 read value
 if [ ${value} -eq 1 ]
