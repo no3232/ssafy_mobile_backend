@@ -1,4 +1,4 @@
-version: "3.3"                                                # docker-compose 버전이다
+version: "2.4"                                                # docker-compose 버전이다
 services:
     nginx:                                                                                    
         image: nginx                             
@@ -51,6 +51,7 @@ services:
             test: ["CMD", "mysqladmin" ,"ping", "-h", "localhost"]
             interval: "60s"
             timeout: "3s"
+            start_period: "5s"
             retries: 3                                      
 
 
