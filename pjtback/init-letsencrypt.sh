@@ -1,4 +1,5 @@
 #!/bin/bash
+if [ $(id -u) -ne 0 ]; then exec sudo bash "$0" "$@"; exit; fi
 
 if ! [ -x "$(command -v docker-compose)" ]; then
   echo 'Error: docker-compose is not installed.' >&2
