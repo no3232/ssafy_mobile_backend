@@ -10,6 +10,10 @@ RUN apt-get install -y python3-pip python3-dev
 # 따라서 파이썬 기본 인코딩을 한국어를 사용할 수 있는 utf-8으로 설정한다.
 ENV PYTHONIOENCODING=utf-8
 
+# pip 를 root user 로 전부 해결 하는 것에 대한 warnign ignore 옵션
+# 근본적으로는 user 만들어서 image 처리 하는게 맞다.. 나중에 고려할것 
+ENV PIP_ROOT_USER_ACTION=ignore
+
 # pip setuptools 업그레이드
 # mysql 붙이기 위한 작업
 RUN pip3 install --upgrade pip
