@@ -1,6 +1,8 @@
 ### ssh 로 서버 접속
 
+```bash
 ssh -i ./sangjun.pem ubuntu@54.248.64.154
+```
 
 ### mysql DB Create
 
@@ -12,17 +14,20 @@ create database django_mobile character set utf8mb4 collate utf8mb4_general_ci;
 
 ### 구니콘 시범 접속
 
+```bash
 gunicorn --bind 0.0.0.0:8000 pjtback.wsgi:application
+```
 
 ### nginx config 수정
-
+```bash
 sudo vi /etc/nginx/sites-available/django_test
-
-### 
+```
 
 ### gunicorn config 수정
 
+```bash
 sudo vi /etc/systemd/system/gunicorn.service
+```
 
 ### 9기 노션으로 바뀌어서 싸피 노션 주소 바뀜
 
@@ -30,6 +35,7 @@ https://hyper-growth.notion.site/SSAFY-Public-Document-9dc94ea8a050472ca00ffe8ea
 
 ### gunicorn config 양식
 
+```bash
 [Unit]
 Description=gunicorn daemon
 After=network.target
@@ -45,9 +51,11 @@ ExecStart=/home/ubuntu/mobile_pjt/pjtback/venv/bin/gunicorn \
 
 [Install]
 WantedBy=multi-user.target
+```
 
 ### Nginx config 양식
 
+```bash
 server {
         listen 80;
         server_name 13.231.102.118;
@@ -62,17 +70,22 @@ server {
     }
 
 }
+```
 
 ### 서버에서 로그 보기
 
 #### Nginx 성공로그 에러로그
 
-tail -f /var/log/nginx/error.log
+```bash
 tail -f /var/log/nginx/access.log
+tail -f /var/log/nginx/error.log
+```
 
 #### 구니콘로그
 
+```bash
 tail -f /var/log/syslog
+```
 
 ### 전달 받은 DTO
 
@@ -226,42 +239,51 @@ data class Comment @JvmOverloads constructor(
 
 ssh 접근
 
-ssh -i I8D103T.pem [ubuntu@i8d103.p.ssafy.io](mailto:ubuntu@i8d103.p.ssafy.io)
+```bash
+ssh -i I8D103T.pem ubuntu@i8d103.p.ssafy.io
+```
 
 일단 가장 원시적인 서버 환경에서 부터 시작해서 필요한 명령어들 정리
 
 ### 기본 세팅과 docker compose 다운 파트
 
+```bash
 sudo apt-get update
 sudo apt-get -y dist-upgrade
 sudo apt-get install docker
 sudo apt-get -y install docker-compose
+```
 
 ## git clone 파트
 
-sudo git clone [SSAFY](https://lab.ssafy.com/luminaries1/mobile_pjt.git)
+```bash
+sudo git clone https://lab.ssafy.com/luminaries1/mobile_pjt.git
+```
 
 ## db , web(gunicorn 실행 명령어 포함), nginx 3개 파트
 
+```bash
 sudo docker-compose up --build
+```
 
 ## certbot 으로 https 붙이는 파트
 
+```bash
 sudo snap install core; sudo snap refresh core
-
 sudo snap install --classic certbot
-
 sudo ln -s /snap/bin/certbot /usr/bin/certbot
-
 sudo certbot --nginx
+```
 
 ## 쉘 스크립트 실행
 
+```bash
 chmod +x init-letsencrypt.sh  
 ./init-letsencrypt.sh
+```
 
 ## 해결해야 할 점들
 
-shell script 좀 더 분기점 두거나, git clone 후 dir 이동 하는거 까지 자동으로 하던가 해야할듯?
+* shell script 좀 더 분기점 두거나, git clone 후 dir 이동 하는거 까지 자동으로 하던가 해야할듯?
 
-보안적으로 뺄거 좀 다 env 파일 같은걸로 빼야함.. ㅠㅠ 이건 좀 더 데여봐야 알듯?
+* 보안적으로 뺄거 좀 다 env 파일 같은걸로 빼야함.. ㅠㅠ 이건 좀 더 데여봐야 알듯?
