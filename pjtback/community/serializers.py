@@ -37,7 +37,6 @@ class TravelSerializer(serializers.ModelSerializer):
 class CommentSerializer(serializers.ModelSerializer):
     commentId = serializers.IntegerField(source='id', read_only=True)
     boardId = serializers.IntegerField(source='board.pk', read_only=True)
-    nickname =  serializers.CharField(source='userId.nickname', read_only=True)
     profileImg = serializers.ImageField(source = 'user.profileImg', read_only= True)
     userId = serializers.CharField(source='user.pk', read_only=True)
     nickname = serializers.CharField(source = 'user.nickname', read_only = True)
