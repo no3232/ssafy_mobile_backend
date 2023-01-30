@@ -13,7 +13,7 @@ from django.core.exceptions import ValidationError as DjangoValidationError
 
 from rest_framework.validators import UniqueValidator
 from django.contrib.auth import get_user_model
-from .models import User, ImageTest
+from .models import User
 
 from community.serializers import PlaceSerializer, BoardListSerializer, TravelSerializer, CommentSerializer
 
@@ -144,12 +144,6 @@ class UserForignSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = ('travel', 'myLikeBoard', 'writeBoard',)
-
-class ImageTestSerializer(serializers.ModelSerializer):
-
-    class Meta:
-        model = ImageTest
-        fields = "__all__"
 
 from rest_framework_simplejwt.serializers import TokenRefreshSerializer
 from rest_framework_simplejwt.settings import api_settings

@@ -25,12 +25,3 @@ class User(AbstractUser):
 class EmailValidateModel(models.Model):
     email = models.EmailField()
     validateNumber = models.CharField(max_length=10)
-
-class ImageTest(models.Model):
-    profileImg = ProcessedImageField(
-        blank=True,
-        upload_to='profile_image/accounts/%Y/%m',
-        processors=[ResizeToFill(300, 300)],
-        format='JPEG',
-        options={'quality': 70},
-    )
