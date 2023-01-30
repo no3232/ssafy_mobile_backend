@@ -145,12 +145,6 @@ class UserForignSerializer(serializers.ModelSerializer):
         model = User
         fields = ('travel', 'myLikeBoard', 'writeBoard',)
 
-class ImageTestSerializer(serializers.ModelSerializer):
-
-    class Meta:
-        model = ImageTest
-        fields = "__all__"
-
 from rest_framework_simplejwt.serializers import TokenRefreshSerializer
 from rest_framework_simplejwt.settings import api_settings
 from rest_framework_simplejwt.serializers import RefreshToken
