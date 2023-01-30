@@ -13,7 +13,7 @@ from django.core.exceptions import ValidationError as DjangoValidationError
 
 from rest_framework.validators import UniqueValidator
 from django.contrib.auth import get_user_model
-from .models import User, ImageTest
+from .models import User
 
 from community.serializers import PlaceSerializer, BoardListSerializer, TravelSerializer, CommentSerializer
 
