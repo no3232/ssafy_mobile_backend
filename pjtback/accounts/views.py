@@ -15,7 +15,7 @@ from rest_framework import serializers
 
 from .serializers import EmailUniqueCheckSerializer, PhoneUniqueCheckSerializer, CustomUserDetailSerializer, JoinSerializer, TestUserDetailSerializer
 
-from .models import EmailValidateModel, ImageTest
+from .models import EmailValidateModel
 
 
 # @extend_schema(tags=['registration'], request=PhoneUniqueCheckSerializer, responses=bool, summary='폰 넘버 중복 체크')
