@@ -200,10 +200,10 @@ def like(request, board_id):
 
     if board.likeList.filter(id=request.user.id).exists():
         board.likeList.remove(user)
-        return Response(data = {False},status=status.HTTP_202_ACCEPTED)
+        return Response(data = False,status=status.HTTP_202_ACCEPTED)
     else:
         board.likeList.add(user)
-        return Response(data = {True}, status=status.HTTP_202_ACCEPTED)
+        return Response(data = True, status=status.HTTP_202_ACCEPTED)
 
 @extend_schema(responses = CommentSerializer , request=CommentSerializer ,summary='코멘트 생성')
 @api_view(['POST'])
