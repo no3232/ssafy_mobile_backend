@@ -260,11 +260,7 @@ sudo certbot --nginx
 chmod +x init-letsencrypt.sh  
 ./init-letsencrypt.sh
 
-## 해결해야 할 구석
-
-Running pip as the 'root' user can result in broken permissions and conflicting behaviour with the system package manager. It is recommended to use a virtual environment instead: [12. Virtual Environments and Packages &#8212; Python 3.11.1 documentation](https://pip.pypa.io/warnings/venv)
-
-요거 해결
+## 해결해야 할 점들
 
 shell script 좀 더 분기점 두거나, git clone 후 dir 이동 하는거 까지 자동으로 하던가 해야할듯?
 
