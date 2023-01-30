@@ -17,8 +17,11 @@ fi
 if [ ${value} -eq 2 ]
 then
 	cd ~/${rootdir}/
-	git reset --hard
-	git pull
+	git clean -f pjtback/accounts/migrations/
+	git clean -f pjtback/community/migrations/
+	git restore .
+	git pull origin master
+	sudo docker-compose rm web
 	sudo docker-compose up -d --build
 fi
 
