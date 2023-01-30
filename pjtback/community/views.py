@@ -154,7 +154,6 @@ def travel_create(request):
         serializer.save(userId=user)
 
         return Response(status=status.HTTP_201_CREATED)
-    return Response(status=status.HTTP_400_BAD_REQUEST)
 
 
 @extend_schema(summary='user_id 파라미터로 넣어 주면 해당 유저의 travel')
