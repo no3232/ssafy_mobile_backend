@@ -6,7 +6,7 @@ from rest_framework import status
 class PlaceSerializer(serializers.ModelSerializer):
     placeId = serializers.IntegerField(source='id', read_only = True)
     saveDate = serializers.DateTimeField(format="%Y-%m-%d %H:%M:%S", read_only= True)
-    placeImgList = serializers.JSONField(required=False)
+    placeImgList = serializers.JSONField(required=False, allow_null = True)
 
     class Meta:
         model = Place
@@ -26,7 +26,6 @@ class TravelSerializer(serializers.ModelSerializer):
     
     def create(self, validated_data):
         instance = Travel.objects.create(**validated_data)
-
         places = self.context['request'].data['placeList']
         if places:
             for place in places:
@@ -40,7 +39,7 @@ class CommentSerializer(serializers.ModelSerializer):
     profileImg = serializers.ImageField(source = 'user.profileImg', read_only= True)
     userId = serializers.CharField(source='user.pk', read_only=True)
     nickname = serializers.CharField(source = 'user.nickname', read_only = True)
-    writeDate = serializers.DateTimeField(source = 'write_date', read_only = True)
+    writeDate = serializers.DateTimeField(format="%Y-%m-%d %H:%M:%S",source = 'write_date', read_only = True)
 
     class Meta:
         model = Comment
@@ -51,7 +50,7 @@ class BoardListSerializer(serializers.ModelSerializer):
     boardId = serializers.IntegerField(source='id', read_only=True)
     userId = serializers.IntegerField(source ='userId.pk', read_only=True)
     nickname =  serializers.CharField(source='userId.nickname', read_only=True)
-    profileImg = serializers.ImageField(source = 'user.profileImg', read_only= True)
+    profileImg = serializers.ImageField(source = 'user.profileImg', read_only= True), 
     writeDate = serializers.DateTimeField(format="%Y-%m-%d %H:%M:%S", read_only= True)
     travel = TravelSerializer(read_only = True)
     imageList = serializers.JSONField(required=False)
