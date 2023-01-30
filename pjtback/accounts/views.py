@@ -147,22 +147,3 @@ def join_views(request):
     user = request.user
     serializer = TestUserDetailSerializer(user)
     return Response(serializer.data, status=status.HTTP_200_OK)
-
-
-
-
-# @api_view(['POST', 'GET'])
-# def image_test(request):
-#     print(request.data)
-#     # ImageTest.objects.create(profileImg = request.FILES)
-#     if request.method == "POST":
-#         serializer = ImageTestSerializer(data = request.data)
-#         if serializer.is_valid():
-#             serializer.save()
-#             return Response(serializer.data, status=status.HTTP_202_ACCEPTED)
-#         else:
-#             return Response(serializer.errors, status = status.HTTP_400_BAD_REQUEST)
-#     else:
-#         img = get_list_or_404(ImageTest)
-#         serializer = ImageTestSerializer(img, many=True)
-#         return Response(serializer.data)
