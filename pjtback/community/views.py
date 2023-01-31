@@ -28,7 +28,7 @@ from django.db.models import Q
 @api_view(['GET'])
 def board_get(request):
     boards = Board.objects.all()
-    serializer = BoardListSerializer(boards, many=True)
+    serializer = BoardListSerializer(boards, many=True, context={"request": request})
     return Response(serializer.data)
 
 
@@ -106,7 +106,7 @@ def board_filtered(request):
     result_query = age_query & period_query & theme_query & region_query
     result_board = boards.filter(result_query)
 
-    serializer = BoardListSerializer(result_board, many= True)
+    serializer = BoardListSerializer(result_board, many= True, context={"request": request})
 
     return Response(serializer.data, status= status.HTTP_200_OK)
 
@@ -171,14 +171,14 @@ def board_detail(request, board_id):
 
     board = get_object_or_404(Board, id = board_id)
     if request.method == 'GET':
-        serializer = BoardListSerializer(board)
+        serializer = BoardListSerializer(board, context={"request": request})
         return Response(serializer.data)
 
     elif request.method == 'PUT':
         user = request.user
         if board.userId == user:
             wanted_travel = get_object_or_404(Travel, pk=request.data['travel']['travelId'])
-            serializer = BoardListSerializer(board, data=request.data)
+            serializer = BoardListSerializer(board, data=request.data, context={"request": request})
             if serializer.is_valid(raise_exception=True):
                 serializer.save(userId=user, travel=wanted_travel)
                 
@@ -213,7 +213,7 @@ def comment_create(request, board_id):
     if serializer.is_valid(raise_exception=True):
         serializer.save(board=board, user=request.user)
         board_modified = Board.objects.get(id = board_id)
-        boardserializer = BoardListSerializer(board_modified)
+        boardserializer = BoardListSerializer(board_modified, context={"request": request})
         return Response(boardserializer.data, status=status.HTTP_201_CREATED)
 
 @extend_schema(responses = CommentSerializer , request=CommentSerializer ,summary='코멘트 수정, 삭제')
@@ -225,7 +225,7 @@ def comments(request,board_id,comment_id):
     if request.method == 'DELETE':
         comment.delete()
         board_modified = Board.objects.get(id = board_id)
-        boardserializer = BoardListSerializer(board_modified)
+        boardserializer = BoardListSerializer(board_modified, context={"request": request})
         return Response(boardserializer.data, status=status.HTTP_204_NO_CONTENT)
     
     elif request.method == 'PUT':
@@ -235,6 +235,6 @@ def comments(request,board_id,comment_id):
         if serializer.is_valid(raise_exception=True):
             serializer.save(user=request.user, board=board)
             board_modified = Board.objects.get(id = board_id)
-            boardserializer = BoardListSerializer(board_modified)
+            boardserializer = BoardListSerializer(board_modified, context={"request": request})
             return Response(boardserializer.data, status=status.HTTP_202_ACCEPTED)
 
