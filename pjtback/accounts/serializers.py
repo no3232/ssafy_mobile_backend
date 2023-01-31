@@ -42,7 +42,7 @@ class CustomRegisterSerializer(RegisterSerializer):
 
     def get_cleaned_data(self):
         data = super().get_cleaned_data()
-        data['profileImg'] = self.validated_data.get('profileImg', 'default_image.jpg')
+        data['profileImg'] = self.validated_data.get('profileImg', '')
         data['phone_number'] = self.validated_data.get('phone_number', '')
         data['naver'] = self.validated_data.get('naver', '')
         data['google'] = self.validated_data.get('google', '')
