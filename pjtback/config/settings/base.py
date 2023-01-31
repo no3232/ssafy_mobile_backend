@@ -199,16 +199,16 @@ WSGI_APPLICATION = 'pjtback.wsgi.application'
 #     }
 # }
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'django_mobile',
-        'USER': 'root',
-        'PASSWORD': 'sangjun1324',
-        'HOST': 'localhost',
-        'PORT': '3306'
-    }
-}
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.mysql',
+#         'NAME': 'django_mobile',
+#         'USER': 'root',
+#         'PASSWORD': 'sangjun1324',
+#         'HOST': 'localhost',
+#         'PORT': '3306'
+#     }
+# }
 
 
 # Password validation
