@@ -5,7 +5,7 @@ from rest_framework import status
 
 class PlaceSerializer(serializers.ModelSerializer):
     placeId = serializers.IntegerField(source='id', read_only = True)
-    saveDate = serializers.DateTimeField(format="%Y-%m-%d %H:%M:%S", read_only= True)
+    saveDate = serializers.DateTimeField(format="%Y-%m-%d %H:%M:%S")
     placeImgList = serializers.JSONField(required=False, allow_null = True)
 
     class Meta:
