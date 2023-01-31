@@ -21,7 +21,9 @@ then
 	git clean -f pjtback/community/migrations/
 	git restore .
 	git pull origin master
+	sudo docker-compose stop
 	sudo docker-compose rm web
-	sudo docker-compose up -d --build
+	sudo docker-compose up --build
+	echo "web 로그를 확인해주세요"
 fi
 
