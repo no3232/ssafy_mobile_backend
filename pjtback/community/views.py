@@ -226,7 +226,7 @@ def comments(request,board_id,comment_id):
         comment.delete()
         board_modified = Board.objects.get(id = board_id)
         boardserializer = BoardListSerializer(board_modified, context={"request": request})
-        return Response(boardserializer.data, status=status.HTTP_204_NO_CONTENT)
+        return Response(boardserializer.data, status=status.HTTP_200_OK)
     
     elif request.method == 'PUT':
         comment = Comment.objects.get(id=comment_id)
