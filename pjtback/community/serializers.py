@@ -36,7 +36,7 @@ class TravelSerializer(serializers.ModelSerializer):
 class CommentSerializer(serializers.ModelSerializer):
     commentId = serializers.IntegerField(source='id', read_only=True)
     boardId = serializers.IntegerField(source='board.pk', read_only=True)
-    profileImg = serializers.ImageField(source = 'user.profileImg', read_only= True)
+    profileImg = serializers.ImageField(source = 'user.profileImg', read_only= True, use_url=True)
     userId = serializers.CharField(source='user.pk', read_only=True)
     nickname = serializers.CharField(source = 'user.nickname', read_only = True)
     writeDate = serializers.DateTimeField(format="%Y-%m-%d %H:%M:%S",source = 'write_date', read_only = True)
@@ -50,7 +50,7 @@ class BoardListSerializer(serializers.ModelSerializer):
     boardId = serializers.IntegerField(source='id', read_only=True)
     userId = serializers.IntegerField(source ='userId.pk', read_only=True)
     nickname =  serializers.CharField(source='userId.nickname', read_only=True)
-    profileImg = serializers.ImageField(source = 'user.profileImg', read_only= True)
+    profileImg = serializers.ImageField(source = 'userId.profileImg', read_only= True, use_url = True)
     writeDate = serializers.DateTimeField(format="%Y-%m-%d %H:%M:%S", read_only= True)
     travel = TravelSerializer(read_only = True)
     imageList = serializers.JSONField(required=False)
