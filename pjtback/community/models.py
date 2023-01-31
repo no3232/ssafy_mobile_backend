@@ -31,7 +31,7 @@ class Place(models.Model):
     placeImgList = models.JSONField(default=list)
     latitude = models.FloatField(default=0.0)
     longitude = models.FloatField(default=0.0)
-    address = models.CharField(max_length=40, default='')
+    address = models.CharField(max_length=255, default='')
 
 
 class Comment(models.Model):
