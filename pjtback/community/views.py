@@ -212,7 +212,9 @@ def comment_create(request, board_id):
     serializer = CommentSerializer(data=request.data)
     if serializer.is_valid(raise_exception=True):
         serializer.save(board=board, user=request.user)
-        return Response(serializer.data, status=status.HTTP_201_CREATED)
+        board_modified = Board.objects.get(id = board_id)
+        boardserializer = BoardListSerializer(board_modified)
+        return Response(boardserializer.data, status=status.HTTP_201_CREATED)
 
 @extend_schema(responses = CommentSerializer , request=CommentSerializer ,summary='코멘트 수정, 삭제')
 @api_view(['DELETE', 'PUT'])
@@ -222,12 +224,17 @@ def comments(request,board_id,comment_id):
 
     if request.method == 'DELETE':
         comment.delete()
-        return Response(status=status.HTTP_204_NO_CONTENT)
+        board_modified = Board.objects.get(id = board_id)
+        boardserializer = BoardListSerializer(board_modified)
+        return Response(boardserializer.data, status=status.HTTP_204_NO_CONTENT)
     
     elif request.method == 'PUT':
-        board = Board.objects.get(id=board_id)
+        comment = Comment.objects.get(id=comment_id)
+        board = Board.objects.get(id = board_id)
         serializer = CommentSerializer(comment, data=request.data)
         if serializer.is_valid(raise_exception=True):
             serializer.save(user=request.user, board=board)
-            return Response(serializer.data)
+            board_modified = Board.objects.get(id = board_id)
+            boardserializer = BoardListSerializer(board_modified)
+            return Response(boardserializer.data, status=status.HTTP_202_ACCEPTED)
 
