@@ -8,8 +8,8 @@ from rest_framework.decorators import permission_classes
 from rest_framework.permissions import IsAuthenticated
 
 from django.shortcuts import get_object_or_404, get_list_or_404
-from .serializers import BoardListSerializer, PlaceSerializer, TravelSerializer , CommentSerializer
-from .models import Board, Place, Travel, Comment
+from .serializers import BoardListSerializer, PlaceSerializer, TravelSerializer , CommentSerializer, NotificationSerializer
+from .models import Board, Place, Travel, Comment, Notification
 from django.contrib.auth import get_user_model
 
 # json 파싱을 위해서
@@ -28,15 +28,15 @@ from django.db.models import Q
 from firebase_admin import messaging
 
 # fire base message를 위한 함수
-def send_to_firebase_cloud_messaging():
+def send_to_firebase_cloud_messaging(send_title, send_body, send_token):
     # This registration token comes from the client FCM SDKs.
     registration_token = 'dLlc4_JMRMuYtetSRj_TGV:APA91bGFHN2uGRV6Mn8OCRmMRQ-sOECODMGjDS7F14sqxOIBxhnb7e2b52dykkrZ3MQTPbZYw-F63OyExJVToeUasfwlv-p8-xT3TVvXXVhA8WrzKWSoC9AjJRa2kjFFeSC-8lWeCHZM'   # 이걸 해야 되는데.
 
     # See documentation on defining a message payload.
     message = messaging.Message(
     notification=messaging.Notification(
-        title='안녕하세요 타이틀 입니다',
-        body='안녕하세요 메세지 입니다',
+        title=send_title,
+        body=send_body,
     ),
     token=registration_token,
     )
@@ -231,12 +231,17 @@ def like(request, board_id):
 @permission_classes([IsAuthenticated])
 def comment_create(request, board_id):
     board = Board.objects.get(id=board_id)
-    serializer = CommentSerializer(data=request.data)
+    serializer = CommentSerializer(data=request.data['comment'])
 
     if serializer.is_valid(raise_exception=True):
         serializer.save(board=board, user=request.user)
         board_modified = Board.objects.get(id = board_id)
         boardserializer = BoardListSerializer(board_modified, context={"request": request})
+
+        notification_serializer = NotificationSerializer(data={'creator': request.user.id, 'to': board_modified.userId.id})
+        if notification_serializer.is_valid(raise_exception=True):
+            notification_serializer.save(notification_type = 1)
+        # Notification.objects.create(creator = request.user, to = board_modified.userId , notification_type = 0)
         
         return Response(boardserializer.data, status=status.HTTP_201_CREATED)
 

@@ -33,16 +33,17 @@ class Place(models.Model):
     longitude = models.FloatField(default=0.0)
     address = models.CharField(max_length=255, default='')
 
-
 class Comment(models.Model):
     board = models.ForeignKey(Board, on_delete=models.CASCADE, related_name='commentList')
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="commentList")
     content = models.TextField(max_length=50)
     write_date = models.DateTimeField(auto_now_add=True)
 
-
-
 class Like(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     board = models.ForeignKey(Board, on_delete=models.CASCADE)
 
+class Notification(models.Model):
+    creator = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='creator')
+    to = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='to')
+    notification_type = models.IntegerField(default=0)

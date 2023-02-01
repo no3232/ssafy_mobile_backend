@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Board, Travel ,Place , Comment, Like
+from .models import Board, Travel ,Place , Comment, Like, Notification
 from rest_framework.response import Response
 from rest_framework import status 
 
@@ -61,11 +61,17 @@ class BoardListSerializer(serializers.ModelSerializer):
         fields = ('boardId','userId','nickname', 'profileImg','writeDate','theme','title','content','imageList','travel','likeList','commentList')
         read_only_fields = ('userId','travel','profileImg','writeDate')
 
-
-
-
 class LikeSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Like
         fields = '__all__'
+
+class NotificationSerializer(serializers.ModelSerializer):
+    notificationType = serializers.IntegerField(source='notification_type', read_only = True)
+    profileImg = serializers.ImageField(source = 'creator.profileImg', read_only= True, use_url = True)
+
+    class Meta:
+        model = Notification
+        fields = ('creator', 'to', 'profileImg', 'notificationType')
+
