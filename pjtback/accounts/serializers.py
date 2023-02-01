@@ -202,3 +202,13 @@ class CustomTokenBlacklistSerializer(serializers.Serializer):
         except AttributeError:
             pass
         return {}
+
+
+
+# firebase 토큰 시리얼라이저
+class FirebaseSerializer(serializers.Serializer):
+    firebaseToken = serializers.CharField(source = 'firebase', required= True)
+    
+    class Meta:
+        model = User
+        fields = ('firebaseToken')
