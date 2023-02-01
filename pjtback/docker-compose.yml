@@ -39,6 +39,8 @@ services:
             - "8000:8000"                                            
         volumes:                                            
             - .:/pjtback
+        environment:
+            - TZ=Asia/Seoul
     db:                                                     
         image: mysql:latest                                
         container_name: db
