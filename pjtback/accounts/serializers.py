@@ -81,10 +81,11 @@ class CustomUserDetailSerializer(UserDetailsSerializer):
     pw = serializers.CharField(source="password", read_only=True)
     name = serializers.CharField(source="username", required=False)
     age = serializers.CharField()
+    firebaseToken = serializers.CharField(source = 'firebase')
 
     class Meta(UserDetailsSerializer.Meta):
         fields = ('email', 'pw', 'name', 'nickname',
-                  'profileImg', 'age', 'kakao', 'naver', 'google')
+                  'profileImg', 'age', 'kakao', 'naver', 'google', 'firebaseToken')
         read_only_fields = ('email', 'pw',)
 
 
@@ -206,9 +207,9 @@ class CustomTokenBlacklistSerializer(serializers.Serializer):
 
 
 # firebase 토큰 시리얼라이저
-class FirebaseSerializer(serializers.Serializer):
+class FirebaseSerializer(UserDetailsSerializer):
     firebaseToken = serializers.CharField(source = 'firebase', required= True)
-    
+    # user = JoinSerializer(source='*', read_only = True)
     class Meta:
-        model = User
-        fields = ('firebaseToken')
+        model=User
+        fields = ('firebaseToken',)

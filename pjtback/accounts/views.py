@@ -151,11 +151,12 @@ def join_views(request):
 
 
 @csrf_exempt
-@api_view(['POST'])
+@api_view(['POST', 'PUT'])
 @permission_classes([IsAuthenticated])
 def f_token_save_views(request):
     user = request.user
-    serializer = FirebaseSerializer(user)
-
+    serializer = FirebaseSerializer(user, data = request.data)
+    print(request.data)
     if serializer.is_valid(raise_exception=True):
-        return Response(status=status.HTTP_200_OK)
+        serializer.save()
+        return Response(serializer.data, status=status.HTTP_200_OK)
