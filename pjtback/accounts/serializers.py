@@ -147,7 +147,7 @@ class UserForignSerializer(serializers.ModelSerializer):
 
 from rest_framework_simplejwt.serializers import TokenRefreshSerializer
 from rest_framework_simplejwt.settings import api_settings
-from rest_framework_simplejwt.serializers import RefreshToken
+from rest_framework_simplejwt.tokens import RefreshToken, AccessToken
 class CustomTokenRefreshSerializer(TokenRefreshSerializer):
     refresh = ""
     refresh_token = serializers.CharField()
@@ -189,3 +189,16 @@ class TestUserDetailSerializer(UserDetailsSerializer):
     class Meta(UserDetailsSerializer.Meta):
         fields = ('uid', 'join', 'travel', 'myLikeBoard', 'commentList', 'writeBoard')
         read_only_fields = ()
+
+# 블랙리스트 시리얼라이저
+class CustomTokenBlacklistSerializer(serializers.Serializer):
+    refresh_token = serializers.CharField()
+    refresh_token_class = RefreshToken
+
+    def validate(self, attrs):
+        refresh = self.refresh_token_class(attrs["refresh_token"])
+        try:
+            refresh.blacklist()
+        except AttributeError:
+            pass
+        return {}

@@ -18,6 +18,7 @@ from django.urls import path, include
 from rest_framework_simplejwt.views import (
     TokenObtainPairView,
     TokenRefreshView,
+    TokenBlacklistView,
 )
 from django.conf.urls import url
 from rest_framework import permissions
@@ -45,6 +46,7 @@ urlpatterns = [
 
     path('token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
     path('token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
+    path('token/blacklist/', TokenBlacklistView.as_view(), name='token_blacklist'),
     
     path('community/', include('community.urls')),
 
@@ -56,7 +58,7 @@ urlpatterns = [
     # SWAGGER
 
     path('schema/', SpectacularAPIView.as_view(), name='schema'),
-    path('swagger/', SpectacularSwaggerView.as_view(url_name='schema'), name='swaggerui'),
+    path('swagger/', SpectacularSwaggerView.as_view(url_name='schema'), name='swaggerui')
 ] 
 
 # 미디어파일 url 추가
