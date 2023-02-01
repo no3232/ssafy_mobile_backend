@@ -68,10 +68,14 @@ class LikeSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 class NotificationSerializer(serializers.ModelSerializer):
+    notificationId = serializers.IntegerField(source='id', read_only=True)
     notificationType = serializers.IntegerField(source='notification_type', read_only = True)
     profileImg = serializers.ImageField(source = 'creator.profileImg', read_only= True, use_url = True)
+    creatornickname = serializers.CharField(source="creator.nickname", read_only= True)
+    tonickname = serializers.CharField(source="to.nickname", read_only= True)
 
     class Meta:
         model = Notification
-        fields = ('creator', 'to', 'profileImg', 'notificationType')
+        fields = ('notificationId','creatornickname', 'tonickname', 'profileImg', 'notificationType')
+        read_only_fields = ('notificationId', 'profileImg')
 

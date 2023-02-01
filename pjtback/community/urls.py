@@ -15,4 +15,8 @@ urlpatterns = [
     path('travel/create/', views.travel_create),
     path('travel/detail/<int:travel_id>/', views.travel_detail),
     path('travel/user/<int:user_id>/',views.travel_user),
+
+    # notification 나중에 mypage app 같은 곳으로 빼던가 해야 할듯
+    path('notification/', views.notification),
+    path('notification/<int: notification_id>', views.notification_delete),
 ]

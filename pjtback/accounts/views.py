@@ -154,9 +154,9 @@ def join_views(request):
 @api_view(['POST', 'PUT'])
 @permission_classes([IsAuthenticated])
 def f_token_save_views(request):
-    user = request.user
-    serializer = FirebaseSerializer(user, data = request.data)
+    serializer = FirebaseSerializer(data = request.data)
+    
     print(request.data)
     if serializer.is_valid(raise_exception=True):
-        serializer.save()
+        serializer.save(user=request.user)
         return Response(serializer.data, status=status.HTTP_200_OK)

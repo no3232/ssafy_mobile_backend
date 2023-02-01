@@ -3,6 +3,7 @@ from django.contrib.auth.models import AbstractUser, PermissionsMixin
 from imagekit.models import ProcessedImageField
 from imagekit.processors import ResizeToFill
 from django.utils.translation import gettext_lazy as _
+from django.conf import settings
 
 # Create your models here.
 
@@ -21,8 +22,11 @@ class User(AbstractUser):
     naver = models.EmailField(_("naver_email"), null=True)
     kakao = models.EmailField(_("kakao_email"), null=True)
     google = models.EmailField(_("google_email"), null=True)
-    firebase = models.CharField(max_length=255, null= True)
 
 class EmailValidateModel(models.Model):
     email = models.EmailField()
     validateNumber = models.CharField(max_length=10)
+
+class FireBase(models.Model):
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, null=True)
+    fcmToken = models.CharField("FCM Token", blank=True, max_length=500, null=True)

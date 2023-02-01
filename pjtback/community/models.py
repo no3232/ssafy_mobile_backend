@@ -44,6 +44,6 @@ class Like(models.Model):
     board = models.ForeignKey(Board, on_delete=models.CASCADE)
 
 class Notification(models.Model):
-    creator = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='creator')
-    to = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='to')
+    creator = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='notiList')
+    to = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='notiList')
     notification_type = models.IntegerField(default=0)

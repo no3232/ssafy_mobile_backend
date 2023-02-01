@@ -10,6 +10,7 @@ from rest_framework.permissions import IsAuthenticated
 from django.shortcuts import get_object_or_404, get_list_or_404
 from .serializers import BoardListSerializer, PlaceSerializer, TravelSerializer , CommentSerializer, NotificationSerializer
 from .models import Board, Place, Travel, Comment, Notification
+from accounts.models import FireBase
 from django.contrib.auth import get_user_model
 
 # json 파싱을 위해서
@@ -29,7 +30,7 @@ from firebase_admin import messaging
 # fire base message를 위한 함수
 def send_to_firebase_cloud_messaging(send_title, send_body, send_token):
     # This registration token comes from the client FCM SDKs.
-    registration_token = 'dLlc4_JMRMuYtetSRj_TGV:APA91bGFHN2uGRV6Mn8OCRmMRQ-sOECODMGjDS7F14sqxOIBxhnb7e2b52dykkrZ3MQTPbZYw-F63OyExJVToeUasfwlv-p8-xT3TVvXXVhA8WrzKWSoC9AjJRa2kjFFeSC-8lWeCHZM'   # 이걸 해야 되는데.
+    # registration_token = 'dLlc4_JMRMuYtetSRj_TGV:APA91bGFHN2uGRV6Mn8OCRmMRQ-sOECODMGjDS7F14sqxOIBxhnb7e2b52dykkrZ3MQTPbZYw-F63OyExJVToeUasfwlv-p8-xT3TVvXXVhA8WrzKWSoC9AjJRa2kjFFeSC-8lWeCHZM'   # 이걸 해야 되는데.
 
     # See documentation on defining a message payload.
     message = messaging.Message(
@@ -37,7 +38,7 @@ def send_to_firebase_cloud_messaging(send_title, send_body, send_token):
         title=send_title,
         body=send_body,
     ),
-    token=registration_token,
+    token=send_token,
     )
 
     response = messaging.send(message)
@@ -243,10 +244,13 @@ def like(request, board_id):
         return Response(data = False,status=status.HTTP_202_ACCEPTED)
     else:
         board.likeList.add(user)
-        notification_serializer = NotificationSerializer(data={'creator': request.user.id, 'to': board.userId.id})
+        notification_serializer = NotificationSerializer(data={'creator': request.user.id, 'to': board.userId.id},context={"request": request})
         if notification_serializer.is_valid(raise_exception=True):
             notification_serializer.save(notification_type = 1)
-        send_to_firebase_cloud_messaging(request.data['token']['title'], request.data['token']['body'], board.userId.firebase)
+        
+        fcm_list = [firebase for firebase in FireBase.objects.filter(user__id = board.userId.id) ]
+        for fcm in fcm_list:
+            send_to_firebase_cloud_messaging(request.data['message']['title'], request.data['message']['body'], fcm.fcmToken)
         return Response(data = True, status=status.HTTP_202_ACCEPTED)
 
 @extend_schema(responses = CommentSerializer , request=CommentSerializer ,summary='코멘트 생성')
@@ -261,12 +265,15 @@ def comment_create(request, board_id):
         board_modified = Board.objects.get(id = board_id)
         boardserializer = BoardListSerializer(board_modified, context={"request": request})
 
-        notification_serializer = NotificationSerializer(data={'creator': request.user.id, 'to': board_modified.userId.id})
+        notification_serializer = NotificationSerializer(data={'creator': request.user.id, 'to': board_modified.userId.id}, context={"request": request})
         if notification_serializer.is_valid(raise_exception=True):
             notification_serializer.save(notification_type = 0)
         # Notification.objects.create(creator = request.user, to = board_modified.userId , notification_type = 0)
         # print(board_modified.userId.age, board_modified.userId.firebase)
-        send_to_firebase_cloud_messaging(request.data['token']['title'], request.data['token']['body'], board_modified.userId.firebase)
+
+        fcm_list = [firebase for firebase in FireBase.objects.filter(user__id = board_modified.userId.id) ]
+        for fcm in fcm_list:
+            send_to_firebase_cloud_messaging(request.data['message']['title'], request.data['message']['body'], fcm.fcmToken)
 
 
         return Response(boardserializer.data, status=status.HTTP_201_CREATED)
@@ -293,6 +300,22 @@ def comments(request,board_id,comment_id):
             boardserializer = BoardListSerializer(board_modified, context={"request": request})
             return Response(boardserializer.data, status=status.HTTP_202_ACCEPTED)
 
+# 나중에 마이페이지 쪽으로 빼던가 하자
+@extend_schema(summary='알림페이지 GET')
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def notification(request):
+    user_id = request.user.id
+    notifications = Notification.objects.filter(to__id = user_id)
+    serializer = NotificationSerializer(notifications, many = True, context={"request": request})    
 
+    return Response(serializer.data)
 
+@extend_schema(summary='알림페이지 DELETE')
+@api_view(['DELETE'])
+@permission_classes([IsAuthenticated])
+def notification_delete(request, notification_id):
+    notification = get_object_or_404(Notification, id = notification_id)
+    notification.delete()
 
+    return Response(status=status.HTTP_204_NO_CONTENT)

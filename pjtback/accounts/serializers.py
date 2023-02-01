@@ -13,7 +13,7 @@ from django.core.exceptions import ValidationError as DjangoValidationError
 
 from rest_framework.validators import UniqueValidator
 from django.contrib.auth import get_user_model
-from .models import User
+from .models import User, FireBase
 
 from community.serializers import PlaceSerializer, BoardListSerializer, TravelSerializer, CommentSerializer
 
@@ -209,7 +209,7 @@ class CustomTokenBlacklistSerializer(serializers.Serializer):
 # firebase 토큰 시리얼라이저
 class FirebaseSerializer(UserDetailsSerializer):
     firebaseToken = serializers.CharField(source = 'firebase', required= True)
-    # user = JoinSerializer(source='*', read_only = True)
+
     class Meta:
-        model=User
-        fields = ('firebaseToken',)
+        model=FireBase
+        fields = '__all__'
