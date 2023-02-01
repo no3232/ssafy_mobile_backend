@@ -23,8 +23,7 @@ from rest_framework import serializers
 # for db orm query
 from django.db.models import Q
 
-
-
+# for firebase messaging
 from firebase_admin import messaging
 
 # fire base message를 위한 함수
@@ -132,6 +131,53 @@ def board_filtered(request):
 
     return Response(serializer.data, status= status.HTTP_200_OK)
 
+@extend_schema(summary='Board 상세페이지 조회, 수정, 삭제')
+@api_view(['GET', 'PUT', 'DELETE'])
+@permission_classes([IsAuthenticated])
+def board_detail(request, board_id):
+
+    board = get_object_or_404(Board, id = board_id)
+    if request.method == 'GET':
+        serializer = BoardListSerializer(board, context={"request": request})
+        return Response(serializer.data)
+
+    elif request.method == 'PUT':
+        user = request.user
+        if board.userId == user:
+            wanted_travel = get_object_or_404(Travel, pk=request.data['travel']['travelId'])
+            serializer = BoardListSerializer(board, data=request.data, context={"request": request})
+            if serializer.is_valid(raise_exception=True):
+                serializer.save(userId=user, travel=wanted_travel)
+                
+            return Response(serializer.data, status=status.HTTP_201_CREATED)  
+    
+    elif request.method == 'DELETE':
+        if request.user == board.userId:
+            board.delete()
+            return Response(status=status.HTTP_204_NO_CONTENT)
+        else:
+            return Response(status=status.HTTP_401_UNAUTHORIZED)
+
+@extend_schema(summary='토큰 넣어주면 해당 유저의 보드 객체들을 얻어 옴')
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def user_board(request):
+    user_id = request.user.id
+    boards = Board.objects.filter(userId__id = user_id)
+    serializer = BoardListSerializer(boards, many = True, context={"request": request})
+
+    return Response(serializer.data)
+
+@extend_schema(summary='토큰 넣어주면 해당 유저가 좋아하는 보드 객체들을 얻어 옴')
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def user_like_board(request):
+    user_id = request.user.id
+    boards = Board.objects.filter(likeList__contains = user_id)
+    serializer = BoardListSerializer(boards, many = True, context={"request": request})
+
+    return Response(serializer.data)
+
 @extend_schema(responses=TravelSerializer(many = True), summary='게시글 전체 조회')
 @api_view(['GET'])
 def travel_get(request):
@@ -186,33 +232,6 @@ def travel_user(request, user_id):
 
     return Response(serializer.data)
 
-@extend_schema(summary='Board 상세페이지 조회, 수정, 삭제')
-@api_view(['GET', 'PUT', 'DELETE'])
-@permission_classes([IsAuthenticated])
-def board_detail(request, board_id):
-
-    board = get_object_or_404(Board, id = board_id)
-    if request.method == 'GET':
-        serializer = BoardListSerializer(board, context={"request": request})
-        return Response(serializer.data)
-
-    elif request.method == 'PUT':
-        user = request.user
-        if board.userId == user:
-            wanted_travel = get_object_or_404(Travel, pk=request.data['travel']['travelId'])
-            serializer = BoardListSerializer(board, data=request.data, context={"request": request})
-            if serializer.is_valid(raise_exception=True):
-                serializer.save(userId=user, travel=wanted_travel)
-                
-            return Response(serializer.data, status=status.HTTP_201_CREATED)  
-    
-    elif request.method == 'DELETE':
-        if request.user == board.userId:
-            board.delete()
-            return Response(status=status.HTTP_204_NO_CONTENT)
-        else:
-            return Response(status=status.HTTP_401_UNAUTHORIZED)
-
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
 def like(request, board_id):
@@ -224,6 +243,10 @@ def like(request, board_id):
         return Response(data = False,status=status.HTTP_202_ACCEPTED)
     else:
         board.likeList.add(user)
+        notification_serializer = NotificationSerializer(data={'creator': request.user.id, 'to': board.userId.id})
+        if notification_serializer.is_valid(raise_exception=True):
+            notification_serializer.save(notification_type = 1)
+        send_to_firebase_cloud_messaging(request.data['token']['title'], request.data['token']['body'], board.userId.firebase)
         return Response(data = True, status=status.HTTP_202_ACCEPTED)
 
 @extend_schema(responses = CommentSerializer , request=CommentSerializer ,summary='코멘트 생성')
@@ -240,9 +263,12 @@ def comment_create(request, board_id):
 
         notification_serializer = NotificationSerializer(data={'creator': request.user.id, 'to': board_modified.userId.id})
         if notification_serializer.is_valid(raise_exception=True):
-            notification_serializer.save(notification_type = 1)
+            notification_serializer.save(notification_type = 0)
         # Notification.objects.create(creator = request.user, to = board_modified.userId , notification_type = 0)
-        
+        # print(board_modified.userId.age, board_modified.userId.firebase)
+        send_to_firebase_cloud_messaging(request.data['token']['title'], request.data['token']['body'], board_modified.userId.firebase)
+
+
         return Response(boardserializer.data, status=status.HTTP_201_CREATED)
 
 @extend_schema(responses = CommentSerializer , request=CommentSerializer ,summary='코멘트 수정, 삭제')
