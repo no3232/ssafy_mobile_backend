@@ -89,11 +89,11 @@ class CustomUserDetailSerializer(UserDetailsSerializer):
 
 
 class JoinSerializer(serializers.ModelSerializer):
-    
+    profile_image = serializers.ImageField(source='profileImg', use_url = True)
     class Meta:
         model = User
         fields = ('email', 'password', 'username', 'nickname',
-                  'profileImg', 'age', 'kakao', 'naver', 'google')
+                  'profile_image', 'age', 'kakao', 'naver', 'google')
         read_only_fields = ('email', 'password',)
 
 
