@@ -13,7 +13,7 @@ from rest_framework.decorators import api_view
 from django.views.decorators.csrf import csrf_exempt
 from rest_framework import serializers
 
-from .serializers import EmailUniqueCheckSerializer, PhoneUniqueCheckSerializer, CustomUserDetailSerializer, JoinSerializer, TestUserDetailSerializer
+from .serializers import EmailUniqueCheckSerializer, PhoneUniqueCheckSerializer, CustomUserDetailSerializer, JoinSerializer, TestUserDetailSerializer, FirebaseSerializer
 
 from .models import EmailValidateModel
 
@@ -148,3 +148,14 @@ def join_views(request):
     user = request.user
     serializer = TestUserDetailSerializer(user, context={"request": request})
     return Response(serializer.data, status=status.HTTP_200_OK)
+
+
+@csrf_exempt
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def f_token_save_views(request):
+    user = request.user
+    serializer = FirebaseSerializer(user)
+
+    if serializer.is_valid(raise_exception=True):
+        return Response(status=status.HTTP_200_OK)
