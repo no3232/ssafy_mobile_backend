@@ -89,7 +89,7 @@ class CustomUserDetailSerializer(UserDetailsSerializer):
 
 
 class JoinSerializer(serializers.ModelSerializer):
-    
+    profileImg = serializers.ImageField(use_url = True)
     class Meta:
         model = User
         fields = ('email', 'password', 'username', 'nickname',

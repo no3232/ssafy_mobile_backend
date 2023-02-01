@@ -140,10 +140,11 @@ def get_tokens_for_user(user):
 
 from rest_framework.decorators import permission_classes
 from rest_framework.permissions import IsAuthenticated
+
 @csrf_exempt
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
 def join_views(request):
     user = request.user
-    serializer = TestUserDetailSerializer(user)
+    serializer = TestUserDetailSerializer(user, context={"request": request})
     return Response(serializer.data, status=status.HTTP_200_OK)
