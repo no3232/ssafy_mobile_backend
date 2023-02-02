@@ -148,7 +148,7 @@ class UserForignSerializer(serializers.ModelSerializer):
 
 from rest_framework_simplejwt.serializers import TokenRefreshSerializer
 from rest_framework_simplejwt.settings import api_settings
-from rest_framework_simplejwt.tokens import RefreshToken, AccessToken
+from rest_framework_simplejwt.tokens import RefreshToken
 class CustomTokenRefreshSerializer(TokenRefreshSerializer):
     refresh = ""
     refresh_token = serializers.CharField()
@@ -208,7 +208,7 @@ class CustomTokenBlacklistSerializer(serializers.Serializer):
 
 # firebase 토큰 시리얼라이저
 class FirebaseSerializer(UserDetailsSerializer):
-    firebaseToken = serializers.CharField(source = 'firebase', required= True)
+    firebaseToken = serializers.CharField(source = 'fcmToken', required= True)
 
     class Meta:
         model=FireBase
