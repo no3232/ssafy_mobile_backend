@@ -81,11 +81,11 @@ class CustomUserDetailSerializer(UserDetailsSerializer):
     pw = serializers.CharField(source="password", read_only=True)
     name = serializers.CharField(source="username", required=False)
     age = serializers.CharField()
-    firebaseToken = serializers.CharField(source = 'firebase')
+    
 
     class Meta(UserDetailsSerializer.Meta):
         fields = ('email', 'pw', 'name', 'nickname',
-                  'profileImg', 'age', 'kakao', 'naver', 'google', 'firebaseToken')
+                  'profileImg', 'age', 'kakao', 'naver', 'google',)
         read_only_fields = ('email', 'pw',)
 
 
@@ -179,7 +179,7 @@ class CustomTokenRefreshSerializer(TokenRefreshSerializer):
         return data
 
 # 유저 디테일 시리얼라이저
-class TestUserDetailSerializer(UserDetailsSerializer):
+class AllUserDetailSerializer(UserDetailsSerializer):
     uid = serializers.IntegerField(source="id", read_only=True)
     join = JoinSerializer(source="*")
     travel = TravelSerializer(many=True, read_only=True)
