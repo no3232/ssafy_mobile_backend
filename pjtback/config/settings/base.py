@@ -81,6 +81,7 @@ INSTALLED_APPS = [
     'rest_framework',
     'rest_framework.authtoken',
     'rest_framework_simplejwt',
+    'rest_framework_simplejwt.token_blacklist',
 
 
     'dj_rest_auth',
@@ -118,10 +119,10 @@ REST_FRAMEWORK = {
 
 # JWT 토큰
 SIMPLE_JWT = {
-    'ACCESS_TOKEN_LIFETIME': timedelta(days=30),
+    'ACCESS_TOKEN_LIFETIME': timedelta(days=3),
     'REFRESH_TOKEN_LIFETIME': timedelta(days=180),
     'ROTATE_REFRESH_TOKENS': False,
-    'BLACKLIST_AFTER_ROTATION': False,
+    'BLACKLIST_AFTER_ROTATION': True,
     'UPDATE_LAST_LOGIN': False,
 
     'ALGORITHM': 'HS256',
@@ -149,6 +150,7 @@ SIMPLE_JWT = {
     'SLIDING_TOKEN_REFRESH_LIFETIME': timedelta(days=1),
     
     "TOKEN_REFRESH_SERIALIZER": "accounts.serializers.CustomTokenRefreshSerializer",
+    "TOKEN_BLACKLIST_SERIALIZER": "accounts.serializers.CustomTokenBlacklistSerializer",
 }
 
 MIDDLEWARE = [
@@ -188,27 +190,27 @@ WSGI_APPLICATION = 'pjtback.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/3.2/ref/settings/#databases
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'django_mobile',
-        'USER': 'root',
-        'PASSWORD': 'sangjun1324',
-        'HOST': 'db',
-        'PORT': '3306'
-    }
-}
-
 # DATABASES = {
 #     'default': {
 #         'ENGINE': 'django.db.backends.mysql',
 #         'NAME': 'django_mobile',
 #         'USER': 'root',
 #         'PASSWORD': 'sangjun1324',
-#         'HOST': 'localhost',
+#         'HOST': 'db',
 #         'PORT': '3306'
 #     }
 # }
+
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': 'django_mobile',
+        'USER': 'root',
+        'PASSWORD': 'sangjun1324',
+        'HOST': 'localhost',
+        'PORT': '3306'
+    }
+}
 
 
 # Password validation
@@ -248,7 +250,6 @@ USE_TZ = False
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/3.2/howto/static-files/
 
-STATIC_URL = '/static/'
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/3.2/ref/settings/#default-auto-field
@@ -290,12 +291,6 @@ REST_AUTH_SERIALIZERS = {
 # JWT 사용
 REST_USE_JWT = True
 
-# 스태틱 파일 BASEROOT
-STATIC_ROOT = BASE_DIR / 'static'
-# STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
-# STATICFILES_DIRS = [
-#     BASE_DIR / 'static',
-# ]
 
 # django graphene
 GRAPHENE = {
@@ -312,11 +307,6 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-# 각 media 파일에 대한 URL Prefix
-MEDIA_URL = '/media/' # 항상 / 로 끝나도록 설정
-
-# 업로드된 파일을 저장할 디렉토리 경로
-MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 
 # 이메일 관련설정
@@ -328,6 +318,16 @@ EMAIL_HOST_PASSWORD = 'jwlkzbqydsdtjhic'
 EMAIL_USE_TLS = True
 DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
 
+STATIC_URL = '/static/'
+STATIC_ROOT = os.path.join(os.path.dirname(BASE_DIR),"static") #개발시 스태틱파일을 모아서 복사해줄 디렉토리
+
+MEDIA_URL = '/media/'
+MEDIA_ROOT = os.path.join(os.path.dirname(BASE_DIR),"static", "media")
+
+STATICFILES_DIRS = [
+    os.path.join(os.path.dirname(BASE_DIR),"static", "static_dirs"),
+    os.path.join(os.path.dirname(BASE_DIR),"static", "media"),
+]
 import firebase_admin
 from firebase_admin import credentials
 
