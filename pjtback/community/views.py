@@ -46,24 +46,24 @@ def send_to_firebase_cloud_messaging(send_content, send_token):
     # Response is a message ID string.
 
 
-# @extend_schema(responses=BoardListSerializer(many=True), summary='게시글 전체 가져오기')
-# @api_view(['GET'])
-# def board_get(request):
-    
-#     boards = Board.objects.all()
-#     serializer = BoardListSerializer(boards, many=True, context={"request": request})
-#     return Response(serializer.data)
-
 @extend_schema(responses=BoardListSerializer(many=True), summary='게시글 전체 가져오기')
 @api_view(['GET'])
 def board_get(request):
-    all_boards = cache.get('all_boards')
-    if not all_boards:
-        boards = Board.objects.all()
-        serializer = BoardListSerializer(boards, many=True, context={"request": request})
-        cache.set('all_boards', serializer.data)
-        all_boards = serializer.data
-    return Response(all_boards)
+    
+    boards = Board.objects.all()
+    serializer = BoardListSerializer(boards, many=True, context={"request": request})
+    return Response(serializer.data)
+
+# @extend_schema(responses=BoardListSerializer(many=True), summary='게시글 전체 가져오기')
+# @api_view(['GET'])
+# def board_get(request):
+#     all_boards = cache.get('all_boards')
+#     if not all_boards:
+#         boards = Board.objects.all()
+#         serializer = BoardListSerializer(boards, many=True, context={"request": request})
+#         cache.set('all_boards', serializer.data)
+#         all_boards = serializer.data
+#     return Response(all_boards)
 
 
 
