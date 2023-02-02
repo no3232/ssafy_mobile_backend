@@ -334,3 +334,15 @@ from firebase_admin import credentials
 cred_path = os.path.join(BASE_DIR, "serviceAccountKey.json")
 cred = credentials.Certificate(cred_path)
 firebase_admin.initialize_app(cred)
+
+# 레디스
+CACHE = {
+    "default" : {
+        "BACKEND" : "django_redis.cache.RedisCache",
+        "LOCATION" : "redis://127.0.0.1:6379/1",
+        "OPTION" : {
+            "CLIENT_CLASS" : "django_redis.client.DefaultClient",
+        }
+    }
+
+}
