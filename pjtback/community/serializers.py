@@ -40,11 +40,12 @@ class CommentSerializer(serializers.ModelSerializer):
     userId = serializers.CharField(source='user.pk', read_only=True)
     nickname = serializers.CharField(source = 'user.nickname', read_only = True)
     writeDate = serializers.DateTimeField(format="%Y-%m-%d %H:%M:%S",source = 'write_date', read_only = True)
+    message = serializers.CharField(read_only= True, required = False)
 
     class Meta:
         model = Comment
-        fields = ('commentId', 'boardId', 'profileImg', 'userId', 'nickname', 'content', 'writeDate',)
-        read_only_fields = ('user','board','profileImg',)
+        fields = ('commentId', 'boardId', 'profileImg', 'userId', 'nickname', 'content', 'writeDate','message')
+        read_only_fields = ('user','board','profileImg','message')
 
 class BoardListSerializer(serializers.ModelSerializer):
     boardId = serializers.IntegerField(source='id', read_only=True)
@@ -71,6 +72,7 @@ class NotificationSerializer(serializers.ModelSerializer):
     notificationId = serializers.IntegerField(source='id', read_only=True)
     notificationType = serializers.IntegerField(source='notification_type', read_only = True)
     profileImg = serializers.ImageField(source = 'creator.profileImg', read_only= True, use_url = True)
+    # boardTitle = serializers.CharField()
     creatornickname = serializers.CharField(source="creator.nickname", read_only= True)
     tonickname = serializers.CharField(source="to.nickname", read_only= True)
 

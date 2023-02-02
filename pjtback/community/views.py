@@ -257,13 +257,14 @@ def like(request, board_id):
 def comment_create(request, board_id):
     print(request.data)
     board = Board.objects.get(id=board_id)
-    serializer = CommentSerializer(data=request.data['comment'])
+    serializer = CommentSerializer(data=request.data)
 
     if serializer.is_valid(raise_exception=True):
         serializer.save(board=board, user=request.user)
         board_modified = Board.objects.get(id = board_id)
         boardserializer = BoardListSerializer(board_modified, context={"request": request})
         notification_serializer = NotificationSerializer(data={"notification_type": 0}, context={"request": request})
+        
         if notification_serializer.is_valid(raise_exception=True):
             notification_serializer.save(creator = request.user, to = board.userId)
         # Notification.objects.create(creator = request.user, to = board_modified.userId , notification_type = 0)
