@@ -27,6 +27,9 @@ from django.db.models import Q
 # for firebase messaging
 from firebase_admin import messaging
 
+# redis cache
+from django.core.cache import cache
+
 # fire base message를 위한 함수
 def send_to_firebase_cloud_messaging(send_content, send_token):
     # This registration token comes from the client FCM SDKs.
@@ -41,15 +44,26 @@ def send_to_firebase_cloud_messaging(send_content, send_token):
 
     response = messaging.send(message)
     # Response is a message ID string.
-    print('Successfully sent message:', response)
 
+
+# @extend_schema(responses=BoardListSerializer(many=True), summary='게시글 전체 가져오기')
+# @api_view(['GET'])
+# def board_get(request):
+    
+#     boards = Board.objects.all()
+#     serializer = BoardListSerializer(boards, many=True, context={"request": request})
+#     return Response(serializer.data)
 
 @extend_schema(responses=BoardListSerializer(many=True), summary='게시글 전체 가져오기')
 @api_view(['GET'])
 def board_get(request):
-    boards = Board.objects.all()
-    serializer = BoardListSerializer(boards, many=True, context={"request": request})
-    return Response(serializer.data)
+    all_boards = cache.get('all_boards')
+    if not all_boards:
+        boards = Board.objects.all()
+        serializer = BoardListSerializer(boards, many=True, context={"request": request})
+        cache.set('all_boards', serializer.data)
+        all_boards = serializer.data
+    return Response(all_boards)
 
 
 
@@ -234,7 +248,7 @@ def travel_user(request, user_id):
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
 def like(request, board_id):
-    print(request.data['message'])
+
     board = Board.objects.get(id = board_id)
     user = request.user
 
@@ -256,7 +270,7 @@ def like(request, board_id):
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
 def comment_create(request, board_id):
-    print(request.data)
+
     board = Board.objects.get(id=board_id)
     serializer = CommentSerializer(data=request.data)
 
@@ -273,10 +287,9 @@ def comment_create(request, board_id):
 
         fcm_list = [firebase for firebase in FireBase.objects.filter(user__id = board_modified.userId.id) ]
 
-        print(fcm_list)
+        
         
         for fcm in fcm_list:
-            print(fcm.fcmToken)
             send_to_firebase_cloud_messaging(request.data['message'], fcm.fcmToken)
 
 
