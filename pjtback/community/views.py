@@ -31,15 +31,13 @@ from firebase_admin import messaging
 from django.core.cache import cache
 
 # fire base message를 위한 함수
-def send_to_firebase_cloud_messaging(send_title, send_body, send_token):
+def send_to_firebase_cloud_messaging(send_content, send_token):
     # This registration token comes from the client FCM SDKs.
-    # registration_token = 'dLlc4_JMRMuYtetSRj_TGV:APA91bGFHN2uGRV6Mn8OCRmMRQ-sOECODMGjDS7F14sqxOIBxhnb7e2b52dykkrZ3MQTPbZYw-F63OyExJVToeUasfwlv-p8-xT3TVvXXVhA8WrzKWSoC9AjJRa2kjFFeSC-8lWeCHZM'   # 이걸 해야 되는데.
-
+    # registration_token = 'c-mNY4KtTt66mQyDI2lpMF:APA91bHn99Msks_zPUOC3zTyfeLndz1uvGbxRMq5BmwGy5W0UcRSZvZQtqQWdKOwoxSnr36tpYHO95Y0bKnlNjNuHqGf2pim070DEePqe0MIAk-cIzMFbbYYOy6HcEf93SNmoxXfhKbD'   # 이걸 해야 되는데.
     # See documentation on defining a message payload.
     message = messaging.Message(
     notification=messaging.Notification(
-        title=send_title,
-        body=send_body,
+        title=send_content,
     ),
     token=send_token,
     )
@@ -250,6 +248,7 @@ def travel_user(request, user_id):
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
 def like(request, board_id):
+    print(request.data['message'])
     board = Board.objects.get(id = board_id)
     user = request.user
 
@@ -258,36 +257,41 @@ def like(request, board_id):
         return Response(data = False,status=status.HTTP_202_ACCEPTED)
     else:
         board.likeList.add(user)
-        notification_serializer = NotificationSerializer(data={'creator': request.user.id, 'to': board.userId.id},context={"request": request})
+        notification_serializer = NotificationSerializer(data={"notification_type": 0},context={"request": request})
         if notification_serializer.is_valid(raise_exception=True):
-            notification_serializer.save(notification_type = 1)
+            notification_serializer.save(creator = request.user, to = board.userId)
         
         fcm_list = [firebase for firebase in FireBase.objects.filter(user__id = board.userId.id) ]
         for fcm in fcm_list:
-            send_to_firebase_cloud_messaging(request.data['message']['title'], request.data['message']['body'], fcm.fcmToken)
+            send_to_firebase_cloud_messaging(request.data['message'], fcm.fcmToken)
         return Response(data = True, status=status.HTTP_202_ACCEPTED)
 
 @extend_schema(responses = CommentSerializer , request=CommentSerializer ,summary='코멘트 생성')
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
 def comment_create(request, board_id):
+    print(request.data)
     board = Board.objects.get(id=board_id)
-    serializer = CommentSerializer(data=request.data['comment'])
+    serializer = CommentSerializer(data=request.data)
 
     if serializer.is_valid(raise_exception=True):
         serializer.save(board=board, user=request.user)
         board_modified = Board.objects.get(id = board_id)
         boardserializer = BoardListSerializer(board_modified, context={"request": request})
-
-        notification_serializer = NotificationSerializer(data={'creator': request.user.id, 'to': board_modified.userId.id}, context={"request": request})
+        notification_serializer = NotificationSerializer(data={"notification_type": 0}, context={"request": request})
+        
         if notification_serializer.is_valid(raise_exception=True):
-            notification_serializer.save(notification_type = 0)
+            notification_serializer.save(creator = request.user, to = board.userId)
         # Notification.objects.create(creator = request.user, to = board_modified.userId , notification_type = 0)
         # print(board_modified.userId.age, board_modified.userId.firebase)
 
         fcm_list = [firebase for firebase in FireBase.objects.filter(user__id = board_modified.userId.id) ]
+
+        print(fcm_list)
+        
         for fcm in fcm_list:
-            send_to_firebase_cloud_messaging(request.data['message']['title'], request.data['message']['body'], fcm.fcmToken)
+            print(fcm.fcmToken)
+            send_to_firebase_cloud_messaging(request.data['message'], fcm.fcmToken)
 
 
         return Response(boardserializer.data, status=status.HTTP_201_CREATED)
