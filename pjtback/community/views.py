@@ -33,7 +33,7 @@ from django.core.cache import cache
 # fire base message를 위한 함수
 def send_to_firebase_cloud_messaging(send_content, send_token):
     # This registration token comes from the client FCM SDKs.
-    # registration_token = 'c-mNY4KtTt66mQyDI2lpMF:APA91bHn99Msks_zPUOC3zTyfeLndz1uvGbxRMq5BmwGy5W0UcRSZvZQtqQWdKOwoxSnr36tpYHO95Y0bKnlNjNuHqGf2pim070DEePqe0MIAk-cIzMFbbYYOy6HcEf93SNmoxXfhKbD'   # 이걸 해야 되는데.
+    # registration_token = 'ePHmTIi4T_-BX0_-nfssKj:APA91bHVBQhvBAUXAilaNB3mpMjgy_XIq6CRE8_gQDbkDO5-suJRq2cUxuzkPawaMksL8b9VqND2JSSTJ9aOj29tGzyagKkraIh50_HrA5wJspvmORByCjJHc8MpBsXwmRpXQjUSSNdu'   # 이걸 해야 되는데.
     # See documentation on defining a message payload.
     message = messaging.Message(
     notification=messaging.Notification(
@@ -44,7 +44,6 @@ def send_to_firebase_cloud_messaging(send_content, send_token):
 
     response = messaging.send(message)
     # Response is a message ID string.
-
 
 @extend_schema(responses=BoardListSerializer(many=True), summary='게시글 전체 가져오기')
 @api_view(['GET'])
@@ -186,7 +185,7 @@ def user_board(request):
 @permission_classes([IsAuthenticated])
 def user_like_board(request):
     user_id = request.user.id
-    boards = Board.objects.filter(likeList__contains = user_id)
+    boards = Board.objects.filter(likeList__id = user_id)
     serializer = BoardListSerializer(boards, many = True, context={"request": request})
 
     return Response(serializer.data)
