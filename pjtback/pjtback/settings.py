@@ -16,7 +16,7 @@ import os
 
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
-BASE_DIR = Path(__file__).resolve().parent.parent
+BASE_DIR = Path(__file__).resolve().parent.parent.parent
 
 
 # Quick-start development settings - unsuitable for production
@@ -330,10 +330,22 @@ EMAIL_HOST_PASSWORD = 'jwlkzbqydsdtjhic'
 EMAIL_USE_TLS = True
 DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
 
-
+# FCM
 import firebase_admin
 from firebase_admin import credentials
 
-cred_path = os.path.join(BASE_DIR, "serviceAccountKey.json")
+cred_path = os.path.join(BASE_DIR, "pjtback/serviceAccountKey.json")
 cred = credentials.Certificate(cred_path)
 firebase_admin.initialize_app(cred)
+
+# 레디스
+CACHE = {
+    "default" : {
+        "BACKEND" : "django_redis.cache.RedisCache",
+        "LOCATION" : "redis://127.0.0.1:6379/1",
+        "OPTION" : {
+            "CLIENT_CLASS" : "django_redis.client.DefaultClient",
+        }
+    }
+
+}
