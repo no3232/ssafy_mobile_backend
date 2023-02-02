@@ -234,7 +234,7 @@ def travel_user(request, user_id):
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
 def like(request, board_id):
-    print(request.data)
+    print(request.data['message'])
     board = Board.objects.get(id = board_id)
     user = request.user
 
@@ -249,7 +249,7 @@ def like(request, board_id):
         
         fcm_list = [firebase for firebase in FireBase.objects.filter(user__id = board.userId.id) ]
         for fcm in fcm_list:
-            send_to_firebase_cloud_messaging(request.data, fcm.fcmToken)
+            send_to_firebase_cloud_messaging(request.data['message'], fcm.fcmToken)
         return Response(data = True, status=status.HTTP_202_ACCEPTED)
 
 @extend_schema(responses = CommentSerializer , request=CommentSerializer ,summary='코멘트 생성')
