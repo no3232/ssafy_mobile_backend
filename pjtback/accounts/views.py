@@ -15,7 +15,7 @@ from rest_framework import serializers
 
 from .serializers import EmailUniqueCheckSerializer, PhoneUniqueCheckSerializer, CustomUserDetailSerializer, JoinSerializer, TestUserDetailSerializer, FirebaseSerializer
 
-from .models import EmailValidateModel
+from .models import EmailValidateModel, FireBase
 
 
 # @extend_schema(tags=['registration'], request=PhoneUniqueCheckSerializer, responses=bool, summary='폰 넘버 중복 체크')
@@ -151,12 +151,16 @@ def join_views(request):
 
 
 @csrf_exempt
-@api_view(['POST', 'PUT'])
+@api_view(['POST', 'DELETE'])
 @permission_classes([IsAuthenticated])
 def f_token_save_views(request):
-    print(request.data)
-    serializer = FirebaseSerializer(data = request.data)
-    
-    if serializer.is_valid(raise_exception=True):
-        serializer.save(user=request.user)
-        return Response(serializer.data, status=status.HTTP_200_OK)
+    if request.method == 'POST':
+        print(request.data)
+        serializer = FirebaseSerializer(data = request.data)
+        
+        if serializer.is_valid(raise_exception=True):
+            serializer.save(user=request.user)
+            return Response(data=serializer.data['firebaseToken'], status=status.HTTP_200_OK)
+    else:
+        FireBase.objects.filter(fcmToken = request.data['firebaseToken']).delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
