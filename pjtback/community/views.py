@@ -275,7 +275,7 @@ def comment_create(request, board_id):
         
         for fcm in fcm_list:
             print(fcm.fcmToken)
-            send_to_firebase_cloud_messaging(request.data['message']['content'], fcm.fcmToken)
+            send_to_firebase_cloud_messaging(request.data['message'], fcm.fcmToken)
 
 
         return Response(boardserializer.data, status=status.HTTP_201_CREATED)
