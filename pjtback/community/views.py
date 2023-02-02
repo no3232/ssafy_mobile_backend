@@ -31,11 +31,10 @@ from firebase_admin import messaging
 def send_to_firebase_cloud_messaging(send_content, send_token):
     # This registration token comes from the client FCM SDKs.
     # registration_token = 'c-mNY4KtTt66mQyDI2lpMF:APA91bHn99Msks_zPUOC3zTyfeLndz1uvGbxRMq5BmwGy5W0UcRSZvZQtqQWdKOwoxSnr36tpYHO95Y0bKnlNjNuHqGf2pim070DEePqe0MIAk-cIzMFbbYYOy6HcEf93SNmoxXfhKbD'   # 이걸 해야 되는데.
-
     # See documentation on defining a message payload.
     message = messaging.Message(
     notification=messaging.Notification(
-        body=send_content,
+        title=send_content,
     ),
     token=send_token,
     )
@@ -243,9 +242,9 @@ def like(request, board_id):
         return Response(data = False,status=status.HTTP_202_ACCEPTED)
     else:
         board.likeList.add(user)
-        notification_serializer = NotificationSerializer(data={'creator': request.user.id, 'to': board.userId.id},context={"request": request})
+        notification_serializer = NotificationSerializer(data={"notification_type": 0},context={"request": request})
         if notification_serializer.is_valid(raise_exception=True):
-            notification_serializer.save(notification_type = 1)
+            notification_serializer.save(creator = request.user, to = board.userId)
         
         fcm_list = [firebase for firebase in FireBase.objects.filter(user__id = board.userId.id) ]
         for fcm in fcm_list:
@@ -256,6 +255,7 @@ def like(request, board_id):
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
 def comment_create(request, board_id):
+    print(request.data)
     board = Board.objects.get(id=board_id)
     serializer = CommentSerializer(data=request.data['comment'])
 
@@ -271,8 +271,11 @@ def comment_create(request, board_id):
 
         fcm_list = [firebase for firebase in FireBase.objects.filter(user__id = board_modified.userId.id) ]
 
+        print(fcm_list)
+        
         for fcm in fcm_list:
-            send_to_firebase_cloud_messaging(request.data['message'], fcm.fcmToken)
+            print(fcm.fcmToken)
+            send_to_firebase_cloud_messaging(request.data['message']['content'], fcm.fcmToken)
 
 
         return Response(boardserializer.data, status=status.HTTP_201_CREATED)
