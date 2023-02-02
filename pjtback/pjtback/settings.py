@@ -250,7 +250,6 @@ USE_TZ = False
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/3.2/howto/static-files/
 
-STATIC_URL = '/static/'
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/3.2/ref/settings/#default-auto-field
@@ -292,12 +291,6 @@ REST_AUTH_SERIALIZERS = {
 # JWT 사용
 REST_USE_JWT = True
 
-# 스태틱 파일 BASEROOT
-STATIC_ROOT = BASE_DIR / 'static'
-# STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
-# STATICFILES_DIRS = [
-#     BASE_DIR / 'static',
-# ]
 
 # django graphene
 GRAPHENE = {
@@ -314,11 +307,6 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-# 각 media 파일에 대한 URL Prefix
-MEDIA_URL = '/media/' # 항상 / 로 끝나도록 설정
-
-# 업로드된 파일을 저장할 디렉토리 경로
-MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 
 # 이메일 관련설정
@@ -330,7 +318,16 @@ EMAIL_HOST_PASSWORD = 'jwlkzbqydsdtjhic'
 EMAIL_USE_TLS = True
 DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
 
+STATIC_URL = '/static/'
+STATIC_ROOT = os.path.join(os.path.dirname(BASE_DIR),"static") #개발시 스태틱파일을 모아서 복사해줄 디렉토리
 
+MEDIA_URL = '/media/'
+MEDIA_ROOT = os.path.join(os.path.dirname(BASE_DIR),"static", "media")
+
+STATICFILES_DIRS = [
+    os.path.join(os.path.dirname(BASE_DIR),"static", "static_dirs"),
+    os.path.join(os.path.dirname(BASE_DIR),"static", "media"),
+]
 import firebase_admin
 from firebase_admin import credentials
 
