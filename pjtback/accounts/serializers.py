@@ -212,4 +212,4 @@ class FirebaseSerializer(UserDetailsSerializer):
 
     class Meta:
         model=FireBase
-        fields = '__all__'
+        fields = ('__all__')
