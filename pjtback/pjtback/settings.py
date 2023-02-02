@@ -334,7 +334,7 @@ DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
 import firebase_admin
 from firebase_admin import credentials
 
-cred_path = os.path.join(BASE_DIR,"pjtback", "serviceAccountKey.json")
+cred_path = os.path.join(BASE_DIR, "serviceAccountKey.json")
 cred = credentials.Certificate(cred_path)
 firebase_admin.initialize_app(cred)
 
