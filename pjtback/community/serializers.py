@@ -72,12 +72,10 @@ class NotificationSerializer(serializers.ModelSerializer):
     notificationId = serializers.IntegerField(source='id', read_only=True)
     notificationType = serializers.IntegerField(source='notification_type', read_only = True)
     profileImg = serializers.ImageField(source = 'creator.profileImg', read_only= True, use_url = True)
-    # boardTitle = serializers.CharField()
-    creatornickname = serializers.CharField(source="creator.nickname", read_only= True)
-    tonickname = serializers.CharField(source="to.nickname", read_only= True)
+    message = serializers.CharField(source = 'msg', read_only = True)
 
     class Meta:
         model = Notification
-        fields = ('notificationId','creatornickname', 'tonickname', 'profileImg', 'notificationType')
-        read_only_fields = ('notificationId', 'profileImg')
+        fields = ('notificationId', 'message', 'profileImg', 'notificationType')
+        read_only_fields = ('notificationId', 'profileImg', 'message')
 

@@ -30,6 +30,20 @@ from firebase_admin import messaging
 # redis cache
 from django.core.cache import cache
 
+
+# redis caching  ㅠㅠ
+# @extend_schema(responses=BoardListSerializer(many=True), summary='게시글 전체 가져오기')
+# @api_view(['GET'])
+# def board_get(request):
+#     all_boards = cache.get('all_boards')
+#     if not all_boards:
+#         boards = Board.objects.all()
+#         serializer = BoardListSerializer(boards, many=True, context={"request": request})
+#         cache.set('all_boards', serializer.data)
+#         all_boards = serializer.data
+
+#     return Response(all_boards)
+
 # fire base message를 위한 함수
 def send_to_firebase_cloud_messaging(send_content, send_token):
     # This registration token comes from the client FCM SDKs.
@@ -42,7 +56,12 @@ def send_to_firebase_cloud_messaging(send_content, send_token):
     token=send_token,
     )
 
-    response = messaging.send(message)
+    try:
+        response = messaging.send(message)
+    except:
+        print('옛날 토큰입니다.')
+        FireBase.objects.filter(fcmToken = send_token ).delete()
+
     # Response is a message ID string.
 
 @extend_schema(responses=BoardListSerializer(many=True), summary='게시글 전체 가져오기')
@@ -52,18 +71,6 @@ def board_get(request):
     boards = Board.objects.all()
     serializer = BoardListSerializer(boards, many=True, context={"request": request})
     return Response(serializer.data)
-
-# @extend_schema(responses=BoardListSerializer(many=True), summary='게시글 전체 가져오기')
-# @api_view(['GET'])
-# def board_get(request):
-#     all_boards = cache.get('all_boards')
-#     if not all_boards:
-#         boards = Board.objects.all()
-#         serializer = BoardListSerializer(boards, many=True, context={"request": request})
-#         cache.set('all_boards', serializer.data)
-#         all_boards = serializer.data
-#     return Response(all_boards)
-
 
 
 @extend_schema(request=BoardListSerializer(), summary='게시글 생성')
