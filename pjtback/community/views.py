@@ -41,7 +41,6 @@ from django.core.cache import cache
 #         serializer = BoardListSerializer(boards, many=True, context={"request": request})
 #         cache.set('all_boards', serializer.data)
 #         all_boards = serializer.data
-
 #     return Response(all_boards)
 
 # fire base message를 위한 함수
@@ -263,14 +262,21 @@ def like(request, board_id):
         return Response(data = False,status=status.HTTP_202_ACCEPTED)
     else:
         board.likeList.add(user)
-        notification_serializer = NotificationSerializer(data={"notification_type": 0},context={"request": request})
-        if notification_serializer.is_valid(raise_exception=True):
-            notification_serializer.save(creator = request.user, to = board.userId)
+
+        if Notification.objects.filter(msg = request.data["message"]):
+            pass
+        else:
+            notification_serializer = NotificationSerializer(data={"notification_type": 0 , "msg" : request.data["message"]}, context={"request": request})
+            
+            if notification_serializer.is_valid(raise_exception=True):
+                notification_serializer.save(to = board.userId)
         
         fcm_list = [firebase for firebase in FireBase.objects.filter(user__id = board.userId.id) ]
         for fcm in fcm_list:
             send_to_firebase_cloud_messaging(request.data['message'], fcm.fcmToken)
         return Response(data = True, status=status.HTTP_202_ACCEPTED)
+
+
 
 @extend_schema(responses = CommentSerializer , request=CommentSerializer ,summary='코멘트 생성')
 @api_view(['POST'])
@@ -284,20 +290,19 @@ def comment_create(request, board_id):
         serializer.save(board=board, user=request.user)
         board_modified = Board.objects.get(id = board_id)
         boardserializer = BoardListSerializer(board_modified, context={"request": request})
-        notification_serializer = NotificationSerializer(data={"notification_type": 0}, context={"request": request})
-        
-        if notification_serializer.is_valid(raise_exception=True):
-            notification_serializer.save(creator = request.user, to = board.userId)
-        # Notification.objects.create(creator = request.user, to = board_modified.userId , notification_type = 0)
-        # print(board_modified.userId.age, board_modified.userId.firebase)
+
+        if Notification.objects.filter(msg = request.data["message"]):
+            pass
+        else:
+            notification_serializer = NotificationSerializer(data={"notification_type": 1 , "msg" : request.data["message"]}, context={"request": request})
+            
+            if notification_serializer.is_valid(raise_exception=True):
+                notification_serializer.save(to = board.userId)
 
         fcm_list = [firebase for firebase in FireBase.objects.filter(user__id = board_modified.userId.id) ]
-
-        
         
         for fcm in fcm_list:
             send_to_firebase_cloud_messaging(request.data['message'], fcm.fcmToken)
-
 
         return Response(boardserializer.data, status=status.HTTP_201_CREATED)
 
