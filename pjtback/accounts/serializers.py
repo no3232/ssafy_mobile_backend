@@ -202,7 +202,9 @@ class CustomTokenBlacklistSerializer(serializers.Serializer):
             refresh.blacklist()
         except AttributeError:
             pass
-        return {}
+        return True
+    def post(self):
+        return 'ok'
 
 
 
