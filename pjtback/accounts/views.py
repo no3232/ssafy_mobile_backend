@@ -151,18 +151,18 @@ def join_views(request):
 
 
 @csrf_exempt
-@api_view(['POST', 'DELETE'])
+@api_view(['POST', 'PUT'])
 @permission_classes([IsAuthenticated])
 def f_token_save_views(request):
     if request.method == 'POST':
         if len(FireBase.objects.filter(fcmToken = request.data['firebaseToken'], user=request.user)) == 0:
             serializer = FirebaseSerializer(data = request.data)
-            
+
             if serializer.is_valid(raise_exception=True):
                 serializer.save(user=request.user)
                 return Response(data=serializer.data['firebaseToken'], status=status.HTTP_200_OK)
         else:
             return Response(data=request.data['firebaseToken'], status=status.HTTP_200_OK)
-    else:
+    elif request.method == 'PUT':
         FireBase.objects.filter(fcmToken = request.data['firebaseToken']).delete()
-        return Response(status=status.HTTP_204_NO_CONTENT)
+        return Response(data=request.data['firebaseToken'], status=status.HTTP_200_OK)
