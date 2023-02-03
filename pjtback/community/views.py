@@ -263,16 +263,19 @@ def like(request, board_id):
     else:
         board.likeList.add(user)
 
-        if Notification.objects.filter(msg = request.data["message"]):
+        if Notification.objects.filter(msg = request.data["message"]) or user.id == board.userId.id:
             pass
         else:
+            # 알림 객체 생성 부분
             notification_serializer = NotificationSerializer(data={"notificationType": 0 , "message" : request.data["message"]}, context={"request": request})
             if notification_serializer.is_valid(raise_exception=True):
                 notification_serializer.save(creator=user, to=board.userId)
         
-        fcm_list = [firebase for firebase in FireBase.objects.filter(user__id = board.userId.id) ]
-        for fcm in fcm_list:
-            send_to_firebase_cloud_messaging(request.data['message'], fcm.fcmToken)
+            # 알림을 실제로 보내는 부분
+            fcm_list = [firebase for firebase in FireBase.objects.filter(user__id = board.userId.id) ]
+            for fcm in fcm_list:
+                send_to_firebase_cloud_messaging(request.data['message'], fcm.fcmToken)
+
         return Response(data = True, status=status.HTTP_202_ACCEPTED)
 
 
@@ -291,18 +294,16 @@ def comment_create(request, board_id):
         board_modified = Board.objects.get(id = board_id)
         boardserializer = BoardListSerializer(board_modified, context={"request": request})
 
-        if Notification.objects.filter(msg = request.data["message"]):
+        if Notification.objects.filter(msg = request.data["message"]) or user.id == board.userId.id:
             pass
         else:
             notification_serializer = NotificationSerializer(data={"notificationType": 1 , "message" : request.data["message"]}, context={"request": request})
-
             if notification_serializer.is_valid(raise_exception=True):
                 notification_serializer.save(creator=user,to = board.userId)
 
-        fcm_list = [firebase for firebase in FireBase.objects.filter(user__id = board_modified.userId.id) ]
-        
-        for fcm in fcm_list:
-            send_to_firebase_cloud_messaging(request.data['message'], fcm.fcmToken)
+            fcm_list = [firebase for firebase in FireBase.objects.filter(user__id = board_modified.userId.id) ]
+            for fcm in fcm_list:
+                send_to_firebase_cloud_messaging(request.data['message'], fcm.fcmToken)
 
         return Response(boardserializer.data, status=status.HTTP_201_CREATED)
 
