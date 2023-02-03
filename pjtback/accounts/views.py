@@ -13,9 +13,11 @@ from rest_framework.decorators import api_view
 from django.views.decorators.csrf import csrf_exempt
 from rest_framework import serializers
 
-from .serializers import EmailUniqueCheckSerializer, PhoneUniqueCheckSerializer, CustomUserDetailSerializer, JoinSerializer, AllUserDetailSerializer, FirebaseSerializer
+from .serializers import EmailUniqueCheckSerializer, PhoneUniqueCheckSerializer, CustomUserDetailSerializer, JoinSerializer, AllUserDetailSerializer, FirebaseSerializer, CustomTokenBlacklistSerializer
 
 from .models import EmailValidateModel, FireBase
+
+from rest_framework_simplejwt.views import TokenBlacklistView
 
 
 # @extend_schema(tags=['registration'], request=PhoneUniqueCheckSerializer, responses=bool, summary='폰 넘버 중복 체크')
@@ -99,7 +101,7 @@ def social_login(request, social_page):
 
     # 네이버의 경우
     if social_page == "naver":
-        usertoken = request.POST.get("token")
+        usertoken = request.data["token"]
         userdata = requests.get(url="https://openapi.naver.com/v1/nid/me",
                                 headers={"Authorization": f"Bearer {usertoken}"})
 
@@ -166,3 +168,4 @@ def f_token_save_views(request):
     elif request.method == 'PUT':
         FireBase.objects.filter(fcmToken = request.data['firebaseToken']).delete()
         return Response(data=request.data['firebaseToken'], status=status.HTTP_200_OK)
+        
