@@ -266,10 +266,9 @@ def like(request, board_id):
         if Notification.objects.filter(msg = request.data["message"]):
             pass
         else:
-            notification_serializer = NotificationSerializer(data={"notification_type": 0 , "msg" : request.data["message"]}, context={"request": request})
-            
+            notification_serializer = NotificationSerializer(data={"notificationType": 0 , "message" : request.data["message"]}, context={"request": request})
             if notification_serializer.is_valid(raise_exception=True):
-                notification_serializer.save(to = board.userId)
+                notification_serializer.save(creator=user, to=board.userId)
         
         fcm_list = [firebase for firebase in FireBase.objects.filter(user__id = board.userId.id) ]
         for fcm in fcm_list:
@@ -285,6 +284,7 @@ def comment_create(request, board_id):
 
     board = Board.objects.get(id=board_id)
     serializer = CommentSerializer(data=request.data)
+    user = request.user
 
     if serializer.is_valid(raise_exception=True):
         serializer.save(board=board, user=request.user)
@@ -294,10 +294,10 @@ def comment_create(request, board_id):
         if Notification.objects.filter(msg = request.data["message"]):
             pass
         else:
-            notification_serializer = NotificationSerializer(data={"notification_type": 1 , "msg" : request.data["message"]}, context={"request": request})
-            
+            notification_serializer = NotificationSerializer(data={"notificationType": 1 , "message" : request.data["message"]}, context={"request": request})
+
             if notification_serializer.is_valid(raise_exception=True):
-                notification_serializer.save(to = board.userId)
+                notification_serializer.save(creator=user,to = board.userId)
 
         fcm_list = [firebase for firebase in FireBase.objects.filter(user__id = board_modified.userId.id) ]
         
