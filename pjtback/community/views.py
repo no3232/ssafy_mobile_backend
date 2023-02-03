@@ -172,9 +172,9 @@ def board_detail(request, board_id):
     elif request.method == 'DELETE':
         if request.user == board.userId:
             board.delete()
-            return Response(status=status.HTTP_204_NO_CONTENT)
+            return Response(data="OK",status=status.HTTP_200_OK)
         else:
-            return Response(status=status.HTTP_401_UNAUTHORIZED)
+            return Response(data="뭔가 문제 있음",status=status.HTTP_401_UNAUTHORIZED)
 
 @extend_schema(summary='토큰 넣어주면 해당 유저의 보드 객체들을 얻어 옴')
 @api_view(['GET'])
