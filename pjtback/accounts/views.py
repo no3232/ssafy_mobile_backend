@@ -113,6 +113,7 @@ def social_login(request, social_page):
         usertoken = request.POST.get("token")
         userdata = requests.get(url="https://kapi.kakao.com/v2/user/me",
                                 headers={"Authorization": f"Bearer {usertoken}"})
+        
     # 구글의 경우
     elif social_page == "google":
         usertoken = request.POST.get("token")

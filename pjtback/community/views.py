@@ -216,11 +216,14 @@ def travel_detail(request, travel_id):
     elif request.method == 'PUT':
         user = request.user
         if travel.userId == user:
-            serializer = TravelSerializer(travel, data=request.data)
+            serializer = TravelSerializer(travel, data=request.data, context ={'request': request})
+            print(1)
             if serializer.is_valid(raise_exception=True):
                 serializer.save(userId = user)
                 
-                return Response(serializer.data, status=status.HTTP_201_CREATED)  
+                return Response(serializer.data, status=status.HTTP_201_CREATED)
+        else:
+            return Response(data={'error': '일치하지 않는 유저입니다.'}, status=status.HTTP_401_UNAUTHORIZED)
     
     elif request.method == 'DELETE':
         if request.user == travel.userId:
