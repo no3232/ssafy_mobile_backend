@@ -222,7 +222,7 @@ def travel_detail(request, travel_id):
                 
                 return Response(serializer.data, status=status.HTTP_201_CREATED)
         else:
-            return Response(data={'error': '일치하지 않는 유저입니다.'}, status=status.HTTP_401_UNAUTHORIZED)
+            return Response(status=status.HTTP_401_UNAUTHORIZED)
     
     elif request.method == 'DELETE':
         if request.user == travel.userId:
