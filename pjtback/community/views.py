@@ -217,7 +217,6 @@ def travel_detail(request, travel_id):
         user = request.user
         if travel.userId == user:
             serializer = TravelSerializer(travel, data=request.data, context ={'request': request})
-            print(1)
             if serializer.is_valid(raise_exception=True):
                 serializer.save(userId = user)
                 
