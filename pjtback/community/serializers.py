@@ -38,12 +38,12 @@ class TravelSerializer(serializers.ModelSerializer):
         return instance
 
     def update(self, instance, validated_data):
-        print(1)
-
         instance.location = validated_data.get('location', instance.location)
         instance.startDate = validated_data.get(
             'startDate', instance.startDate)
         instance.endDate = validated_data.get('endDate', instance.endDate)
+        # 일단은 관련 플레이스 죄다 삭제 후 재생성으로 했습니다.
+        # 단시간에 알고리즘 짜면 for 3번 돌거 같아서...
         Place.objects.filter(travel=instance).delete()
         places = self.context['request'].data['placeList']
         if places:
