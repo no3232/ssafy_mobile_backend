@@ -56,7 +56,7 @@ class TravelSerializer(serializers.ModelSerializer):
                                                  latitude=place['latitude'],
                                                  longitude=place['longitude'],
                                                  address=place['address'])
-
+        instance.save()
         return instance
 
 
