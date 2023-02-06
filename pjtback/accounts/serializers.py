@@ -78,7 +78,6 @@ class CustomRegisterSerializer(RegisterSerializer):
 
 # 유저 디테일 시리얼라이저
 class CustomUserDetailSerializer(UserDetailsSerializer):
-    password = serializers.CharField(source="password", read_only=True)
     name = serializers.CharField(source="username", required=False)
     age = serializers.CharField()
     
@@ -86,7 +85,7 @@ class CustomUserDetailSerializer(UserDetailsSerializer):
     class Meta(UserDetailsSerializer.Meta):
         fields = ('email', 'password', 'name', 'nickname',
                   'profileImg', 'age', 'kakao', 'naver', 'google',)
-        read_only_fields = ('email', 'pw',)
+        read_only_fields = ('email', 'password',)
 
 
 class JoinSerializer(serializers.ModelSerializer):
