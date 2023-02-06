@@ -2,6 +2,7 @@ from rest_framework import serializers
 from .models import Board, Travel, Place, Comment, Like, Notification
 from rest_framework.response import Response
 from rest_framework import status
+from rest_framework.exceptions import ValidationError, ParseError
 
 
 class PlaceSerializer(serializers.ModelSerializer):
@@ -34,6 +35,8 @@ class TravelSerializer(serializers.ModelSerializer):
         if places:
             for place in places:
                 new_place = Place.objects.create(travel=instance, **place)
+        else:
+            raise ValidationError
 
         return instance
 
