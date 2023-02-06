@@ -19,9 +19,9 @@ class User(AbstractUser):
     )
     nickname = models.CharField(_("nickname"), max_length=50)
     age = models.IntegerField(_("age"), null=True)
-    naver = models.EmailField(_("naver_email"), null=True)
-    kakao = models.EmailField(_("kakao_email"), null=True)
-    google = models.EmailField(_("google_email"), null=True)
+    naver = models.EmailField(_("naver_email"), null=True, blank=True)
+    kakao = models.EmailField(_("kakao_email"), null=True, blank=True)
+    google = models.EmailField(_("google_email"), null=True, blank=True)
 
 class EmailValidateModel(models.Model):
     email = models.EmailField()

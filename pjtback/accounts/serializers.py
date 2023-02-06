@@ -30,7 +30,7 @@ class CustomRegisterSerializer(RegisterSerializer):
     password = serializers.CharField(write_only=True, source="password1")
     phone_number = serializers.CharField(max_length=13, required=False)
     profileImg = serializers.ImageField(use_url=True, required=False)
-    naver_email = serializers.EmailField(required=False)
+    naver_email = serializers.EmailField(required=False, allow_null = True)
     kakao_email = serializers.EmailField(required=False)
     google_email = serializers.EmailField(required=False)
     nickname = serializers.CharField(min_length=1, required=True)
