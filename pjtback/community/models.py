@@ -21,7 +21,7 @@ class Board(models.Model):
     content = models.TextField(max_length=300)
     imageList = models.JSONField()
     travel = models.ForeignKey(Travel, on_delete=models.CASCADE, related_name='board')
-    likeList = models.ManyToManyField(User, related_name='myLikeBoard', blank= True)
+    likeList = models.ManyToManyField(User, related_name='myLikeBoard', blank= True, through='Like')
 
 class Place(models.Model):
     travel = models.ForeignKey(Travel, on_delete=models.CASCADE, related_name='placeList')
