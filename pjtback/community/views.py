@@ -191,7 +191,7 @@ def user_board(request):
 @permission_classes([IsAuthenticated])
 def user_like_board(request):
     user_id = request.user.id
-    boards = Board.objects.filter(likeList__id = user_id).order_by('-like__id')
+    boards = Board.objects.filter(likeList__id = user_id)
     serializer = BoardListSerializer(boards, many = True, context={"request": request})
 
     return Response(serializer.data)
