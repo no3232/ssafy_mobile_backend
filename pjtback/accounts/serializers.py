@@ -78,14 +78,15 @@ class CustomRegisterSerializer(RegisterSerializer):
 
 # 유저 디테일 시리얼라이저
 class CustomUserDetailSerializer(UserDetailsSerializer):
-    name = serializers.CharField(source="username", required=False)
-    age = serializers.CharField()
+    profile_image = serializers.ImageField(source='profileImg', use_url = True, required=False)
     
-
     class Meta(UserDetailsSerializer.Meta):
-        fields = ('email', 'password', 'name', 'nickname',
-                  'profileImg', 'age', 'kakao', 'naver', 'google',)
+        fields = ('email', 'password', 'username', 'nickname',
+                  'profile_image', 'age', 'kakao', 'naver', 'google',)
         read_only_fields = ('email', 'password',)
+    @staticmethod
+    def validate_username(username):
+        return username
 
 
 class JoinSerializer(serializers.ModelSerializer):
