@@ -17,8 +17,8 @@ fi
 if [ ${value} -eq 2 ]
 then
 	cd ~/${rootdir}/
-	git clean -f pjtback/accounts/migrations/
-	git clean -f pjtback/community/migrations/
+	git clean -f accounts/migrations/
+	git clean -f community/migrations/
 	git restore .
 	git pull origin master
 	sudo docker-compose stop
