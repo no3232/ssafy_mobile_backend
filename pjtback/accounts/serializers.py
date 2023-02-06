@@ -78,7 +78,7 @@ class CustomRegisterSerializer(RegisterSerializer):
 
 # 유저 디테일 시리얼라이저
 class CustomUserDetailSerializer(UserDetailsSerializer):
-    profile_image = serializers.ImageField(source='profileImg', use_url = True, required=False)
+    profile_image = serializers.ImageField(source='profileImg', use_url = True, required=False, allow_null = True)
     
     class Meta(UserDetailsSerializer.Meta):
         fields = ('email', 'password', 'username', 'nickname',
@@ -87,7 +87,14 @@ class CustomUserDetailSerializer(UserDetailsSerializer):
     @staticmethod
     def validate_username(username):
         return username
+    
+    def update(self,instance, validated_data):
+        if not validated_data.get('profileImg'):
+            validated_data['profileImg']= instance.profileImg 
 
+        super().update(instance, validated_data)
+        instance.save()
+        return instance
 
 class JoinSerializer(serializers.ModelSerializer):
     profile_image = serializers.ImageField(source='profileImg', use_url = True)
