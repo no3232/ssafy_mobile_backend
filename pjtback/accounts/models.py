@@ -16,6 +16,7 @@ class User(AbstractUser):
         processors=[ResizeToFill(300, 300)],
         format='JPEG',
         options={'quality': 70},
+        null= True
     )
     nickname = models.CharField(_("nickname"), max_length=50)
     age = models.IntegerField(_("age"), null=True)
