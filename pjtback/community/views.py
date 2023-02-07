@@ -293,7 +293,7 @@ def comment_create(request, board_id):
         board_modified = Board.objects.get(id = board_id)
         boardserializer = BoardListSerializer(board_modified, context={"request": request})
 
-        if Notification.objects.filter(msg = request.data["message"]) or user.id == board.userId.id:
+        if user.id == board.userId.id:
             pass
         else:
             notification_serializer = NotificationSerializer(data={"notificationType": 1 , "message" : request.data["message"]}, context={"request": request})
