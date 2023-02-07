@@ -1,7 +1,8 @@
 echo " 1. 최초"
 echo " 2. 소스코드 수정시 배포"
 
-rootdir="mobile_pjt/pjtback"
+rootdir="mobile_pjt"
+appdir="mobile_pjt/pjtback"
 
 read value
 if [ ${value} -eq 1 ]
@@ -17,10 +18,11 @@ fi
 if [ ${value} -eq 2 ]
 then
 	cd ~/${rootdir}/
-	git clean -f accounts/migrations/
-	git clean -f community/migrations/
 	git restore .
 	git pull origin master
+	cd ~/${appdir}/
+	python manage.py makemigrations
+	python manage.py migrate
 	sudo docker-compose stop
 	sudo docker-compose rm web
 	sudo docker-compose up --build
