@@ -49,3 +49,4 @@ class Notification(models.Model):
     to = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='toList')
     msg = models.CharField(_("message"), max_length=100)
     notification_type = models.IntegerField(default=0)
+    createdate = models.DateTimeField(auto_now_add=True)
