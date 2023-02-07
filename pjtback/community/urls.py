@@ -18,5 +18,5 @@ urlpatterns = [
 
     # notification 나중에 mypage app 같은 곳으로 빼던가 해야 할듯
     path('notification/', views.notification),
-    path('notification/<int:notification_id>', views.notification_delete),
+    path('notification/<int:notification_id>/', views.notification_delete),
 ]
