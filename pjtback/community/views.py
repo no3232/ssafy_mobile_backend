@@ -45,9 +45,6 @@ from django.core.cache import cache
 
 # fire base message를 위한 함수
 def send_to_firebase_cloud_messaging(send_content, send_token):
-    # This registration token comes from the client FCM SDKs.
-    # registration_token = 'ePHmTIi4T_-BX0_-nfssKj:APA91bHVBQhvBAUXAilaNB3mpMjgy_XIq6CRE8_gQDbkDO5-suJRq2cUxuzkPawaMksL8b9VqND2JSSTJ9aOj29tGzyagKkraIh50_HrA5wJspvmORByCjJHc8MpBsXwmRpXQjUSSNdu'   # 이걸 해야 되는데.
-    # See documentation on defining a message payload.
     message = messaging.Message(
     notification=messaging.Notification(
         title=send_content,

@@ -30,9 +30,9 @@ class TravelSerializer(serializers.ModelSerializer):
         fields = ('travelId', 'location', 'startDate', 'endDate', 'placeList',)
 
     def create(self, validated_data):
-        instance = Travel.objects.create(**validated_data)
         places = self.context['request'].data['placeList']
         if places:
+            instance = Travel.objects.create(**validated_data)
             for place in places:
                 new_place = Place.objects.create(travel=instance, **place)
         else:
