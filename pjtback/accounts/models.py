@@ -9,6 +9,7 @@ from django.conf import settings
 
 class User(AbstractUser):
     email = models.EmailField(_("email_address"), unique=True)
+    username = models.CharField(max_length=50, unique=False)
     phone_number = models.CharField(_("phone"), max_length=13,)
     profileImg = ProcessedImageField(
         blank=True,
@@ -23,6 +24,8 @@ class User(AbstractUser):
     naver = models.EmailField(_("naver_email"), null=True, blank=True)
     kakao = models.EmailField(_("kakao_email"), null=True, blank=True)
     google = models.EmailField(_("google_email"), null=True, blank=True)
+    USERNAME_FIELD = 'email'
+    REQUIRED_FIELDS = []
 
 class EmailValidateModel(models.Model):
     email = models.EmailField()
