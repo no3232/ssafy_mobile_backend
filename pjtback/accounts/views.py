@@ -110,9 +110,11 @@ def social_login(request, social_page):
             'utf-8')).get('response').get('email')
     # 카카오의 경우
     if social_page == "kakao":
-        usertoken = request.POST.get("token")
+        usertoken = request.data["token"]
         userdata = requests.get(url="https://kapi.kakao.com/v2/user/me",
-                                headers={"Authorization": f"Bearer {usertoken}"})
+                                headers={"Authorization": f"Bearer {usertoken}"}).json()
+        useremail = userdata["kakao_account"]["email"]
+
         
     # 구글의 경우
     elif social_page == "google":
@@ -185,4 +187,3 @@ def f_token_save_views(request):
     elif request.method == 'PUT':
         FireBase.objects.filter(fcmToken = request.data['firebaseToken']).delete()
         return Response(data=request.data['firebaseToken'], status=status.HTTP_200_OK)
-        
