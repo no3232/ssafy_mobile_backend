@@ -11,4 +11,5 @@ urlpatterns = [
     path('social_login/<str:social_page>/', views.social_login),
     path('userdetail/', UserDetailsView.as_view()),
     path('firebase_save/', views.f_token_save_views),
+    path('change_email/', views.change_email),
 ]
