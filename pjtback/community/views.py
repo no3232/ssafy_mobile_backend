@@ -103,7 +103,7 @@ def board_filtered(request):
 
     # 일단 하드 코딩에 가깝긴 한데, 프엔에서 넘겨주는 타이밍 까지 만드는게 아니면 그냥 이런식으로 쓰고 수정하는게 나을듯?
     age_dic = { '10대' : [10,20], '20대': [20,30] , '30대' : [30,40] , '40대': [40,50], '50대': [50,60], '60대 이상': [60,100]}
-    periods_dic = {'당일 치기': 1, '1박 2일': 2, '3박 4일': 3, '4박 5일+': 4}
+    periods_dic = {'당일 치기': 1, '1박 2일': 2, '2박 3일': 3, '3박 4일': 4, '4박 5일+': 4}
     theme_lst = ['혼자', '친구와', '연인과', '배우자와', '아이와', '부모님과', '기타']
     region_lst = ["서울","경기","강원","부산","경북·대구","전남·광주","제주","충남·대전","경남","충북","경남","전북","인천"]
 
@@ -123,7 +123,11 @@ def board_filtered(request):
     
     if periods:
         for period_str in periods:
-            period_query |= Q(day__lt = timedelta(days=periods_dic[period_str]))
+            if period_str == "4박 5일+":
+                period_query |= Q(day__gte = timedelta(days=4))
+            else:
+                period_query |= Q(day__lt = timedelta(days=periods_dic[period_str])) & Q(day__gte = timedelta(days=periods_dic[period_str]-1))
+
     else:
         period_query = ~Q(pk__in=[])
 
@@ -293,7 +297,7 @@ def comment_create(request, board_id):
         board_modified = Board.objects.get(id = board_id)
         boardserializer = BoardListSerializer(board_modified, context={"request": request})
 
-        if Notification.objects.filter(msg = request.data["message"]) or user.id == board.userId.id:
+        if user.id == board.userId.id:
             pass
         else:
             notification_serializer = NotificationSerializer(data={"notificationType": 1 , "message" : request.data["message"]}, context={"request": request})

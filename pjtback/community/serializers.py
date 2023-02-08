@@ -3,6 +3,7 @@ from .models import Board, Travel, Place, Comment, Like, Notification, PlaceImag
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.exceptions import ValidationError, ParseError
+from django.utils.timezone import now, timedelta
 import json
 
 class PlaceImageSerializer(serializers.ModelSerializer):
@@ -130,8 +131,10 @@ class NotificationSerializer(serializers.ModelSerializer):
     profileImg = serializers.ImageField(
         source='creator.profileImg', read_only=True, use_url=True)
     message = serializers.CharField(source='msg')
+    createDate = serializers.DateTimeField(source='createdate',format="%Y-%m-%d %H:%M:%S", read_only=True)
 
     class Meta:
         model = Notification
         fields = ('notificationId', 'message',
-                  'profileImg', 'notificationType')
+                  'profileImg', 'notificationType', 'createDate')
+
