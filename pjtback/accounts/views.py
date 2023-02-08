@@ -192,8 +192,8 @@ def f_token_save_views(request):
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
 def change_email(request):
-    # uesr = request.user
-    # if request.method == 'POST':
-    #     User = get_user_model()
-    #     serialier = CustomRegisterSerializer( data=request.data)
-    pass
+    user = request.user
+    user.email = request.data['email']
+    user.save()
+
+    return Response(status=status.HTTP_200_OK)
