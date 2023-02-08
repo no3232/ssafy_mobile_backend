@@ -1,6 +1,6 @@
 from django.urls import path
 from . import views
-from dj_rest_auth.views import (UserDetailsView)
+from dj_rest_auth.views import (UserDetailsView, PasswordChangeView)
 from . import serializers
 
 urlpatterns = [
@@ -11,5 +11,6 @@ urlpatterns = [
     path('social_login/<str:social_page>/', views.social_login),
     path('userdetail/', UserDetailsView.as_view()),
     path('firebase_save/', views.f_token_save_views),
-    path('change_email/', views.change_email),
+    path('changeEmail/',views.change_email ),
+    path('changePassword/', PasswordChangeView.as_view()),
 ]
