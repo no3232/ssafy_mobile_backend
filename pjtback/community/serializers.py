@@ -7,14 +7,16 @@ from django.utils.timezone import now, timedelta
 import json
 
 class PlaceImageSerializer(serializers.ModelSerializer):
+    url = serializers.ImageField(source = "picture")
+
     class Meta:
         model = PlaceImage
-        fields = "__all__"
+        fields = ("id", "url")
 
 class PlaceSerializer(serializers.ModelSerializer):
     placeId = serializers.IntegerField(source='id', read_only=True)
     saveDate = serializers.DateTimeField(format="%Y-%m-%d %H:%M:%S")
-    placeImgList = PlaceImageSerializer(required=False, allow_null=True)
+    placeImgList = PlaceImageSerializer(required=False, allow_null=True, many=True)
 
     class Meta:
         model = Place
