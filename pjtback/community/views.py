@@ -297,7 +297,7 @@ def comment_create(request, board_id):
         board_modified = Board.objects.get(id = board_id)
         boardserializer = BoardListSerializer(board_modified, context={"request": request})
 
-        if Notification.objects.filter(msg = request.data["message"]) or user.id == board.userId.id:
+        if user.id == board.userId.id:
             pass
         else:
             notification_serializer = NotificationSerializer(data={"notificationType": 1 , "message" : request.data["message"]}, context={"request": request})
@@ -342,6 +342,14 @@ def notification(request):
     serializer = NotificationSerializer(notifications, many = True, context={"request": request})    
 
     return Response(serializer.data)
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def notification_count(request):
+    user_id = request.user.id
+    notifications = Notification.objects.filter(to__id = user_id)
+    
+    return Response(data=len(notifications), status=status.HTTP_200_OK)
 
 @extend_schema(summary='알림페이지 DELETE')
 @api_view(['DELETE'])
