@@ -28,10 +28,21 @@ class Place(models.Model):
     placeName = models.CharField(max_length = 20, default="대구")
     saveDate = models.DateTimeField(auto_now=False, auto_now_add=False)
     memo = models.CharField(max_length=20)
-    placeImgList = models.JSONField(default=list)
+    # placeImgList = models.ManyToManyField("PlaceImage", related_name='place')
     latitude = models.FloatField(default=0.0)
     longitude = models.FloatField(default=0.0)
     address = models.CharField(max_length=255, default='')
+
+class PlaceImage(models.Model):
+    place = models.ForeignKey(Place, related_name='placeImgList', on_delete=models.CASCADE)
+    picture = ProcessedImageField(
+        blank=True,
+        upload_to='palce_image/%Y/%m',
+        processors=[],
+        format='JPEG',
+        options={'quality': 70},
+        null= True
+    )
 
 class Comment(models.Model):
     board = models.ForeignKey(Board, on_delete=models.CASCADE, related_name='commentList')
