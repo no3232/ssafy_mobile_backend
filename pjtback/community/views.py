@@ -339,6 +339,14 @@ def notification(request):
 
     return Response(serializer.data)
 
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def notification_count(request):
+    user_id = request.user.id
+    notifications = Notification.objects.filter(to__id = user_id)
+    
+    return Response(data=len(notifications), status=status.HTTP_200_OK)
+
 @extend_schema(summary='알림페이지 DELETE')
 @api_view(['DELETE'])
 @permission_classes([IsAuthenticated])
