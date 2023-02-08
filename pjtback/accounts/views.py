@@ -187,3 +187,13 @@ def f_token_save_views(request):
     elif request.method == 'PUT':
         FireBase.objects.filter(fcmToken = request.data['firebaseToken']).delete()
         return Response(data=request.data['firebaseToken'], status=status.HTTP_200_OK)
+
+
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def change_email(request):
+    # uesr = request.user
+    # if request.method == 'POST':
+    #     User = get_user_model()
+    #     serialier = CustomRegisterSerializer( data=request.data)
+    pass
