@@ -1,14 +1,19 @@
 from rest_framework import serializers
-from .models import Board, Travel, Place, Comment, Like, Notification
+from .models import Board, Travel, Place, Comment, Like, Notification, PlaceImage
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.exceptions import ValidationError, ParseError
+import json
 
+class PlaceImageSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = PlaceImage
+        fields = "__all__"
 
 class PlaceSerializer(serializers.ModelSerializer):
     placeId = serializers.IntegerField(source='id', read_only=True)
     saveDate = serializers.DateTimeField(format="%Y-%m-%d %H:%M:%S")
-    placeImgList = serializers.JSONField(required=False, allow_null=True)
+    placeImgList = PlaceImageSerializer(required=False, allow_null=True)
 
     class Meta:
         model = Place
@@ -31,10 +36,19 @@ class TravelSerializer(serializers.ModelSerializer):
 
     def create(self, validated_data):
         places = self.context['request'].data['placeList']
+        images = self.context['request'].FILES
+        places = json.loads(places)
         if places:
             instance = Travel.objects.create(**validated_data)
-            for place in places:
-                new_place = Place.objects.create(travel=instance, **place)
+            for idx, place in enumerate(places):
+                # 플레이스 생성
+                new_place = Place.objects.create(travel=instance, placeName = place["placeName"], saveDate = place["saveDate"], memo = place["memo"], latitude = place["latitude"], longitude = place["longitude"], address = place["address"])
+                # 이미지 존재할 때 플레이스 이미지 컬럼 생성
+                if images[str(idx)]:
+                    for image in images.getlist(str(idx)):
+                        print(image)
+                        PlaceImage.objects.create(place = new_place, picture = image)
+
         else:
             raise ValidationError
 
@@ -45,17 +59,19 @@ class TravelSerializer(serializers.ModelSerializer):
         instance.startDate = validated_data.get(
             'startDate', instance.startDate)
         instance.endDate = validated_data.get('endDate', instance.endDate)
+
+        
         # 일단은 관련 플레이스 죄다 삭제 후 재생성으로 했습니다.
         # 단시간에 알고리즘 짜면 for 3번 돌거 같아서...
-        Place.objects.filter(travel=instance).delete()
+        old_place = Place.objects.filter(travel=instance)
         places = self.context['request'].data['placeList']
+        places = json.loads(places)
         if places:
             for place in places:
                 new_place = Place.objects.create(travel=instance, 
                                                  placeName=place['placeName'],
                                                  saveDate=place['saveDate'],
                                                  memo=place['memo'],
-                                                 placeImgList=place['placeImgList'],
                                                  latitude=place['latitude'],
                                                  longitude=place['longitude'],
                                                  address=place['address'])
