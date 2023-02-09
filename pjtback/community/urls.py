@@ -11,6 +11,8 @@ urlpatterns = [
     path('board/detail/<int:board_id>/comment/<int:comment_id>/',views.comments),
     path('board/user/',views.user_board),
     path('board/user/like/',views.user_like_board),
+    path('board/<int:page_num>/', views.board_page),
+    path('board/filter/<int:page_num>/', views.board_filter_page),
     path('travel/', views.travel_get),
     path('travel/create/', views.travel_create),
     path('travel/detail/<int:travel_id>/', views.travel_detail),
