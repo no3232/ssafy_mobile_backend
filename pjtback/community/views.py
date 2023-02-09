@@ -86,15 +86,7 @@ def board_create(request):
 from django.db.models import Q, F
 from datetime import timedelta
 
-@extend_schema(request=inline_serializer(name="gamsa",
-    fields={
-        "ageList": serializers.ListField(child=serializers.CharField()),
-        "periodList" :serializers.ListField(),
-        "themeList" : serializers.ListField(),
-        "regionList": serializers.ListField()
-    }), responses=BoardListSerializer(many=True) ,summary='게시글 필터 필터 부분 바디에 담아서 보내주시면 됨')
-@api_view(['POST'])
-def board_filtered(request):
+def filtered_board(request):
     boards = Board.objects.annotate(day=F('travel__endDate') - F('travel__startDate'))
     # 기본 전략은 4가지 필터 부분으로 분리하고, get 으로 접근
     # get 했을 때 none 이면 필터 pass 하는 식
@@ -149,7 +141,22 @@ def board_filtered(request):
     result_query = age_query & period_query & theme_query & region_query
     result_board = boards.filter(result_query)
 
-    serializer = BoardListSerializer(result_board, many= True, context={"request": request})
+    return result_board
+
+
+
+@extend_schema(request=inline_serializer(name="gamsa",
+    fields={
+        "ageList": serializers.ListField(child=serializers.CharField()),
+        "periodList" :serializers.ListField(),
+        "themeList" : serializers.ListField(),
+        "regionList": serializers.ListField()
+    }), responses=BoardListSerializer(many=True) ,summary='게시글 필터 필터 부분 바디에 담아서 보내주시면 됨')
+@api_view(['POST'])
+def board_filtered(request):
+    
+    result_boards = filtered_board(request)
+    serializer = BoardListSerializer(result_boards, many= True, context={"request": request})
 
     return Response(serializer.data, status= status.HTTP_200_OK)
 
@@ -199,6 +206,34 @@ def user_like_board(request):
     serializer = BoardListSerializer(boards, many = True, context={"request": request})
 
     return Response(serializer.data)
+
+@api_view(['GET'])
+def board_page(request, page_num):
+    boards = Board.objects.all()
+    if 10*page_num < len(boards):
+        paging_boards = boards[10*(page_num-1):10*(page_num)]
+    elif 10*(page_num-1) < len(boards):
+        paging_boards = boards[10*(page_num-1):]
+    else:
+        return Response(status=status.HTTP_400_BAD_REQUEST)
+    
+
+    serializer = BoardListSerializer(paging_boards, many=True, context={"request": request})
+    return Response(serializer.data)
+
+@api_view(['POST'])
+def board_filter_page(request, page_num):
+    result_boards = filtered_board(request)
+    if 10*page_num < len(result_boards):
+        paging_boards = result_boards[10*(page_num-1):10*(page_num)]
+    elif 10*(page_num-1) < len(result_boards):
+        paging_boards = result_boards[10*(page_num-1):]
+    else:
+        return Response(status=status.HTTP_400_BAD_REQUEST)
+    
+    serializer = BoardListSerializer(paging_boards, many=True, context={"request": request})
+    return Response(serializer.data)
+
 
 @extend_schema(responses=TravelSerializer(many = True), summary='게시글 전체 조회')
 @api_view(['GET'])
