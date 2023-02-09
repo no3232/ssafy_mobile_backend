@@ -1,0 +1,27 @@
+Started by user [8mha:////4FSXkql0xpGtAuTpuRlvDqPWb+bIauK2NzoUwMpZUfEyAAAAlx+LCAAAAAAAAP9b85aBtbiIQTGjNKU4P08vOT+vOD8nVc83PyU1x6OyILUoJzMv2y+/JJUBAhiZGBgqihhk0NSjKDWzXb3RdlLBUSYGJk8GtpzUvPSSDB8G5tKinBIGIZ+sxLJE/ZzEvHT94JKizLx0a6BxUmjGOUNodHsLgAzWEgZu/dLi1CL9xJTczDwAj6GcLcAAAAA=[0m반가워요!
+Running as SYSTEM
+Building in workspace /var/jenkins_home/workspace/jenkins_test
+The recommended git tool is: NONE
+using credential d06a6d41-31b5-4225-aeaa-c48fe9d64fad
+ > git rev-parse --resolve-git-dir /var/jenkins_home/workspace/jenkins_test/.git # timeout=10
+Fetching changes from the remote Git repository
+ > git config remote.origin.url https://lab.ssafy.com/luminaries1/mobile_pjt.git # timeout=10
+Fetching upstream changes from https://lab.ssafy.com/luminaries1/mobile_pjt.git
+ > git --version # timeout=10
+ > git --version # 'git version 2.30.2'
+using GIT_ASKPASS to set credentials 
+ > git fetch --tags --force --progress -- https://lab.ssafy.com/luminaries1/mobile_pjt.git +refs/heads/*:refs/remotes/origin/* # timeout=10
+ > git rev-parse refs/remotes/origin/master^{commit} # timeout=10
+Checking out Revision ed9dcac94b4b8ba18d91d5d449967bad578c6b04 (refs/remotes/origin/master)
+ > git config core.sparsecheckout # timeout=10
+ > git checkout -f ed9dcac94b4b8ba18d91d5d449967bad578c6b04 # timeout=10
+Commit message: "댓글쪽은 notify 중복허용"
+ > git rev-list --no-walk ed9dcac94b4b8ba18d91d5d449967bad578c6b04 # timeout=10
+[jenkins_test] $ /bin/sh -xe /tmp/jenkins616910418086519989.sh
++ rootdir=workspace/jenkins_test/pjtback
++ appdir=workspace/jenkins_test/pjtback
++ cd /var/jenkins_home/workspace/jenkins_test/pjtback/
++ python manage.py makemigrations
+/tmp/jenkins616910418086519989.sh: 6: python: not found
+Build step 'Execute shell' marked build as failure
+Finished: FAILURE
