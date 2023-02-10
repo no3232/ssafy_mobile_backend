@@ -208,28 +208,30 @@ def user_like_board(request):
     return Response(serializer.data)
 
 @api_view(['GET'])
-def board_page(request, page_num):
+def board_page(request):
     boards = Board.objects.all()
+    page_num = int(request.GET.get('page'))
     if 10*page_num < len(boards):
         paging_boards = boards[10*(page_num-1):10*(page_num)]
     elif 10*(page_num-1) < len(boards):
         paging_boards = boards[10*(page_num-1):]
     else:
-        return Response(status=status.HTTP_400_BAD_REQUEST)
+        return Response(data=[])
     
 
     serializer = BoardListSerializer(paging_boards, many=True, context={"request": request})
     return Response(serializer.data)
 
 @api_view(['POST'])
-def board_filter_page(request, page_num):
+def board_filter_page(request):
     result_boards = filtered_board(request)
+    page_num = int(request.GET.get('page'))
     if 10*page_num < len(result_boards):
         paging_boards = result_boards[10*(page_num-1):10*(page_num)]
     elif 10*(page_num-1) < len(result_boards):
         paging_boards = result_boards[10*(page_num-1):]
     else:
-        return Response(status=status.HTTP_400_BAD_REQUEST)
+        return Response(data=[])
     
     serializer = BoardListSerializer(paging_boards, many=True, context={"request": request})
     return Response(serializer.data)
