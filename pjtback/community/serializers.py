@@ -99,7 +99,7 @@ class TravelSerializer(serializers.ModelSerializer):
                     update_place.longitude=place['longitude']
                     update_place.address=place['address']
                     update_place.save()
-                except:
+                except Place.DoesNotExist:
                     update_place = Place.objects.create(travel=instance, placeName = place["placeName"], saveDate = place["saveDate"], memo = place["memo"], latitude = place["latitude"], longitude = place["longitude"], address = place["address"])
                 if images:
                     for image in images:
