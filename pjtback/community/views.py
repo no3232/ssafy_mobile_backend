@@ -125,19 +125,19 @@ def board_get(request):
     else:
         page_num = 1
     if request.GET.get('periodList'):
-        periodList = list((request.GET.get('periodList')).split(','))
+        periodList = request.GET.getlist('periodList')
     else:
         periodList = []
     if request.GET.get('ageList'):
-        ageList = list((request.GET.get('ageList')).split(','))
+        ageList = request.GET.getlist('ageList')
     else:
         ageList = []
     if request.GET.get('themeList'):
-        themeList = list((request.GET.get('themeList')).split(','))
+        themeList = request.GET.getlist('themeList')
     else:
         themeList = []
     if request.GET.get('regionList'):
-        regionList = list((request.GET.get('regionList')).split(','))
+        regionList = request.GET.getlist('regionList')
     else:
         regionList = []
     if request.GET.get('sortedType') :   
