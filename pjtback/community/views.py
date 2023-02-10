@@ -59,43 +59,7 @@ def send_to_firebase_cloud_messaging(send_content, send_token):
         print('옛날 토큰입니다.')
         FireBase.objects.filter(fcmToken = send_token ).delete()
 
-
-@extend_schema(responses=BoardListSerializer(many=True), summary='게시글 전체 가져오기')
-@api_view(['GET'])
-def board_get(request):
-    
-    boards = Board.objects.all()
-    serializer = BoardListSerializer(boards, many=True, context={"request": request})
-    return Response(serializer.data)
-
-
-@extend_schema(responses=BoardListSerializer(), request=BoardListSerializer(), summary='게시글 생성')
-@api_view(['POST'])
-@permission_classes([IsAuthenticated])
-def board_create(request):
-    user = request.user
-    
-    serializer = BoardListSerializer(data=request.data)
-    wanted_travel = get_object_or_404(Travel, pk=request.data['travel']['travelId'])
-    
-    if serializer.is_valid(raise_exception=True):
-        serializer.save(userId=user, travel=wanted_travel)
-        return Response(serializer.data, status=status.HTTP_201_CREATED)
-
-
-# 쿼리 형식으로 db 접근 할 수 있는 라이브러리
-from django.db.models import Q, F
-from datetime import timedelta
-
 def filtered_board(age,periods,theme,region,sorted_type):
-    boards = Board.objects.annotate(day=F('travel__endDate') - F('travel__startDate'))
-    # 기본 전략은 4가지 필터 부분으로 분리하고, get 으로 접근
-    # get 했을 때 none 이면 필터 pass 하는 식
-    # age = request.data.get('ageList')
-    # periods = request.data.get('periodList')
-    # theme = request.data.get('themeList')
-    # region_ = request.data.get('regionList')
-
     boards = Board.objects.annotate(day = F('travel__endDate') - F('travel__startDate'))
 
     # 일단 하드 코딩에 가깝긴 한데, 프엔에서 넘겨주는 타이밍 까지 만드는게 아니면 그냥 이런식으로 쓰고 수정하는게 나을듯?
@@ -111,13 +75,8 @@ def filtered_board(age,periods,theme,region,sorted_type):
     theme_query = Q(pk__in=[])
     region_query = Q(pk__in=[])
 
-    print(age, periods,theme,region)
-
     if age:
         for age_str in age:
-            print(age_str)
-            print(type(age_str))
-            print(age_dic['10대'])
             age_query  |= Q(userId__age__gte = age_dic[age_str][0] , userId__age__lt = age_dic[age_str][1])
     else:
         age_query = ~Q(pk__in=[])
@@ -154,26 +113,86 @@ def filtered_board(age,periods,theme,region,sorted_type):
     else:
         result_boards = result_board.order_by('-writeDate')
         # result_boards = sorted(result_board, key=lambda x: x.writeDate)
-
-    print(result_boards[0])
-
     return result_boards
 
 
+@extend_schema(responses=BoardListSerializer(many=True), summary='게시글 전체 가져오기')
+@api_view(['GET'])
+def board_get(request):
+    
+    if request.GET.get('page'):
+        page_num = int(request.GET.get('page'))
+    else:
+        page_num = 1
+    if request.GET.get('periodList'):
+        periodList = list((request.GET.get('periodList')).split(','))
+    else:
+        periodList = []
+    if request.GET.get('ageList'):
+        ageList = list((request.GET.get('ageList')).split(','))
+    else:
+        ageList = []
+    if request.GET.get('themeList'):
+        themeList = list((request.GET.get('themeList')).split(','))
+    else:
+        themeList = []
+    if request.GET.get('regionList'):
+        regionList = list((request.GET.get('regionList')).split(','))
+    else:
+        regionList = []
+    if request.GET.get('sortedType') :   
+        sortedType = int(request.GET.get('sortedType'))
+    else:
+        sortedType = 0
 
-@extend_schema(request=inline_serializer(name="gamsa",
-    fields={
-        "ageList": serializers.ListField(child=serializers.CharField()),
-        "periodList" :serializers.ListField(),
-        "themeList" : serializers.ListField(),
-        "regionList": serializers.ListField()
-    }), responses=BoardListSerializer(many=True) ,summary='게시글 필터 필터 부분 바디에 담아서 보내주시면 됨')
+    result_boards = filtered_board(ageList, periodList, themeList, regionList, sortedType)
+
+    # pagination size 하드코딩 부분 ㅠ
+    page_size = 25
+
+    if page_size*page_num < len(result_boards):
+        paging_boards = result_boards[page_size*(page_num-1):page_size*(page_num)]
+    elif page_size*(page_num-1) < len(result_boards):
+        paging_boards = result_boards[page_size*(page_num-1):]
+    else:
+        return Response(data=[])
+    
+    serializer = BoardListSerializer(paging_boards, many=True, context={"request": request})
+    return Response(serializer.data)
+
+
+@extend_schema(responses=BoardListSerializer(), request=BoardListSerializer(), summary='게시글 생성')
 @api_view(['POST'])
-def board_filtered(request):
-    # result_boards = filtered_board(age,periods,theme,region,sorted_type )
-    # serializer = BoardListSerializer(result_boards, many= True, context={"request": request})
+@permission_classes([IsAuthenticated])
+def board_create(request):
+    user = request.user
+    
+    serializer = BoardListSerializer(data=request.data)
+    wanted_travel = get_object_or_404(Travel, pk=request.data['travel']['travelId'])
+    
+    if serializer.is_valid(raise_exception=True):
+        serializer.save(userId=user, travel=wanted_travel)
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
 
-    return Response(data= [], status= status.HTTP_200_OK)
+
+# 쿼리 형식으로 db 접근 할 수 있는 라이브러리
+from django.db.models import Q, F
+from datetime import timedelta
+
+
+# @extend_schema(request=inline_serializer(name="gamsa",
+#     fields={
+#         "ageList": serializers.ListField(child=serializers.CharField()),
+#         "periodList" :serializers.ListField(),
+#         "themeList" : serializers.ListField(),
+#         "regionList": serializers.ListField()
+#     }), responses=BoardListSerializer(many=True) ,summary='게시글 필터 필터 부분 바디에 담아서 보내주시면 됨')
+# @api_view(['POST'])
+# def board_filtered(request):
+#     # result_boards = filtered_board(age,periods,theme,region,sorted_type )
+#     # serializer = BoardListSerializer(result_boards, many= True, context={"request": request})
+
+#     return Response(data= [], status= status.HTTP_200_OK)
 
 @extend_schema(summary='Board 상세페이지 조회, 수정, 삭제')
 @api_view(['GET', 'PUT', 'DELETE'])
@@ -222,59 +241,20 @@ def user_like_board(request):
 
     return Response(serializer.data)
 
-@api_view(['GET'])
-def board_page(request):
-    boards = Board.objects.all()
-    page_num = int(request.GET.get('page'))
-    if 10*page_num < len(boards):
-        paging_boards = boards[10*(page_num-1):10*(page_num)]
-    elif 10*(page_num-1) < len(boards):
-        paging_boards = boards[10*(page_num-1):]
-    else:
-        return Response(data=[])
+# @api_view(['GET'])
+# def board_page(request):
+#     boards = Board.objects.all()
+#     page_num = int(request.GET.get('page'))
+#     if 10*page_num < len(boards):
+#         paging_boards = boards[10*(page_num-1):10*(page_num)]
+#     elif 10*(page_num-1) < len(boards):
+#         paging_boards = boards[10*(page_num-1):]
+#     else:
+#         return Response(data=[])
     
 
-    serializer = BoardListSerializer(paging_boards, many=True, context={"request": request})
-    return Response(serializer.data)
-
-@api_view(['GET'])
-def board_filter_page(request):
-    if request.GET.get('page'):
-        page_num = int(request.GET.get('page'))
-    else:
-        page_num = 1
-    if request.GET.get('periodList'):
-        periodList = list((request.GET.get('periodList')).split(','))
-    else:
-        periodList = []
-    if request.GET.get('ageList'):
-        ageList = list((request.GET.get('ageList')).split(','))
-    else:
-        ageList = []
-    if request.GET.get('themeList'):
-        themeList = list((request.GET.get('themeList')).split(','))
-    else:
-        themeList = []
-    if request.GET.get('regionList'):
-        regionList = list((request.GET.get('regionList')).split(','))
-    else:
-        regionList = []
-    if request.GET.get('sortedType') :   
-        sortedType = int(request.GET.get('sortedType'))
-    else:
-        sortedType = 0
-
-    result_boards = filtered_board(ageList, periodList, themeList, regionList, sortedType)
-
-    if 10*page_num < len(result_boards):
-        paging_boards = result_boards[10*(page_num-1):10*(page_num)]
-    elif 10*(page_num-1) < len(result_boards):
-        paging_boards = result_boards[10*(page_num-1):]
-    else:
-        return Response(data=[])
-    
-    serializer = BoardListSerializer(paging_boards, many=True, context={"request": request})
-    return Response(serializer.data)
+#     serializer = BoardListSerializer(paging_boards, many=True, context={"request": request})
+#     return Response(serializer.data)
 
 
 @extend_schema(responses=TravelSerializer(many = True), summary='게시글 전체 조회')
@@ -417,7 +397,7 @@ def comments(request,board_id,comment_id):
 @permission_classes([IsAuthenticated])
 def notification(request):
     user_id = request.user.id
-    notifications = Notification.objects.filter(to__id = user_id)
+    notifications = Notification.objects.filter(to__id = user_id).order_by('createDate')
     serializer = NotificationSerializer(notifications, many = True, context={"request": request})    
 
     return Response(serializer.data)
