@@ -90,7 +90,7 @@ class TravelSerializer(serializers.ModelSerializer):
         if places:
             for idx, place in enumerate(places):
                 try:
-                    update_place = Place.objects.get(id=place["placeId"])
+                    update_place = Place.objects.get(id=place.get("placeId"))
                     update_place.travel=instance
                     update_place.placeName=place['placeName']
                     update_place.saveDate=place['saveDate']
