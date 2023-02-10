@@ -29,6 +29,7 @@ from firebase_admin import messaging
 
 # redis cache
 from django.core.cache import cache
+from django.db.models import Count
 
 
 # redis caching  ㅠㅠ
@@ -110,8 +111,13 @@ def filtered_board(age,periods,theme,region,sorted_type):
     theme_query = Q(pk__in=[])
     region_query = Q(pk__in=[])
 
+    print(age, periods,theme,region)
+
     if age:
         for age_str in age:
+            print(age_str)
+            print(type(age_str))
+            print(age_dic['10대'])
             age_query  |= Q(userId__age__gte = age_dic[age_str][0] , userId__age__lt = age_dic[age_str][1])
     else:
         age_query = ~Q(pk__in=[])
@@ -141,12 +147,17 @@ def filtered_board(age,periods,theme,region,sorted_type):
     result_query = age_query & period_query & theme_query & region_query
     result_board = boards.filter(result_query)
 
-    if sorted_type :
-        result_board = sorted(result_board, key= lambda x: len(x.likeList) )
-    else:
-        result_board = sorted(result_board, key=lambda x: x.writeDate)
 
-    return result_board
+    if sorted_type :
+        # result_boards = sorted(result_board, key= lambda x: len(x.like) )
+        result_boards = result_board.annotate(like_count=Count('likeList')).order_by('-like_count')
+    else:
+        result_boards = result_board.order_by('-writeDate')
+        # result_boards = sorted(result_board, key=lambda x: x.writeDate)
+
+    print(result_boards[0])
+
+    return result_boards
 
 
 
@@ -228,23 +239,33 @@ def board_page(request):
 
 @api_view(['GET'])
 def board_filter_page(request):
-    
-    page_num = int(request.GET.get('page'))
-    filter = (request.GET.get('filter'))
-    print(filter)
-    periodList = filter['periodList']
-    ageList = filter['ageList']
-    themeList = filter['themeList']
-    regionList = filter['regionList']
-    # periodList = (request.GET.get('periodList'))
-    # ageList = (request.GET.get('ageList'))
-    # themeList = (request.GET.get('themeList'))
-    # regionList = (request.GET.get('regionList'))
-    sortedType = int(request.GET.get('sortedType'))
+    if request.GET.get('page'):
+        page_num = int(request.GET.get('page'))
+    else:
+        page_num = 1
+    if request.GET.get('periodList'):
+        periodList = list((request.GET.get('periodList')).split(','))
+    else:
+        periodList = []
+    if request.GET.get('ageList'):
+        ageList = list((request.GET.get('ageList')).split(','))
+    else:
+        ageList = []
+    if request.GET.get('themeList'):
+        themeList = list((request.GET.get('themeList')).split(','))
+    else:
+        themeList = []
+    if request.GET.get('regionList'):
+        regionList = list((request.GET.get('regionList')).split(','))
+    else:
+        regionList = []
+    if request.GET.get('sortedType') :   
+        sortedType = int(request.GET.get('sortedType'))
+    else:
+        sortedType = 0
 
-    # result_boards = filtered_board(periodList, ageList, themeList, regionList, sortedType)
+    result_boards = filtered_board(ageList, periodList, themeList, regionList, sortedType)
 
-    result_boards = []
     if 10*page_num < len(result_boards):
         paging_boards = result_boards[10*(page_num-1):10*(page_num)]
     elif 10*(page_num-1) < len(result_boards):
