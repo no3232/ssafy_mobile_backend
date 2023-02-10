@@ -397,7 +397,7 @@ def comments(request,board_id,comment_id):
 @permission_classes([IsAuthenticated])
 def notification(request):
     user_id = request.user.id
-    notifications = Notification.objects.filter(to__id = user_id).order_by('createDate')
+    notifications = Notification.objects.filter(to__id = user_id).order_by('createdate')
     serializer = NotificationSerializer(notifications, many = True, context={"request": request})    
 
     return Response(serializer.data)
