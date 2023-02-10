@@ -89,15 +89,18 @@ class TravelSerializer(serializers.ModelSerializer):
         images = self.context['request'].FILES.getlist('placeImgList')
         if places:
             for idx, place in enumerate(places):
-                update_place = Place.objects.get(id=place["placeId"])
-                update_place.travel=instance
-                update_place.placeName=place['placeName']
-                update_place.saveDate=place['saveDate']
-                update_place.memo=place['memo']
-                update_place.latitude=place['latitude']
-                update_place.longitude=place['longitude']
-                update_place.address=place['address']
-                update_place.save()
+                try:
+                    update_place = Place.objects.get(id=place["placeId"])
+                    update_place.travel=instance
+                    update_place.placeName=place['placeName']
+                    update_place.saveDate=place['saveDate']
+                    update_place.memo=place['memo']
+                    update_place.latitude=place['latitude']
+                    update_place.longitude=place['longitude']
+                    update_place.address=place['address']
+                    update_place.save()
+                except:
+                    update_place = Place.objects.create(travel=instance, placeName = place["placeName"], saveDate = place["saveDate"], memo = place["memo"], latitude = place["latitude"], longitude = place["longitude"], address = place["address"])
                 if images:
                     for image in images:
                         if image.name.split('_')[0] == str(idx):
