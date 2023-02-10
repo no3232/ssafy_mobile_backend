@@ -5,13 +5,22 @@ from rest_framework import status
 from rest_framework.exceptions import ValidationError, ParseError
 from django.utils.timezone import now, timedelta
 import json
+import datetime
 
 class PlaceImageSerializer(serializers.ModelSerializer):
-    url = serializers.ImageField(source = "picture")
+    url = serializers.ImageField(source = "picture", use_url = True)
 
     class Meta:
         model = PlaceImage
-        fields = ("id", "url")
+        fields = ("url",)
+
+    def to_representation(self, instance):
+        url = instance.picture.url
+        request = self.context.get('request', None)
+        if request is not None:
+            return request.build_absolute_uri(url)
+        return url
+
 
 class PlaceSerializer(serializers.ModelSerializer):
     placeId = serializers.IntegerField(source='id', read_only=True)
@@ -45,6 +54,7 @@ class TravelSerializer(serializers.ModelSerializer):
             instance = Travel.objects.create(**validated_data)
             for idx, place in enumerate(places):
                 # 플레이스 생성
+                places["saveDate"] = datetime.strptime(places["saveDate"], '%d/%m/%y %H:%M:%S')
                 new_place = Place.objects.create(travel=instance, placeName = place["placeName"], saveDate = place["saveDate"], memo = place["memo"], latitude = place["latitude"], longitude = place["longitude"], address = place["address"])
                 # 이미지 존재할 때 플레이스 이미지 컬럼 생성
                 if images[str(idx)]:
@@ -66,11 +76,12 @@ class TravelSerializer(serializers.ModelSerializer):
         
         # 일단은 관련 플레이스 죄다 삭제 후 재생성으로 했습니다.
         # 단시간에 알고리즘 짜면 for 3번 돌거 같아서...
-        old_place = Place.objects.filter(travel=instance)
+        old_place = Place.objects.filter(travel=instance).delete()
         places = self.context['request'].data['placeList']
+        images = self.context['request'].FILES
         places = json.loads(places)
         if places:
-            for place in places:
+            for idx, place in enumerate(places):
                 new_place = Place.objects.create(travel=instance, 
                                                  placeName=place['placeName'],
                                                  saveDate=place['saveDate'],
@@ -78,6 +89,10 @@ class TravelSerializer(serializers.ModelSerializer):
                                                  latitude=place['latitude'],
                                                  longitude=place['longitude'],
                                                  address=place['address'])
+                if images[str(idx)]:
+                    for image in images.getlist(str(idx)):
+                        PlaceImage.objects.create(place = new_place, picture = image)
+
         instance.save()
         return instance
 
