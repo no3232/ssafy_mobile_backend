@@ -58,7 +58,6 @@ def send_to_firebase_cloud_messaging(send_content, send_token):
         print('옛날 토큰입니다.')
         FireBase.objects.filter(fcmToken = send_token ).delete()
 
-    # Response is a message ID string.
 
 @extend_schema(responses=BoardListSerializer(many=True), summary='게시글 전체 가져오기')
 @api_view(['GET'])
@@ -69,7 +68,7 @@ def board_get(request):
     return Response(serializer.data)
 
 
-@extend_schema(request=BoardListSerializer(), summary='게시글 생성')
+@extend_schema(responses=BoardListSerializer(), request=BoardListSerializer(), summary='게시글 생성')
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
 def board_create(request):
@@ -87,11 +86,8 @@ def board_create(request):
 from django.db.models import Q, F
 from datetime import timedelta
 
-@extend_schema(summary='게시글 필터 필터 부분 바디에 담아서 보내주시면 됨')
-@api_view(['POST'])
-def board_filtered(request):
-    boards = Board.objects.annotate(
-        day=F('travel__endDate') - F('travel__startDate'))
+def filtered_board(request):
+    boards = Board.objects.annotate(day=F('travel__endDate') - F('travel__startDate'))
     # 기본 전략은 4가지 필터 부분으로 분리하고, get 으로 접근
     # get 했을 때 none 이면 필터 pass 하는 식
     age = request.data.get('ageList')
@@ -106,7 +102,6 @@ def board_filtered(request):
     periods_dic = {'당일 치기': 1, '1박 2일': 2, '2박 3일': 3, '3박 4일': 4, '4박 5일+': 4}
     theme_lst = ['혼자', '친구와', '연인과', '배우자와', '아이와', '부모님과', '기타']
     region_lst = ["서울","경기","강원","부산","경북·대구","전남·광주","제주","충남·대전","경남","충북","경남","전북","인천"]
-
 
     # alyways true q object 찾아보니까 이렇더라 이거 default로 추가해가면 될 것 같음.
     # result_query = ~Q(pk__in=[])
@@ -146,7 +141,22 @@ def board_filtered(request):
     result_query = age_query & period_query & theme_query & region_query
     result_board = boards.filter(result_query)
 
-    serializer = BoardListSerializer(result_board, many= True, context={"request": request})
+    return result_board
+
+
+
+@extend_schema(request=inline_serializer(name="gamsa",
+    fields={
+        "ageList": serializers.ListField(child=serializers.CharField()),
+        "periodList" :serializers.ListField(),
+        "themeList" : serializers.ListField(),
+        "regionList": serializers.ListField()
+    }), responses=BoardListSerializer(many=True) ,summary='게시글 필터 필터 부분 바디에 담아서 보내주시면 됨')
+@api_view(['POST'])
+def board_filtered(request):
+    
+    result_boards = filtered_board(request)
+    serializer = BoardListSerializer(result_boards, many= True, context={"request": request})
 
     return Response(serializer.data, status= status.HTTP_200_OK)
 
@@ -197,13 +207,40 @@ def user_like_board(request):
 
     return Response(serializer.data)
 
+@api_view(['GET'])
+def board_page(request, page_num):
+    boards = Board.objects.all()
+    if 10*page_num < len(boards):
+        paging_boards = boards[10*(page_num-1):10*(page_num)]
+    elif 10*(page_num-1) < len(boards):
+        paging_boards = boards[10*(page_num-1):]
+    else:
+        return Response(status=status.HTTP_400_BAD_REQUEST)
+    
+
+    serializer = BoardListSerializer(paging_boards, many=True, context={"request": request})
+    return Response(serializer.data)
+
+@api_view(['POST'])
+def board_filter_page(request, page_num):
+    result_boards = filtered_board(request)
+    if 10*page_num < len(result_boards):
+        paging_boards = result_boards[10*(page_num-1):10*(page_num)]
+    elif 10*(page_num-1) < len(result_boards):
+        paging_boards = result_boards[10*(page_num-1):]
+    else:
+        return Response(status=status.HTTP_400_BAD_REQUEST)
+    
+    serializer = BoardListSerializer(paging_boards, many=True, context={"request": request})
+    return Response(serializer.data)
+
+
 @extend_schema(responses=TravelSerializer(many = True), summary='게시글 전체 조회')
 @api_view(['GET'])
 def travel_get(request):
     travels = Travel.objects.all()
     serializer = TravelSerializer(travels, many=True)
     return Response(serializer.data)
-
 
 @extend_schema(request=TravelSerializer(), summary='단일 게시글 조회 수정 삭제')
 @api_view(['GET', 'PUT', 'DELETE'])
@@ -253,6 +290,7 @@ def travel_user(request, user_id):
 
     return Response(serializer.data)
 
+@extend_schema(summary='좋아요 기능')
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
 def like(request, board_id):
@@ -280,7 +318,6 @@ def like(request, board_id):
                 send_to_firebase_cloud_messaging(request.data['message'], fcm.fcmToken)
 
         return Response(data = True, status=status.HTTP_202_ACCEPTED)
-
 
 
 @extend_schema(responses = CommentSerializer , request=CommentSerializer ,summary='코멘트 생성')
@@ -343,6 +380,7 @@ def notification(request):
 
     return Response(serializer.data)
 
+@extend_schema(summary='알림페이지 count 따로 api')
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
 def notification_count(request):

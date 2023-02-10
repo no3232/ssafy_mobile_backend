@@ -48,7 +48,9 @@ class TravelSerializer(serializers.ModelSerializer):
 
     def create(self, validated_data):
         places = self.context['request'].data['placeList']
-        images = self.context['request'].FILES
+        images = self.context['request'].FILES.getlist('placeImgList')
+        print(images)
+        
         places = json.loads(places)
         if places:
             instance = Travel.objects.create(**validated_data)
@@ -57,10 +59,11 @@ class TravelSerializer(serializers.ModelSerializer):
                 places["saveDate"] = datetime.strptime(places["saveDate"], '%d/%m/%y %H:%M:%S')
                 new_place = Place.objects.create(travel=instance, placeName = place["placeName"], saveDate = place["saveDate"], memo = place["memo"], latitude = place["latitude"], longitude = place["longitude"], address = place["address"])
                 # 이미지 존재할 때 플레이스 이미지 컬럼 생성
-                if images[str(idx)]:
-                    for image in images.getlist(str(idx)):
-                        print(image)
-                        PlaceImage.objects.create(place = new_place, picture = image)
+                if images:
+                    for image in images:
+                        print(image.name[0])
+                        if image.name[0] == str(idx):
+                            PlaceImage.objects.create(place = new_place, picture = image)
 
         else:
             raise ValidationError
