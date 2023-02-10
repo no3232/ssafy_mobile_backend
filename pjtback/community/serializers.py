@@ -79,12 +79,12 @@ class TravelSerializer(serializers.ModelSerializer):
         # 단시간에 알고리즘 짜면 for 3번 돌거 같아서...
         d_places = json.loads(self.context['request'].data['DeletePlaceList'])
         if d_places:
-            for i in d_places:
-                Place.objects.filter(id=i).delete()
-        d_picture = json.loads(self.context['request'].data['DeleteImageList'])
-        if d_picture:
-            for i in d_picture:
-                PlaceImage.objects.filter(picture=i).delete()
+            for d_place in d_places:
+                Place.objects.filter(id=d_place).delete()
+        d_pictures = json.loads(self.context['request'].data['DeleteImageList'])
+        if d_pictures:
+            for d_picture in d_pictures:
+                PlaceImage.objects.filter(picture=d_picture).delete()
         places = json.loads(self.context['request'].data['placeList'])
         images = self.context['request'].FILES.getlist('placeImgList')
         if places:
