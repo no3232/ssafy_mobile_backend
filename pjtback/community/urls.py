@@ -12,7 +12,7 @@ urlpatterns = [
     path('board/user/',views.user_board),
     path('board/user/like/',views.user_like_board),
     path('board/page/', views.board_page),
-    path('board/filter/page/', views.board_filter_page),
+    path('board/test/', views.board_filter_page),
     path('travel/', views.travel_get),
     path('travel/create/', views.travel_create),
     path('travel/detail/<int:travel_id>/', views.travel_detail),
