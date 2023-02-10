@@ -260,7 +260,7 @@ def board_filter_page(request):
 @api_view(['GET'])
 def travel_get(request):
     travels = Travel.objects.all()
-    serializer = TravelSerializer(travels, many=True)
+    serializer = TravelSerializer(travels, many=True, context={"request": request})
     return Response(serializer.data)
 
 @extend_schema(request=TravelSerializer(), summary='단일 게시글 조회 수정 삭제')
@@ -269,7 +269,7 @@ def travel_get(request):
 def travel_detail(request, travel_id):
     travel = get_object_or_404(Travel, id = travel_id)
     if request.method == 'GET':
-        serializer = TravelSerializer(travel)
+        serializer = TravelSerializer(travel, context={"request": request})
         return Response(serializer.data)
 
     elif request.method == 'PUT':
@@ -307,7 +307,7 @@ def travel_create(request):
 @api_view(['GET'])
 def travel_user(request, user_id):
     travels = Travel.objects.filter(userId__id = user_id)
-    serializer = TravelSerializer(travels, many = True)
+    serializer = TravelSerializer(travels, many = True, context={"request": request})
 
     return Response(serializer.data)
 
