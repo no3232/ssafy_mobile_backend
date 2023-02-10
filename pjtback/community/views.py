@@ -150,20 +150,19 @@ def filtered_board(age,periods,theme,region,sorted_type):
 
 
 
-# @extend_schema(request=inline_serializer(name="gamsa",
-#     fields={
-#         "ageList": serializers.ListField(child=serializers.CharField()),
-#         "periodList" :serializers.ListField(),
-#         "themeList" : serializers.ListField(),
-#         "regionList": serializers.ListField()
-#     }), responses=BoardListSerializer(many=True) ,summary='게시글 필터 필터 부분 바디에 담아서 보내주시면 됨')
-# @api_view(['POST'])
-# def board_filtered(request):
-    
-#     result_boards = filtered_board(age,periods,theme,region,sorted_type )
-#     serializer = BoardListSerializer(result_boards, many= True, context={"request": request})
+@extend_schema(request=inline_serializer(name="gamsa",
+    fields={
+        "ageList": serializers.ListField(child=serializers.CharField()),
+        "periodList" :serializers.ListField(),
+        "themeList" : serializers.ListField(),
+        "regionList": serializers.ListField()
+    }), responses=BoardListSerializer(many=True) ,summary='게시글 필터 필터 부분 바디에 담아서 보내주시면 됨')
+@api_view(['POST'])
+def board_filtered(request):
+    # result_boards = filtered_board(age,periods,theme,region,sorted_type )
+    # serializer = BoardListSerializer(result_boards, many= True, context={"request": request})
 
-#     return Response(serializer.data, status= status.HTTP_200_OK)
+    return Response(data= [], status= status.HTTP_200_OK)
 
 @extend_schema(summary='Board 상세페이지 조회, 수정, 삭제')
 @api_view(['GET', 'PUT', 'DELETE'])
