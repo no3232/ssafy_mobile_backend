@@ -226,7 +226,7 @@ def board_page(request):
     serializer = BoardListSerializer(paging_boards, many=True, context={"request": request})
     return Response(serializer.data)
 
-@api_view(['POST'])
+@api_view(['GET'])
 def board_filter_page(request):
     
     page_num = int(request.GET.get('page'))
