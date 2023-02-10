@@ -1,0 +1,479 @@
+Started by user [8mha:////4FSXkql0xpGtAuTpuRlvDqPWb+bIauK2NzoUwMpZUfEyAAAAlx+LCAAAAAAAAP9b85aBtbiIQTGjNKU4P08vOT+vOD8nVc83PyU1x6OyILUoJzMv2y+/JJUBAhiZGBgqihhk0NSjKDWzXb3RdlLBUSYGJk8GtpzUvPSSDB8G5tKinBIGIZ+sxLJE/ZzEvHT94JKizLx0a6BxUmjGOUNodHsLgAzWEgZu/dLi1CL9xJTczDwAj6GcLcAAAAA=[0m반가워요!
+Running as SYSTEM
+Building in workspace /var/jenkins_home/workspace/jenkins_test
+The recommended git tool is: NONE
+using credential d06a6d41-31b5-4225-aeaa-c48fe9d64fad
+ > git rev-parse --resolve-git-dir /var/jenkins_home/workspace/jenkins_test/.git # timeout=10
+Fetching changes from the remote Git repository
+ > git config remote.origin.url https://lab.ssafy.com/luminaries1/mobile_pjt.git # timeout=10
+Fetching upstream changes from https://lab.ssafy.com/luminaries1/mobile_pjt.git
+ > git --version # timeout=10
+ > git --version # 'git version 2.30.2'
+using GIT_ASKPASS to set credentials 
+ > git fetch --tags --force --progress -- https://lab.ssafy.com/luminaries1/mobile_pjt.git +refs/heads/*:refs/remotes/origin/* # timeout=10
+ > git rev-parse refs/remotes/origin/master^{commit} # timeout=10
+Checking out Revision ed9dcac94b4b8ba18d91d5d449967bad578c6b04 (refs/remotes/origin/master)
+ > git config core.sparsecheckout # timeout=10
+ > git checkout -f ed9dcac94b4b8ba18d91d5d449967bad578c6b04 # timeout=10
+Commit message: "댓글쪽은 notify 중복허용"
+ > git rev-list --no-walk ed9dcac94b4b8ba18d91d5d449967bad578c6b04 # timeout=10
+[jenkins_test] $ /bin/sh -xe /tmp/jenkins140177733518842376.sh
++ rootdir=workspace/jenkins_test/pjtback
++ appdir=workspace/jenkins_test/pjtback
++ cd /var/jenkins_home/workspace/jenkins_test/pjtback/
++ docker-compose stop
+Stopping nginx           ... 
+Stopping web             ... 
+Stopping db              ... 
+Stopping certbot_service ... 
+[1A[2KStopping certbot_service ... [32mdone[0m[1B[4A[2KStopping nginx           ... [32mdone[0m[4B[3A[2KStopping web             ... [32mdone[0m[3B[2A[2KStopping db              ... [32mdone[0m[2B+ docker-compose rm web
+Going to remove web
+Are you sure? [yN] + docker-compose up --build
+Building web
+Step 1/17 : FROM ubuntu:22.04
+ ---> 6b7dfa7e8fdb
+Step 2/17 : RUN apt-get -y update && apt-get -y dist-upgrade
+ ---> Using cache
+ ---> 5458005bbad6
+Step 3/17 : RUN apt-get install -y --no-install-recommends apt-utils
+ ---> Using cache
+ ---> 37c99f07267d
+Step 4/17 : RUN apt-get install -y python3-pip python3-dev
+ ---> Using cache
+ ---> a9b93efb7af9
+Step 5/17 : ENV PYTHONIOENCODING=utf-8
+ ---> Using cache
+ ---> 0e1983011873
+Step 6/17 : ENV PIP_ROOT_USER_ACTION=ignore
+ ---> Using cache
+ ---> b368e61b9c8d
+Step 7/17 : ENV DEBIAN_FRONTEND=noninteractive
+ ---> Using cache
+ ---> 14a732a13d4c
+Step 8/17 : RUN pip3 install --upgrade pip
+ ---> Using cache
+ ---> 61baade5b277
+Step 9/17 : RUN pip3 install --upgrade setuptools
+ ---> Using cache
+ ---> dffb60d81408
+Step 10/17 : RUN apt-get install -y python3-dev default-libmysqlclient-dev build-essential
+ ---> Using cache
+ ---> 46ed4c1bfb78
+Step 11/17 : RUN mkdir /config
+ ---> Using cache
+ ---> 6ceb4c0598df
+Step 12/17 : ADD /config/requirements.txt /config/
+ ---> e12058b80a27
+Step 13/17 : RUN pip3 install -r /config/requirements.txt
+ ---> Running in fd20e0fa09a6
+Collecting aniso8601==9.0.1
+  Downloading aniso8601-9.0.1-py2.py3-none-any.whl (52 kB)
+     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 52.8/52.8 kB 2.1 MB/s eta 0:00:00
+Collecting appnope==0.1.3
+  Downloading appnope-0.1.3-py2.py3-none-any.whl (4.4 kB)
+Collecting asgiref==3.5.2
+  Downloading asgiref-3.5.2-py3-none-any.whl (22 kB)
+Collecting asttokens==2.0.5
+  Downloading asttokens-2.0.5-py2.py3-none-any.whl (20 kB)
+Collecting async-generator==1.10
+  Downloading async_generator-1.10-py3-none-any.whl (18 kB)
+Collecting attrs==22.1.0
+  Downloading attrs-22.1.0-py2.py3-none-any.whl (58 kB)
+     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 58.8/58.8 kB 8.9 MB/s eta 0:00:00
+Collecting autopep8==2.0.1
+  Downloading autopep8-2.0.1-py2.py3-none-any.whl (45 kB)
+     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 45.0/45.0 kB 6.5 MB/s eta 0:00:00
+Collecting backcall==0.2.0
+  Downloading backcall-0.2.0-py2.py3-none-any.whl (11 kB)
+Collecting beautifulsoup4==4.11.1
+  Downloading beautifulsoup4-4.11.1-py3-none-any.whl (128 kB)
+     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 128.2/128.2 kB 19.5 MB/s eta 0:00:00
+Collecting CacheControl==0.12.11
+  Downloading CacheControl-0.12.11-py2.py3-none-any.whl (21 kB)
+Collecting cachetools==5.3.0
+  Downloading cachetools-5.3.0-py3-none-any.whl (9.3 kB)
+Collecting certifi==2022.9.24
+  Downloading certifi-2022.9.24-py3-none-any.whl (161 kB)
+     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 161.1/161.1 kB 18.2 MB/s eta 0:00:00
+Collecting cffi==1.15.1
+  Downloading cffi-1.15.1-cp310-cp310-manylinux_2_17_x86_64.manylinux2014_x86_64.whl (441 kB)
+     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 441.8/441.8 kB 24.0 MB/s eta 0:00:00
+Collecting charset-normalizer==2.1.1
+  Downloading charset_normalizer-2.1.1-py3-none-any.whl (39 kB)
+Collecting colorama==0.4.4
+  Downloading colorama-0.4.4-py2.py3-none-any.whl (16 kB)
+Collecting coreapi==2.3.3
+  Downloading coreapi-2.3.3-py2.py3-none-any.whl (25 kB)
+Collecting coreschema==0.0.4
+  Downloading coreschema-0.0.4.tar.gz (10 kB)
+  Preparing metadata (setup.py): started
+  Preparing metadata (setup.py): finished with status 'done'
+Collecting cryptography==38.0.3
+  Downloading cryptography-38.0.3-cp36-abi3-manylinux_2_28_x86_64.whl (4.2 MB)
+     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 4.2/4.2 MB 63.3 MB/s eta 0:00:00
+Collecting decorator==5.1.1
+  Downloading decorator-5.1.1-py3-none-any.whl (9.1 kB)
+Collecting defusedxml==0.7.1
+  Downloading defusedxml-0.7.1-py2.py3-none-any.whl (25 kB)
+Collecting dj-rest-auth==2.2.5
+  Downloading dj-rest-auth-2.2.5.tar.gz (92 kB)
+     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 92.9/92.9 kB 13.7 MB/s eta 0:00:00
+  Preparing metadata (setup.py): started
+  Preparing metadata (setup.py): finished with status 'done'
+Collecting Django==3.2.13
+  Downloading Django-3.2.13-py3-none-any.whl (7.9 MB)
+     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 7.9/7.9 MB 67.7 MB/s eta 0:00:00
+Collecting django-allauth==0.50.0
+  Downloading django-allauth-0.50.0.tar.gz (703 kB)
+     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 703.1/703.1 kB 46.1 MB/s eta 0:00:00
+  Preparing metadata (setup.py): started
+  Preparing metadata (setup.py): finished with status 'done'
+Collecting django-appconf==1.0.5
+  Downloading django_appconf-1.0.5-py3-none-any.whl (6.4 kB)
+Collecting django-bootstrap-v5==1.0.11
+  Downloading django_bootstrap_v5-1.0.11-py3-none-any.whl (24 kB)
+Collecting django-cors-headers==3.13.0
+  Downloading django_cors_headers-3.13.0-py3-none-any.whl (13 kB)
+Collecting django-extensions==3.2.1
+  Downloading django_extensions-3.2.1-py3-none-any.whl (229 kB)
+     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 229.4/229.4 kB 28.7 MB/s eta 0:00:00
+Collecting django-filter==22.1
+  Downloading django_filter-22.1-py3-none-any.whl (80 kB)
+     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 80.9/80.9 kB 10.8 MB/s eta 0:00:00
+Collecting django-imagekit==4.1.0
+  Downloading django_imagekit-4.1.0-py2.py3-none-any.whl (43 kB)
+     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 43.3/43.3 kB 6.3 MB/s eta 0:00:00
+Collecting djangorestframework==3.14.0
+  Downloading djangorestframework-3.14.0-py3-none-any.whl (1.1 MB)
+     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 1.1/1.1 MB 54.0 MB/s eta 0:00:00
+Collecting djangorestframework-simplejwt==5.2.2
+  Downloading djangorestframework_simplejwt-5.2.2-py3-none-any.whl (85 kB)
+     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 85.4/85.4 kB 14.5 MB/s eta 0:00:00
+Collecting drf-spectacular==0.24.2
+  Downloading drf_spectacular-0.24.2-py3-none-any.whl (88 kB)
+     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 88.9/88.9 kB 14.4 MB/s eta 0:00:00
+Collecting drf-yasg==1.21.4
+  Downloading drf_yasg-1.21.4-py3-none-any.whl (6.4 MB)
+     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 6.4/6.4 MB 67.8 MB/s eta 0:00:00
+Collecting exceptiongroup==1.0.4
+  Downloading exceptiongroup-1.0.4-py3-none-any.whl (14 kB)
+Collecting executing==1.1.0
+  Downloading executing-1.1.0-py2.py3-none-any.whl (22 kB)
+Collecting firebase-admin==6.0.1
+  Downloading firebase_admin-6.0.1-py3-none-any.whl (119 kB)
+     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 119.4/119.4 kB 19.2 MB/s eta 0:00:00
+Collecting google-api-core==2.11.0
+  Downloading google_api_core-2.11.0-py3-none-any.whl (120 kB)
+     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 120.3/120.3 kB 13.7 MB/s eta 0:00:00
+Collecting google-api-python-client==2.75.0
+  Downloading google_api_python_client-2.75.0-py2.py3-none-any.whl (11.0 MB)
+     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 11.0/11.0 MB 68.3 MB/s eta 0:00:00
+Collecting google-auth==2.16.0
+  Downloading google_auth-2.16.0-py2.py3-none-any.whl (177 kB)
+     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 177.8/177.8 kB 28.0 MB/s eta 0:00:00
+Collecting google-auth-httplib2==0.1.0
+  Downloading google_auth_httplib2-0.1.0-py2.py3-none-any.whl (9.3 kB)
+Collecting google-cloud-core==2.3.2
+  Downloading google_cloud_core-2.3.2-py2.py3-none-any.whl (29 kB)
+Collecting google-cloud-firestore==2.9.1
+  Downloading google_cloud_firestore-2.9.1-py2.py3-none-any.whl (265 kB)
+     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 265.5/265.5 kB 29.4 MB/s eta 0:00:00
+Collecting google-cloud-storage==2.7.0
+  Downloading google_cloud_storage-2.7.0-py2.py3-none-any.whl (110 kB)
+     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 110.2/110.2 kB 19.0 MB/s eta 0:00:00
+Collecting google-crc32c==1.5.0
+  Downloading google_crc32c-1.5.0-cp310-cp310-manylinux_2_17_x86_64.manylinux2014_x86_64.whl (32 kB)
+Collecting google-resumable-media==2.4.1
+  Downloading google_resumable_media-2.4.1-py2.py3-none-any.whl (77 kB)
+     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 77.7/77.7 kB 13.2 MB/s eta 0:00:00
+Collecting googleapis-common-protos==1.58.0
+  Downloading googleapis_common_protos-1.58.0-py2.py3-none-any.whl (223 kB)
+     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 223.0/223.0 kB 32.7 MB/s eta 0:00:00
+Collecting graphene==3.2.1
+  Downloading graphene-3.2.1-py2.py3-none-any.whl (125 kB)
+     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 125.1/125.1 kB 18.9 MB/s eta 0:00:00
+Collecting graphene-django==3.0.0
+  Downloading graphene_django-3.0.0-py2.py3-none-any.whl (101 kB)
+     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 101.9/101.9 kB 15.9 MB/s eta 0:00:00
+Collecting graphql-core==3.2.3
+  Downloading graphql_core-3.2.3-py3-none-any.whl (202 kB)
+     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 202.9/202.9 kB 28.0 MB/s eta 0:00:00
+Collecting graphql-relay==3.2.0
+  Downloading graphql_relay-3.2.0-py3-none-any.whl (16 kB)
+Collecting grpcio==1.51.1
+  Downloading grpcio-1.51.1-cp310-cp310-manylinux_2_17_x86_64.manylinux2014_x86_64.whl (4.8 MB)
+     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 4.8/4.8 MB 73.9 MB/s eta 0:00:00
+Collecting grpcio-status==1.51.1
+  Downloading grpcio_status-1.51.1-py3-none-any.whl (5.1 kB)
+Collecting gunicorn==20.1.0
+  Downloading gunicorn-20.1.0-py3-none-any.whl (79 kB)
+     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 79.5/79.5 kB 14.1 MB/s eta 0:00:00
+Collecting h11==0.14.0
+  Downloading h11-0.14.0-py3-none-any.whl (58 kB)
+     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 58.3/58.3 kB 9.2 MB/s eta 0:00:00
+Collecting httplib2==0.21.0
+  Downloading httplib2-0.21.0-py3-none-any.whl (96 kB)
+     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 96.8/96.8 kB 15.7 MB/s eta 0:00:00
+Collecting idna==3.4
+  Downloading idna-3.4-py3-none-any.whl (61 kB)
+     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 61.5/61.5 kB 10.0 MB/s eta 0:00:00
+Collecting inflection==0.5.1
+  Downloading inflection-0.5.1-py2.py3-none-any.whl (9.5 kB)
+Collecting ipython==8.5.0
+  Downloading ipython-8.5.0-py3-none-any.whl (752 kB)
+     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 752.0/752.0 kB 52.1 MB/s eta 0:00:00
+Collecting itypes==1.2.0
+  Downloading itypes-1.2.0-py2.py3-none-any.whl (4.8 kB)
+Collecting jedi==0.18.1
+  Downloading jedi-0.18.1-py2.py3-none-any.whl (1.6 MB)
+     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 1.6/1.6 MB 66.1 MB/s eta 0:00:00
+Collecting Jinja2==3.1.2
+  Downloading Jinja2-3.1.2-py3-none-any.whl (133 kB)
+     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 133.1/133.1 kB 19.9 MB/s eta 0:00:00
+Collecting jsonschema==4.17.0
+  Downloading jsonschema-4.17.0-py3-none-any.whl (83 kB)
+     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 83.8/83.8 kB 14.3 MB/s eta 0:00:00
+Collecting MarkupSafe==2.1.1
+  Downloading MarkupSafe-2.1.1-cp310-cp310-manylinux_2_17_x86_64.manylinux2014_x86_64.whl (25 kB)
+Collecting matplotlib-inline==0.1.6
+  Downloading matplotlib_inline-0.1.6-py3-none-any.whl (9.4 kB)
+Collecting msgpack==1.0.4
+  Downloading msgpack-1.0.4-cp310-cp310-manylinux_2_17_x86_64.manylinux2014_x86_64.whl (316 kB)
+     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 317.0/317.0 kB 35.3 MB/s eta 0:00:00
+Collecting mysqlclient==2.1.1
+  Downloading mysqlclient-2.1.1.tar.gz (88 kB)
+     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 88.1/88.1 kB 16.4 MB/s eta 0:00:00
+  Preparing metadata (setup.py): started
+  Preparing metadata (setup.py): finished with status 'done'
+Collecting oauthlib==3.2.2
+  Downloading oauthlib-3.2.2-py3-none-any.whl (151 kB)
+     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 151.7/151.7 kB 20.2 MB/s eta 0:00:00
+Collecting openapi-codec==1.3.2
+  Downloading openapi-codec-1.3.2.tar.gz (6.3 kB)
+  Preparing metadata (setup.py): started
+  Preparing metadata (setup.py): finished with status 'done'
+Collecting outcome==1.2.0
+  Downloading outcome-1.2.0-py2.py3-none-any.whl (9.7 kB)
+Collecting packaging==21.3
+  Downloading packaging-21.3-py3-none-any.whl (40 kB)
+     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 40.8/40.8 kB 6.8 MB/s eta 0:00:00
+Collecting parso==0.8.3
+  Downloading parso-0.8.3-py2.py3-none-any.whl (100 kB)
+     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 100.8/100.8 kB 11.7 MB/s eta 0:00:00
+Collecting pexpect==4.8.0
+  Downloading pexpect-4.8.0-py2.py3-none-any.whl (59 kB)
+     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 59.0/59.0 kB 11.0 MB/s eta 0:00:00
+Collecting pickleshare==0.7.5
+  Downloading pickleshare-0.7.5-py2.py3-none-any.whl (6.9 kB)
+Collecting pilkit==2.0
+  Downloading pilkit-2.0.tar.gz (161 kB)
+     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 161.1/161.1 kB 21.0 MB/s eta 0:00:00
+  Preparing metadata (setup.py): started
+  Preparing metadata (setup.py): finished with status 'done'
+Collecting Pillow==9.4.0
+  Downloading Pillow-9.4.0-cp310-cp310-manylinux_2_28_x86_64.whl (3.4 MB)
+     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 3.4/3.4 MB 78.2 MB/s eta 0:00:00
+Collecting promise==2.3
+  Downloading promise-2.3.tar.gz (19 kB)
+  Preparing metadata (setup.py): started
+  Preparing metadata (setup.py): finished with status 'done'
+Collecting prompt-toolkit==3.0.31
+  Downloading prompt_toolkit-3.0.31-py3-none-any.whl (382 kB)
+     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 382.3/382.3 kB 38.3 MB/s eta 0:00:00
+Collecting proto-plus==1.22.2
+  Downloading proto_plus-1.22.2-py3-none-any.whl (47 kB)
+     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 47.9/47.9 kB 7.9 MB/s eta 0:00:00
+Collecting protobuf==4.21.12
+  Downloading protobuf-4.21.12-cp37-abi3-manylinux2014_x86_64.whl (409 kB)
+     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 409.8/409.8 kB 36.1 MB/s eta 0:00:00
+Collecting ptyprocess==0.7.0
+  Downloading ptyprocess-0.7.0-py2.py3-none-any.whl (13 kB)
+Collecting pure-eval==0.2.2
+  Downloading pure_eval-0.2.2-py3-none-any.whl (11 kB)
+Collecting pyasn1==0.4.8
+  Downloading pyasn1-0.4.8-py2.py3-none-any.whl (77 kB)
+     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 77.1/77.1 kB 12.4 MB/s eta 0:00:00
+Collecting pyasn1-modules==0.2.8
+  Downloading pyasn1_modules-0.2.8-py2.py3-none-any.whl (155 kB)
+     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 155.3/155.3 kB 22.2 MB/s eta 0:00:00
+Collecting pycodestyle==2.10.0
+  Downloading pycodestyle-2.10.0-py2.py3-none-any.whl (41 kB)
+     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 41.3/41.3 kB 6.2 MB/s eta 0:00:00
+Collecting pycparser==2.21
+  Downloading pycparser-2.21-py2.py3-none-any.whl (118 kB)
+     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 118.7/118.7 kB 18.0 MB/s eta 0:00:00
+Collecting Pygments==2.13.0
+  Downloading Pygments-2.13.0-py3-none-any.whl (1.1 MB)
+     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 1.1/1.1 MB 57.2 MB/s eta 0:00:00
+Collecting PyJWT==2.6.0
+  Downloading PyJWT-2.6.0-py3-none-any.whl (20 kB)
+Collecting pyparsing==3.0.9
+  Downloading pyparsing-3.0.9-py3-none-any.whl (98 kB)
+     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 98.3/98.3 kB 15.2 MB/s eta 0:00:00
+Collecting pyrsistent==0.19.2
+  Downloading pyrsistent-0.19.2-py3-none-any.whl (57 kB)
+     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 57.5/57.5 kB 1.9 MB/s eta 0:00:00
+Collecting PySocks==1.7.1
+  Downloading PySocks-1.7.1-py3-none-any.whl (16 kB)
+Collecting python-dotenv==0.21.0
+  Downloading python_dotenv-0.21.0-py3-none-any.whl (18 kB)
+Collecting python3-openid==3.2.0
+  Downloading python3_openid-3.2.0-py3-none-any.whl (133 kB)
+     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 133.7/133.7 kB 20.0 MB/s eta 0:00:00
+Collecting pytz==2022.6
+  Downloading pytz-2022.6-py2.py3-none-any.whl (498 kB)
+     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 498.1/498.1 kB 39.9 MB/s eta 0:00:00
+Collecting PyYAML==6.0
+  Downloading PyYAML-6.0-cp310-cp310-manylinux_2_5_x86_64.manylinux1_x86_64.manylinux_2_12_x86_64.manylinux2010_x86_64.whl (682 kB)
+     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 682.2/682.2 kB 39.7 MB/s eta 0:00:00
+Collecting requests==2.28.1
+  Downloading requests-2.28.1-py3-none-any.whl (62 kB)
+     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 62.8/62.8 kB 10.8 MB/s eta 0:00:00
+Collecting requests-oauthlib==1.3.1
+  Downloading requests_oauthlib-1.3.1-py2.py3-none-any.whl (23 kB)
+Collecting rsa==4.9
+  Downloading rsa-4.9-py3-none-any.whl (34 kB)
+Collecting ruamel.yaml==0.17.21
+  Downloading ruamel.yaml-0.17.21-py3-none-any.whl (109 kB)
+     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 109.5/109.5 kB 15.5 MB/s eta 0:00:00
+Collecting ruamel.yaml.clib==0.2.7
+  Downloading ruamel.yaml.clib-0.2.7-cp310-cp310-manylinux_2_17_x86_64.manylinux2014_x86_64.manylinux_2_24_x86_64.whl (485 kB)
+     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 485.6/485.6 kB 37.8 MB/s eta 0:00:00
+Collecting selenium==4.6.0
+  Downloading selenium-4.6.0-py3-none-any.whl (5.2 MB)
+     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 5.2/5.2 MB 66.0 MB/s eta 0:00:00
+Collecting simplejson==3.18.1
+  Downloading simplejson-3.18.1-cp310-cp310-manylinux_2_5_x86_64.manylinux1_x86_64.manylinux_2_17_x86_64.manylinux2014_x86_64.whl (137 kB)
+     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 137.4/137.4 kB 19.5 MB/s eta 0:00:00
+Collecting six==1.16.0
+  Downloading six-1.16.0-py2.py3-none-any.whl (11 kB)
+Collecting sniffio==1.3.0
+  Downloading sniffio-1.3.0-py3-none-any.whl (10 kB)
+Collecting sortedcontainers==2.4.0
+  Downloading sortedcontainers-2.4.0-py2.py3-none-any.whl (29 kB)
+Collecting soupsieve==2.3.2.post1
+  Downloading soupsieve-2.3.2.post1-py3-none-any.whl (37 kB)
+Collecting sqlparse==0.4.3
+  Downloading sqlparse-0.4.3-py3-none-any.whl (42 kB)
+     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 42.8/42.8 kB 7.4 MB/s eta 0:00:00
+Collecting stack-data==0.5.1
+  Downloading stack_data-0.5.1-py3-none-any.whl (24 kB)
+Collecting text-unidecode==1.3
+  Downloading text_unidecode-1.3-py2.py3-none-any.whl (78 kB)
+     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 78.2/78.2 kB 12.7 MB/s eta 0:00:00
+Collecting tomli==2.0.1
+  Downloading tomli-2.0.1-py3-none-any.whl (12 kB)
+Collecting tqdm==4.64.1
+  Downloading tqdm-4.64.1-py2.py3-none-any.whl (78 kB)
+     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 78.5/78.5 kB 12.3 MB/s eta 0:00:00
+Collecting traitlets==5.4.0
+  Downloading traitlets-5.4.0-py3-none-any.whl (107 kB)
+     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 107.1/107.1 kB 17.3 MB/s eta 0:00:00
+Collecting trio==0.22.0
+  Downloading trio-0.22.0-py3-none-any.whl (384 kB)
+     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 384.9/384.9 kB 35.0 MB/s eta 0:00:00
+Collecting trio-websocket==0.9.2
+  Downloading trio_websocket-0.9.2-py3-none-any.whl (16 kB)
+Collecting uritemplate==4.1.1
+  Downloading uritemplate-4.1.1-py2.py3-none-any.whl (10 kB)
+Collecting urllib3==1.26.12
+  Downloading urllib3-1.26.12-py2.py3-none-any.whl (140 kB)
+     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 140.4/140.4 kB 20.9 MB/s eta 0:00:00
+Collecting wcwidth==0.2.5
+  Downloading wcwidth-0.2.5-py2.py3-none-any.whl (30 kB)
+Collecting webdriver-manager==3.8.5
+  Downloading webdriver_manager-3.8.5-py2.py3-none-any.whl (27 kB)
+Collecting wsproto==1.2.0
+  Downloading wsproto-1.2.0-py3-none-any.whl (24 kB)
+Requirement already satisfied: setuptools>=3.0 in /usr/local/lib/python3.10/dist-packages (from gunicorn==20.1.0->-r /config/requirements.txt (line 53)) (67.0.0)
+Collecting urllib3[socks]~=1.26
+  Downloading urllib3-1.26.14-py2.py3-none-any.whl (140 kB)
+     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 140.6/140.6 kB 18.8 MB/s eta 0:00:00
+  Downloading urllib3-1.26.13-py2.py3-none-any.whl (140 kB)
+     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 140.6/140.6 kB 21.1 MB/s eta 0:00:00
+Building wheels for collected packages: coreschema, dj-rest-auth, django-allauth, mysqlclient, openapi-codec, pilkit, promise
+  Building wheel for coreschema (setup.py): started
+  Building wheel for coreschema (setup.py): finished with status 'done'
+  Created wheel for coreschema: filename=coreschema-0.0.4-py3-none-any.whl size=15015 sha256=cb272d569fbb1a2fb5d0d659f3d6ff7b2d9f416352d6bed64b22c2bcffe1fe55
+  Stored in directory: /root/.cache/pip/wheels/97/f0/a1/ee57c9b2aaaac2e8867798bbde65749450ddae129085e1393d
+  Building wheel for dj-rest-auth (setup.py): started
+  Building wheel for dj-rest-auth (setup.py): finished with status 'done'
+  Created wheel for dj-rest-auth: filename=dj_rest_auth-2.2.5-py2.py3-none-any.whl size=146558 sha256=37057ec459fced3982118f7e05e537f499ca4bddc757edb8c5b8477b9b53451e
+  Stored in directory: /root/.cache/pip/wheels/38/2b/2b/38d45c2f167c57872a49e9b45d1f5303d80b346ce8404743a2
+  Building wheel for django-allauth (setup.py): started
+  Building wheel for django-allauth (setup.py): finished with status 'done'
+  Created wheel for django-allauth: filename=django_allauth-0.50.0-py3-none-any.whl size=1025888 sha256=3dc120f82e86e5bde935049b925fd956a765b35ca500f2f589162f5e88579148
+  Stored in directory: /root/.cache/pip/wheels/8b/57/92/87601d034ca755c5d49e9e6f7571c3e7257ca896ad94adb004
+  Building wheel for mysqlclient (setup.py): started
+  Building wheel for mysqlclient (setup.py): finished with status 'done'
+  Created wheel for mysqlclient: filename=mysqlclient-2.1.1-cp310-cp310-linux_x86_64.whl size=104311 sha256=841232646b99280caccf97e7fd81f9303452c5f6df9c2b8d5ec0b171cdb41c8a
+  Stored in directory: /root/.cache/pip/wheels/7d/34/ba/a769c165b01646816afdf9bf792e847ef149693fee432b6b65
+  Building wheel for openapi-codec (setup.py): started
+  Building wheel for openapi-codec (setup.py): finished with status 'done'
+  Created wheel for openapi-codec: filename=openapi_codec-1.3.2-py3-none-any.whl size=7283 sha256=81b769be836aced5f964db5d7c0f7faee644b01404418966bb63b24a8145d882
+  Stored in directory: /root/.cache/pip/wheels/cf/b5/bf/da08010edbbbc4ad41065c297ba8a97fd5c4e569c936468309
+  Building wheel for pilkit (setup.py): started
+  Building wheel for pilkit (setup.py): finished with status 'done'
+  Created wheel for pilkit: filename=pilkit-2.0-py3-none-any.whl size=18300 sha256=151269e8acc6629adb5d604853851c1364769fd2489726365f88a0c0501e6de6
+  Stored in directory: /root/.cache/pip/wheels/4b/fa/cc/abc67b5de67c44656b2efcbf5f863ef1c84ff1113befa0fa21
+  Building wheel for promise (setup.py): started
+  Building wheel for promise (setup.py): finished with status 'done'
+  Created wheel for promise: filename=promise-2.3-py3-none-any.whl size=21486 sha256=e98d4ffe75e303c09668cb7ebc6471c9264b532c546440ed934364b286635ad5
+  Stored in directory: /root/.cache/pip/wheels/54/4e/28/3ed0e1c8a752867445bab994d2340724928aa3ab059c57c8db
+Successfully built coreschema dj-rest-auth django-allauth mysqlclient openapi-codec pilkit promise
+Installing collected packages: wcwidth, text-unidecode, sortedcontainers, pytz, pyasn1, pure-eval, ptyprocess, pilkit, pickleshare, msgpack, itypes, executing, backcall, appnope, aniso8601, urllib3, uritemplate, traitlets, tqdm, tomli, sqlparse, soupsieve, sniffio, six, simplejson, ruamel.yaml.clib, rsa, PyYAML, python-dotenv, PySocks, pyrsistent, pyparsing, PyJWT, Pygments, pycparser, pycodestyle, pyasn1-modules, protobuf, prompt-toolkit, Pillow, pexpect, parso, oauthlib, mysqlclient, MarkupSafe, inflection, idna, h11, gunicorn, grpcio, graphql-core, google-crc32c, exceptiongroup, defusedxml, decorator, colorama, charset-normalizer, certifi, cachetools, attrs, async-generator, asgiref, wsproto, ruamel.yaml, requests, python3-openid, proto-plus, promise, packaging, outcome, matplotlib-inline, jsonschema, Jinja2, jedi, httplib2, graphql-relay, googleapis-common-protos, google-resumable-media, google-auth, Django, cffi, beautifulsoup4, autopep8, asttokens, webdriver-manager, trio, stack-data, requests-oauthlib, grpcio-status, graphene, google-auth-httplib2, google-api-core, djangorestframework, django-filter, django-extensions, django-cors-headers, django-bootstrap-v5, django-appconf, cryptography, coreschema, CacheControl, trio-websocket, ipython, graphene-django, google-cloud-core, google-api-python-client, drf-spectacular, djangorestframework-simplejwt, django-imagekit, dj-rest-auth, coreapi, selenium, openapi-codec, google-cloud-storage, google-cloud-firestore, drf-yasg, django-allauth, firebase-admin
+Successfully installed CacheControl-0.12.11 Django-3.2.13 Jinja2-3.1.2 MarkupSafe-2.1.1 Pillow-9.4.0 PyJWT-2.6.0 PySocks-1.7.1 PyYAML-6.0 Pygments-2.13.0 aniso8601-9.0.1 appnope-0.1.3 asgiref-3.5.2 asttokens-2.0.5 async-generator-1.10 attrs-22.1.0 autopep8-2.0.1 backcall-0.2.0 beautifulsoup4-4.11.1 cachetools-5.3.0 certifi-2022.9.24 cffi-1.15.1 charset-normalizer-2.1.1 colorama-0.4.4 coreapi-2.3.3 coreschema-0.0.4 cryptography-38.0.3 decorator-5.1.1 defusedxml-0.7.1 dj-rest-auth-2.2.5 django-allauth-0.50.0 django-appconf-1.0.5 django-bootstrap-v5-1.0.11 django-cors-headers-3.13.0 django-extensions-3.2.1 django-filter-22.1 django-imagekit-4.1.0 djangorestframework-3.14.0 djangorestframework-simplejwt-5.2.2 drf-spectacular-0.24.2 drf-yasg-1.21.4 exceptiongroup-1.0.4 executing-1.1.0 firebase-admin-6.0.1 google-api-core-2.11.0 google-api-python-client-2.75.0 google-auth-2.16.0 google-auth-httplib2-0.1.0 google-cloud-core-2.3.2 google-cloud-firestore-2.9.1 google-cloud-storage-2.7.0 google-crc32c-1.5.0 google-resumable-media-2.4.1 googleapis-common-protos-1.58.0 graphene-3.2.1 graphene-django-3.0.0 graphql-core-3.2.3 graphql-relay-3.2.0 grpcio-1.51.1 grpcio-status-1.51.1 gunicorn-20.1.0 h11-0.14.0 httplib2-0.21.0 idna-3.4 inflection-0.5.1 ipython-8.5.0 itypes-1.2.0 jedi-0.18.1 jsonschema-4.17.0 matplotlib-inline-0.1.6 msgpack-1.0.4 mysqlclient-2.1.1 oauthlib-3.2.2 openapi-codec-1.3.2 outcome-1.2.0 packaging-21.3 parso-0.8.3 pexpect-4.8.0 pickleshare-0.7.5 pilkit-2.0 promise-2.3 prompt-toolkit-3.0.31 proto-plus-1.22.2 protobuf-4.21.12 ptyprocess-0.7.0 pure-eval-0.2.2 pyasn1-0.4.8 pyasn1-modules-0.2.8 pycodestyle-2.10.0 pycparser-2.21 pyparsing-3.0.9 pyrsistent-0.19.2 python-dotenv-0.21.0 python3-openid-3.2.0 pytz-2022.6 requests-2.28.1 requests-oauthlib-1.3.1 rsa-4.9 ruamel.yaml-0.17.21 ruamel.yaml.clib-0.2.7 selenium-4.6.0 simplejson-3.18.1 six-1.16.0 sniffio-1.3.0 sortedcontainers-2.4.0 soupsieve-2.3.2.post1 sqlparse-0.4.3 stack-data-0.5.1 text-unidecode-1.3 tomli-2.0.1 tqdm-4.64.1 traitlets-5.4.0 trio-0.22.0 trio-websocket-0.9.2 uritemplate-4.1.1 urllib3-1.26.12 wcwidth-0.2.5 webdriver-manager-3.8.5 wsproto-1.2.0
+Removing intermediate container fd20e0fa09a6
+ ---> a754beb7e140
+Step 14/17 : RUN ln -sf /usr/share/zoneinfo/Asia/Seoul /etc/localtime
+ ---> Running in 63b51e5926e2
+Removing intermediate container 63b51e5926e2
+ ---> 9e51823d4f12
+Step 15/17 : RUN apt-get install tzdata
+ ---> Running in b6983c35ff78
+Reading package lists...
+Building dependency tree...
+Reading state information...
+The following NEW packages will be installed:
+  tzdata
+0 upgraded, 1 newly installed, 0 to remove and 0 not upgraded.
+Need to get 333 kB of archives.
+After this operation, 3857 kB of additional disk space will be used.
+Get:1 http://archive.ubuntu.com/ubuntu jammy-updates/main amd64 tzdata all 2022g-0ubuntu0.22.04.1 [333 kB]
+Preconfiguring packages ...
+Fetched 333 kB in 2s (203 kB/s)
+Selecting previously unselected package tzdata.
+(Reading database ... (Reading database ... 5%(Reading database ... 10%(Reading database ... 15%(Reading database ... 20%(Reading database ... 25%(Reading database ... 30%(Reading database ... 35%(Reading database ... 40%(Reading database ... 45%(Reading database ... 50%(Reading database ... 55%(Reading database ... 60%(Reading database ... 65%(Reading database ... 70%(Reading database ... 75%(Reading database ... 80%(Reading database ... 85%(Reading database ... 90%(Reading database ... 95%(Reading database ... 100%(Reading database ... 16395 files and directories currently installed.)
+Preparing to unpack .../tzdata_2022g-0ubuntu0.22.04.1_all.deb ...
+Unpacking tzdata (2022g-0ubuntu0.22.04.1) ...
+Setting up tzdata (2022g-0ubuntu0.22.04.1) ...
+
+Current default time zone: 'Asia/Seoul'
+Local time is now:      Wed Feb  8 01:44:33 KST 2023.
+Universal Time is now:  Tue Feb  7 16:44:33 UTC 2023.
+Run 'dpkg-reconfigure tzdata' if you wish to change it.
+
+Removing intermediate container b6983c35ff78
+ ---> b79cf5653428
+Step 16/17 : RUN mkdir /pjtback;
+ ---> Running in f7a4dadb5444
+Removing intermediate container f7a4dadb5444
+ ---> f73c914f22ce
+Step 17/17 : WORKDIR /pjtback
+ ---> Running in 4861187bd8fc
+Removing intermediate container 4861187bd8fc
+ ---> 77b1359f98f9
+
+Successfully built 77b1359f98f9
+Successfully tagged pjtback_web:latest
+Starting db ... 
+Recreating certbot_service ... 
+[2A[2KStarting db                ... [32mdone[0m[2B[1A[2KRecreating certbot_service ... [32mdone[0m[1BRecreating web             ... 
+[1A[2KRecreating web             ... [32mdone[0m[1BRecreating nginx           ... 
+[1A[2KRecreating nginx           ... [31merror[0m[1B
+ERROR: for nginx  Cannot start service nginx: failed to create shim: OCI runtime create failed: runc create failed: unable to start container process: error during container init: error mounting "/var/jenkins_home/workspace/jenkins_test/pjtback/config/nginx/nginx.conf" to rootfs at "/etc/nginx/conf.d/default.conf": mount /var/jenkins_home/workspace/jenkins_test/pjtback/config/nginx/nginx.conf:/etc/nginx/conf.d/default.conf (via /proc/self/fd/6), flags: 0x5000: not a directory: unknown: Are you trying to mount a directory onto a file (or vice-versa)? Check if the specified host path exists and is the expected type
+
+ERROR: for nginx  Cannot start service nginx: failed to create shim: OCI runtime create failed: runc create failed: unable to start container process: error during container init: error mounting "/var/jenkins_home/workspace/jenkins_test/pjtback/config/nginx/nginx.conf" to rootfs at "/etc/nginx/conf.d/default.conf": mount /var/jenkins_home/workspace/jenkins_test/pjtback/config/nginx/nginx.conf:/etc/nginx/conf.d/default.conf (via /proc/self/fd/6), flags: 0x5000: not a directory: unknown: Are you trying to mount a directory onto a file (or vice-versa)? Check if the specified host path exists and is the expected type
+Encountered errors while bringing up the project.
+Build step 'Execute shell' marked build as failure
+Finished: FAILURE

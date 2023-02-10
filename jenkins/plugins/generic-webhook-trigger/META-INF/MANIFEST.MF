@@ -1,0 +1,25 @@
+Manifest-Version: 1.0
+Created-By: Maven Archiver 3.5.1
+Build-Jdk-Spec: 11
+Extension-Name: generic-webhook-trigger
+Implementation-Title: generic-webhook-trigger
+Implementation-Version: 1.86.2
+Specification-Title: Can receive any HTTP request, extract any values fr
+ om JSON or XML and trigger a job with those values available as variabl
+ es. Works with GitHub, GitLab, Bitbucket, Jira and many more.
+Group-Id: org.jenkins-ci.plugins
+Short-Name: generic-webhook-trigger
+Long-Name: Generic Webhook Trigger Plugin
+Url: https://github.com/jenkinsci/generic-webhook-trigger-plugin
+Minimum-Java-Version: 1.8
+Plugin-Version: 1.86.2
+Hudson-Version: 2.222.4
+Jenkins-Version: 2.222.4
+Plugin-Dependencies: credentials:2.1.16,plain-credentials:1.2,structs:1.
+ 7
+Plugin-Developers: Tomas Bjerre:tomasbjerre:tomas.bjerre85@gmail.com
+Plugin-License-Name: MIT License
+Plugin-License-Url: http://opensource.org/licenses/MIT
+Plugin-ScmUrl: https://github.com/jenkinsci/generic-webhook-trigger-plug
+ in
+

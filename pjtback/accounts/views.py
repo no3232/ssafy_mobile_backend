@@ -197,3 +197,9 @@ def change_email(request):
     user.save()
 
     return Response(status=status.HTTP_200_OK)
+
+@api_view(['POST'])
+def test(request):
+    print(request.data)
+    print(request.FILES)
+    return Response(status=status.HTTP_200_OK)

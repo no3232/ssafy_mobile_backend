@@ -1,0 +1,77 @@
+<?xml version='1.1' encoding='UTF-8'?>
+<project>
+  <actions/>
+  <description></description>
+  <keepDependencies>false</keepDependencies>
+  <properties>
+    <com.dabsquared.gitlabjenkins.connection.GitLabConnectionProperty plugin="gitlab-plugin@1.7.4">
+      <gitLabConnection></gitLabConnection>
+      <jobCredentialId></jobCredentialId>
+      <useAlternativeCredential>false</useAlternativeCredential>
+    </com.dabsquared.gitlabjenkins.connection.GitLabConnectionProperty>
+  </properties>
+  <scm class="hudson.plugins.git.GitSCM" plugin="git@5.0.0">
+    <configVersion>2</configVersion>
+    <userRemoteConfigs>
+      <hudson.plugins.git.UserRemoteConfig>
+        <url>https://lab.ssafy.com/luminaries1/mobile_pjt.git</url>
+        <credentialsId>d06a6d41-31b5-4225-aeaa-c48fe9d64fad</credentialsId>
+      </hudson.plugins.git.UserRemoteConfig>
+    </userRemoteConfigs>
+    <branches>
+      <hudson.plugins.git.BranchSpec>
+        <name>*/master</name>
+      </hudson.plugins.git.BranchSpec>
+    </branches>
+    <doGenerateSubmoduleConfigurations>false</doGenerateSubmoduleConfigurations>
+    <submoduleCfg class="empty-list"/>
+    <extensions/>
+  </scm>
+  <canRoam>true</canRoam>
+  <disabled>false</disabled>
+  <blockBuildWhenDownstreamBuilding>false</blockBuildWhenDownstreamBuilding>
+  <blockBuildWhenUpstreamBuilding>false</blockBuildWhenUpstreamBuilding>
+  <triggers>
+    <com.dabsquared.gitlabjenkins.GitLabPushTrigger plugin="gitlab-plugin@1.7.4">
+      <spec></spec>
+      <triggerOnPush>true</triggerOnPush>
+      <triggerToBranchDeleteRequest>false</triggerToBranchDeleteRequest>
+      <triggerOnMergeRequest>true</triggerOnMergeRequest>
+      <triggerOnlyIfNewCommitsPushed>false</triggerOnlyIfNewCommitsPushed>
+      <triggerOnPipelineEvent>false</triggerOnPipelineEvent>
+      <triggerOnAcceptedMergeRequest>true</triggerOnAcceptedMergeRequest>
+      <triggerOnClosedMergeRequest>false</triggerOnClosedMergeRequest>
+      <triggerOnApprovedMergeRequest>true</triggerOnApprovedMergeRequest>
+      <triggerOpenMergeRequestOnPush>never</triggerOpenMergeRequestOnPush>
+      <triggerOnNoteRequest>true</triggerOnNoteRequest>
+      <noteRegex>Jenkins please retry a build</noteRegex>
+      <ciSkip>true</ciSkip>
+      <skipWorkInProgressMergeRequest>true</skipWorkInProgressMergeRequest>
+      <labelsThatForcesBuildIfAdded></labelsThatForcesBuildIfAdded>
+      <setBuildDescription>true</setBuildDescription>
+      <branchFilterType>All</branchFilterType>
+      <includeBranchesSpec></includeBranchesSpec>
+      <excludeBranchesSpec></excludeBranchesSpec>
+      <sourceBranchRegex></sourceBranchRegex>
+      <targetBranchRegex></targetBranchRegex>
+      <secretToken>{AQAAABAAAAAQ8P3PzWPvQNRP3sFpgqAlzdLsQ5G3JM4dxdDTe5Slsv0=}</secretToken>
+      <pendingBuildName></pendingBuildName>
+      <cancelPendingBuildsOnUpdate>false</cancelPendingBuildsOnUpdate>
+    </com.dabsquared.gitlabjenkins.GitLabPushTrigger>
+  </triggers>
+  <concurrentBuild>false</concurrentBuild>
+  <builders>
+    <hudson.tasks.Shell>
+      <command>rootdir=&quot;workspace/jenkins_test/pjtback&quot;
+appdir=&quot;workspace/jenkins_test/pjtback&quot;
+
+cd ~/${appdir}/
+docker-compose stop
+docker-compose rm web
+docker-compose up --build</command>
+      <configuredLocalRules/>
+    </hudson.tasks.Shell>
+  </builders>
+  <publishers/>
+  <buildWrappers/>
+</project>

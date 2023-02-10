@@ -13,4 +13,5 @@ urlpatterns = [
     path('firebase_save/', views.f_token_save_views),
     path('changeEmail/',views.change_email ),
     path('changePassword/', PasswordChangeView.as_view()),
+    path('testing/', views.test)
 ]
