@@ -49,20 +49,18 @@ class TravelSerializer(serializers.ModelSerializer):
     def create(self, validated_data):
         places = self.context['request'].data['placeList']
         images = self.context['request'].FILES.getlist('placeImgList')
-        print(images)
-        
         places = json.loads(places)
+
         if places:
             instance = Travel.objects.create(**validated_data)
             for idx, place in enumerate(places):
                 # 플레이스 생성
-                places["saveDate"] = datetime.strptime(places["saveDate"], '%d/%m/%y %H:%M:%S')
+                print(place)
                 new_place = Place.objects.create(travel=instance, placeName = place["placeName"], saveDate = place["saveDate"], memo = place["memo"], latitude = place["latitude"], longitude = place["longitude"], address = place["address"])
                 # 이미지 존재할 때 플레이스 이미지 컬럼 생성
                 if images:
                     for image in images:
-                        print(image.name[0])
-                        if image.name[0] == str(idx):
+                        if image.name.split('_')[0] == str(idx):
                             PlaceImage.objects.create(place = new_place, picture = image)
 
         else:
@@ -79,22 +77,31 @@ class TravelSerializer(serializers.ModelSerializer):
         
         # 일단은 관련 플레이스 죄다 삭제 후 재생성으로 했습니다.
         # 단시간에 알고리즘 짜면 for 3번 돌거 같아서...
-        old_place = Place.objects.filter(travel=instance).delete()
-        places = self.context['request'].data['placeList']
-        images = self.context['request'].FILES
-        places = json.loads(places)
+        d_places = json.loads(self.context['request'].data['DeletePlaceList'])
+        if d_places:
+            for i in d_places:
+                Place.objects.filter(id=i).delete()
+        d_picture = json.loads(self.context['request'].data['DeleteImageList'])
+        if d_picture:
+            for i in d_picture:
+                PlaceImage.objects.filter(picture=i).delete()
+        places = json.loads(self.context['request'].data['placeList'])
+        images = self.context['request'].FILES.getlist('placeImgList')
         if places:
             for idx, place in enumerate(places):
-                new_place = Place.objects.create(travel=instance, 
-                                                 placeName=place['placeName'],
-                                                 saveDate=place['saveDate'],
-                                                 memo=place['memo'],
-                                                 latitude=place['latitude'],
-                                                 longitude=place['longitude'],
-                                                 address=place['address'])
-                if images[str(idx)]:
-                    for image in images.getlist(str(idx)):
-                        PlaceImage.objects.create(place = new_place, picture = image)
+                update_place = Place.objects.get(id=place["placeId"])
+                update_place.travel=instance
+                update_place.placeName=place['placeName']
+                update_place.saveDate=place['saveDate']
+                update_place.memo=place['memo']
+                update_place.latitude=place['latitude']
+                update_place.longitude=place['longitude']
+                update_place.address=place['address']
+                update_place.save()
+                if images:
+                    for image in images:
+                        if image.name.split('_')[0] == str(idx):
+                            PlaceImage.objects.create(place = update_place, picture = image)
 
         instance.save()
         return instance
