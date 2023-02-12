@@ -51,7 +51,7 @@ class CustomRegisterSerializer(RegisterSerializer):
         if self.validated_data.get('age'):
             data['age'] = int(self.validated_data.get('age'))
         else:
-            data['age'] = self.validated_data.get('age')
+            data['age'] = self.validated_data.get('age', 10)
 
         return data
 
